@@ -1,0 +1,85 @@
+[INFO] [1789307249.284381131] [wall_mount_task]: --- grasp sensor_cam_1 at (0.109, 0.109, 0.01929000000000003) ---
+[INFO] [1789307249.285286585] [wall_mount_task]: grasp[1]: MOVE_ARM_TO_PREGRASP (0%)
+[INFO] [1789307259.012296967] [wall_mount_task]: grasp[1]: MOVE_ARM_TO_PREGRASP (100%)
+[INFO] [1789307259.012634840] [wall_mount_task]: grasp[1]: MOVE_ARM_TO_GRASP (0%)
+[INFO] [1789307261.773597677] [wall_mount_task]: grasp[1]: MOVE_ARM_TO_GRASP (100%)
+[INFO] [1789307261.774865446] [wall_mount_task]: grasp[1]: CLOSE_GRIPPER (0%)
+[INFO] [1789307263.491041169] [wall_mount_task]: grasp[1]: CLOSE_GRIPPER (100%)
+[INFO] [1789307263.491382819] [wall_mount_task]: grasp[1]: LIFT_OBJECT (0%)
+[INFO] [1789307269.242759643] [wall_mount_task]: grasp[1]: LIFT_OBJECT (100%)
+[INFO] [1789307269.243173778] [wall_mount_task]: grasp[1]: STOW_OBJECT (0%)
+[INFO] [1789307269.243389693] [wall_mount_task]: grasp[1]: succeeded -- grasp complete
+[INFO] [1789307269.243567018] [wall_mount_task]: --- place onto wall_target_1 at (0.35500000000000004, -0.15, -0.06101000000000001) ---
+[INFO] [1789307269.244289773] [wall_mount_task]: place[1]: MOVE_ARM_TO_PREPLACE (0%)
+[INFO] [1789307308.204287703] [wall_mount_task]: place[1]: MOVE_ARM_TO_PREPLACE (100%)
+[INFO] [1789307308.204641246] [wall_mount_task]: place[1]: MOVE_ARM_TO_PLACE (0%)
+[INFO] [1789307312.072998035] [wall_mount_task]: place[1]: MOVE_ARM_TO_PLACE (100%)
+[INFO] [1789307312.073646978] [wall_mount_task]: place[1]: OPEN_GRIPPER (0%)
+[INFO] [1789307313.669762412] [wall_mount_task]: place[1]: OPEN_GRIPPER (100%)
+[INFO] [1789307315.169820593] [wall_mount_task]: place[1]: RETREAT_ARM (0%)
+[INFO] [1789307319.776867547] [wall_mount_task]: place[1]: RETREAT_ARM (100%)
+[INFO] [1789307319.777278588] [wall_mount_task]: place[1]: succeeded -- place complete
+[INFO] [1789307319.777432079] [wall_mount_task]: --- grasp sensor_cam_2 at (0.109, -0.109, 0.01929000000000003) ---
+[INFO] [1789307319.778063569] [wall_mount_task]: grasp[2]: MOVE_ARM_TO_PREGRASP (0%)
+[INFO] [1789307328.696394907] [wall_mount_task]: grasp[2]: MOVE_ARM_TO_PREGRASP (100%)
+[INFO] [1789307328.696741926] [wall_mount_task]: grasp[2]: MOVE_ARM_TO_GRASP (0%)
+[INFO] [1789307331.598521413] [wall_mount_task]: grasp[2]: MOVE_ARM_TO_GRASP (100%)
+[INFO] [1789307331.599132740] [wall_mount_task]: grasp[2]: CLOSE_GRIPPER (0%)
+[INFO] [1789307333.515953162] [wall_mount_task]: grasp[2]: CLOSE_GRIPPER (100%)
+[INFO] [1789307333.516285580] [wall_mount_task]: grasp[2]: LIFT_OBJECT (0%)
+[INFO] [1789307339.224322981] [wall_mount_task]: grasp[2]: LIFT_OBJECT (100%)
+[INFO] [1789307339.224741785] [wall_mount_task]: grasp[2]: STOW_OBJECT (0%)
+[INFO] [1789307339.224938547] [wall_mount_task]: grasp[2]: succeeded -- grasp complete
+[INFO] [1789307339.225107215] [wall_mount_task]: --- place onto wall_target_2 at (0.35500000000000004, -0.05, -0.06101000000000001) ---
+[INFO] [1789307339.226321287] [wall_mount_task]: place[2]: MOVE_ARM_TO_PREPLACE (0%)
+[INFO] [1789307356.235457431] [wall_mount_task]: place[2]: MOVE_ARM_TO_PREPLACE (100%)
+[INFO] [1789307356.236064228] [wall_mount_task]: place[2]: MOVE_ARM_TO_PLACE (0%)
+[INFO] [1789307359.790871734] [wall_mount_task]: place[2]: MOVE_ARM_TO_PLACE (100%)
+[INFO] [1789307359.791398130] [wall_mount_task]: place[2]: OPEN_GRIPPER (0%)
+[INFO] [1789307361.276352608] [wall_mount_task]: place[2]: OPEN_GRIPPER (100%)
+[INFO] [1789307362.776454304] [wall_mount_task]: place[2]: RETREAT_ARM (0%)
+[INFO] [1789307367.794552409] [wall_mount_task]: place[2]: RETREAT_ARM (100%)
+[INFO] [1789307367.795235587] [wall_mount_task]: place[2]: succeeded -- place complete
+[INFO] [1789307367.795529133] [wall_mount_task]: --- grasp sensor_cam_3 at (-0.109, -0.109, 0.01929000000000003) ---
+[INFO] [1789307367.796547094] [wall_mount_task]: grasp[3]: MOVE_ARM_TO_PREGRASP (0%)
+[INFO] [1789307383.862841541] [wall_mount_task]: grasp[3]: MOVE_ARM_TO_PREGRASP (100%)
+[INFO] [1789307383.863441501] [wall_mount_task]: grasp[3]: MOVE_ARM_TO_GRASP (0%)
+[INFO] [1789307386.689925798] [wall_mount_task]: grasp[3]: MOVE_ARM_TO_GRASP (100%)
+[INFO] [1789307386.690408009] [wall_mount_task]: grasp[3]: CLOSE_GRIPPER (0%)
+[INFO] [1789307388.504784640] [wall_mount_task]: grasp[3]: CLOSE_GRIPPER (100%)
+[INFO] [1789307388.505121491] [wall_mount_task]: grasp[3]: LIFT_OBJECT (0%)
+[INFO] [1789307394.538430362] [wall_mount_task]: grasp[3]: LIFT_OBJECT (100%)
+[INFO] [1789307394.538810465] [wall_mount_task]: grasp[3]: STOW_OBJECT (0%)
+[INFO] [1789307394.538991544] [wall_mount_task]: grasp[3]: succeeded -- grasp complete
+[INFO] [1789307394.539129170] [wall_mount_task]: --- place onto wall_target_3 at (0.35500000000000004, 0.05, -0.06101000000000001) ---
+[INFO] [1789307394.539798945] [wall_mount_task]: place[3]: MOVE_ARM_TO_PREPLACE (0%)
+[INFO] [1789307415.090183478] [wall_mount_task]: place[3]: MOVE_ARM_TO_PREPLACE (100%)
+[INFO] [1789307415.090493102] [wall_mount_task]: place[3]: MOVE_ARM_TO_PLACE (0%)
+[INFO] [1789307419.317294871] [wall_mount_task]: place[3]: MOVE_ARM_TO_PLACE (100%)
+[INFO] [1789307419.317624565] [wall_mount_task]: place[3]: OPEN_GRIPPER (0%)
+[INFO] [1789307420.641793944] [wall_mount_task]: place[3]: OPEN_GRIPPER (100%)
+[INFO] [1789307422.141891103] [wall_mount_task]: place[3]: RETREAT_ARM (0%)
+[INFO] [1789307426.529672876] [wall_mount_task]: place[3]: RETREAT_ARM (100%)
+[INFO] [1789307426.530298082] [wall_mount_task]: place[3]: succeeded -- place complete
+[INFO] [1789307426.530537821] [wall_mount_task]: --- grasp sensor_cam_4 at (-0.109, 0.109, 0.01929000000000003) ---
+[INFO] [1789307426.531559903] [wall_mount_task]: grasp[4]: MOVE_ARM_TO_PREGRASP (0%)
+[INFO] [1789307442.827452812] [wall_mount_task]: grasp[4]: MOVE_ARM_TO_PREGRASP (100%)
+[INFO] [1789307442.828055939] [wall_mount_task]: grasp[4]: MOVE_ARM_TO_GRASP (0%)
+[INFO] [1789307445.655971595] [wall_mount_task]: grasp[4]: MOVE_ARM_TO_GRASP (100%)
+[INFO] [1789307445.656297482] [wall_mount_task]: grasp[4]: CLOSE_GRIPPER (0%)
+[INFO] [1789307447.181485846] [wall_mount_task]: grasp[4]: CLOSE_GRIPPER (100%)
+[INFO] [1789307447.182028633] [wall_mount_task]: grasp[4]: LIFT_OBJECT (0%)
+[INFO] [1789307453.377188904] [wall_mount_task]: grasp[4]: LIFT_OBJECT (100%)
+[INFO] [1789307453.377817800] [wall_mount_task]: grasp[4]: STOW_OBJECT (0%)
+[INFO] [1789307453.378160369] [wall_mount_task]: grasp[4]: succeeded -- grasp complete
+[INFO] [1789307453.378443002] [wall_mount_task]: --- place onto wall_target_4 at (0.35500000000000004, 0.15, -0.06101000000000001) ---
+[INFO] [1789307453.379486735] [wall_mount_task]: place[4]: MOVE_ARM_TO_PREPLACE (0%)
+[INFO] [1789307492.977931094] [wall_mount_task]: place[4]: MOVE_ARM_TO_PREPLACE (100%)
+[INFO] [1789307492.978364661] [wall_mount_task]: place[4]: MOVE_ARM_TO_PLACE (0%)
+[INFO] [1789307496.842946464] [wall_mount_task]: place[4]: MOVE_ARM_TO_PLACE (100%)
+[INFO] [1789307496.843480026] [wall_mount_task]: place[4]: OPEN_GRIPPER (0%)
+[INFO] [1789307498.247002029] [wall_mount_task]: place[4]: OPEN_GRIPPER (100%)
+[INFO] [1789307499.747119045] [wall_mount_task]: place[4]: RETREAT_ARM (0%)
+[INFO] [1789307504.246284680] [wall_mount_task]: place[4]: RETREAT_ARM (100%)
+[INFO] [1789307504.246981916] [wall_mount_task]: place[4]: succeeded -- place complete
+[INFO] [1789307504.247290402] [wall_mount_task]: wall-mount task COMPLETE
