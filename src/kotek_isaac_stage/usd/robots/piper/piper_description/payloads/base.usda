@@ -1,0 +1,2544 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.3"
+    }
+    defaultPrim = "piper_description"
+    doc = """Generated from Composed Stage of root layer /tmp/tmp3ey0ydz7/piper_description.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_piper_description_ri6gt3mq/usdex_piper_description/piper_description.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_piper_description_ri6gt3mq/temp_piper_description/piper_description.usd
+
+
+Generated from Composed Stage of root layer /home/ranulfo/Projects/kotek_ws/src/kotek_isaac_stage/usd/robots/piper/piper_description/payloads/base.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./robot.usda@
+    ]
+    upAxis = "Z"
+)
+
+def Xform "piper_description" (
+    prepend apiSchemas = ["GeomModelAPI"]
+    assetInfo = {
+        string name = "piper_description"
+    }
+    kind = "component"
+)
+{
+    float3[] extentsHint = [(-0.31562904, -0.06926947, -2.032519e-7), (0.19911003, 0.07581418, 0.29497433), (3.4028235e38, 3.4028235e38, 3.4028235e38), (-3.4028235e38, -3.4028235e38, -3.4028235e38), (3.4028235e38, 3.4028235e38, 3.4028235e38), (-3.4028235e38, -3.4028235e38, -3.4028235e38), (-0.32141533, -0.07108428, -1.8998977e-10), (0.19686146, 0.07391673, 0.24909066)]
+
+    def Scope "Materials"
+    {
+        def Material "material_1" (
+            instanceable = true
+            prepend references = @./materials.usda@</Materials/material_1>
+        )
+        {
+        }
+
+        def Material "material_3" (
+            instanceable = true
+            prepend references = @./materials.usda@</Materials/material_1>
+        )
+        {
+        }
+
+        def Material "material_4" (
+            instanceable = true
+            prepend references = @./materials.usda@</Materials/material_1>
+        )
+        {
+        }
+
+        def Material "material_5" (
+            instanceable = true
+            prepend references = @./materials.usda@</Materials/material_1>
+        )
+        {
+        }
+
+        def Material "material_6" (
+            instanceable = true
+            prepend references = @./materials.usda@</Materials/material_1>
+        )
+        {
+        }
+
+        def Material "material_7" (
+            instanceable = true
+            prepend references = @./materials.usda@</Materials/material_1>
+        )
+        {
+        }
+
+        def Material "material_8" (
+            instanceable = true
+            prepend references = @./materials.usda@</Materials/material_1>
+        )
+        {
+        }
+
+        def Material "material_9" (
+            instanceable = true
+            prepend references = @./materials.usda@</Materials/material_1>
+        )
+        {
+        }
+    }
+
+    def Scope "Geometry"
+    {
+        def Xform "base_link"
+        {
+            def Xform "base_link" (
+                prepend apiSchemas = ["MaterialBindingAPI"]
+            )
+            {
+                rel material:binding = </piper_description/Materials/material_1>
+                quatf xformOp:orient = (-0.49999815, -0.5, 0.50000185, 0.5)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                def Xform "tn__solid_base_link012_qR" (
+                    displayName = "solid_base_link.012"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link012_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__solid_base_link011_qR" (
+                    displayName = "solid_base_link.011"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link011_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__solid_base_link010_qR" (
+                    displayName = "solid_base_link.010"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link010_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__solid_base_link009_qR" (
+                    displayName = "solid_base_link.009"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link009_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__solid_base_link008_qR" (
+                    displayName = "solid_base_link.008"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link008_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__solid_base_link007_qR" (
+                    displayName = "solid_base_link.007"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link007_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__solid_base_link006_qR" (
+                    displayName = "solid_base_link.006"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link006_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__solid_base_link005_qR" (
+                    displayName = "solid_base_link.005"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link005_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__solid_base_link004_qR" (
+                    displayName = "solid_base_link.004"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link004_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__solid_base_link003_qR" (
+                    displayName = "solid_base_link.003"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link003_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__solid_base_link002_qR" (
+                    displayName = "solid_base_link.002"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link002_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "tn__solid_base_link001_qR" (
+                    displayName = "solid_base_link.001"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/tn__solid_base_link001_qR>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "solid_base_link" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/solid_base_link>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+            }
+
+            def Xform "link1"
+            {
+                quatf xformOp:orient = (-0.70710546, 0, 0, 0.7071081)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0, 0, 0.123)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                def Xform "link1" (
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/link1>
+                )
+                {
+                    quatd xformOp:orient = (0.7071054578, 0.7071080804, 0, 0)
+                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+
+                def Xform "link2"
+                {
+                    quatf xformOp:orient = (-0.5245882, -0.4741364, 0.52459174, 0.4741364)
+                    float3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                    def Xform "link2" (
+                        prepend apiSchemas = ["MaterialBindingAPI"]
+                    )
+                    {
+                        rel material:binding = </piper_description/Materials/material_3>
+                        quatf xformOp:orient = (0.706432, 0.030855466, 0.70643455, -0.030855352)
+                        float3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0, 0, 0)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                        def Xform "tn__solid_link2111_oL" (
+                            displayName = "solid_link2.111"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2111_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2110_oL" (
+                            displayName = "solid_link2.110"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2110_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2109_oL" (
+                            displayName = "solid_link2.109"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2109_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2108_oL" (
+                            displayName = "solid_link2.108"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2108_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2107_oL" (
+                            displayName = "solid_link2.107"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2107_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2106_oL" (
+                            displayName = "solid_link2.106"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2106_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2105_oL" (
+                            displayName = "solid_link2.105"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2105_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2104_oL" (
+                            displayName = "solid_link2.104"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2104_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2103_oL" (
+                            displayName = "solid_link2.103"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2103_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2102_oL" (
+                            displayName = "solid_link2.102"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2102_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2101_oL" (
+                            displayName = "solid_link2.101"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2101_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2100_oL" (
+                            displayName = "solid_link2.100"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2100_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2099_oL" (
+                            displayName = "solid_link2.099"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2099_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2098_oL" (
+                            displayName = "solid_link2.098"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2098_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2097_oL" (
+                            displayName = "solid_link2.097"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2097_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2096_oL" (
+                            displayName = "solid_link2.096"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2096_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2095_oL" (
+                            displayName = "solid_link2.095"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2095_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2094_oL" (
+                            displayName = "solid_link2.094"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2094_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2093_oL" (
+                            displayName = "solid_link2.093"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2093_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2092_oL" (
+                            displayName = "solid_link2.092"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2092_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2091_oL" (
+                            displayName = "solid_link2.091"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2091_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2090_oL" (
+                            displayName = "solid_link2.090"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2090_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2089_oL" (
+                            displayName = "solid_link2.089"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2089_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2088_oL" (
+                            displayName = "solid_link2.088"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2088_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2087_oL" (
+                            displayName = "solid_link2.087"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2087_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2086_oL" (
+                            displayName = "solid_link2.086"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2086_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2085_oL" (
+                            displayName = "solid_link2.085"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2085_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2084_oL" (
+                            displayName = "solid_link2.084"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2084_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2083_oL" (
+                            displayName = "solid_link2.083"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2083_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2082_oL" (
+                            displayName = "solid_link2.082"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2082_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2081_oL" (
+                            displayName = "solid_link2.081"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2081_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2080_oL" (
+                            displayName = "solid_link2.080"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2080_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2079_oL" (
+                            displayName = "solid_link2.079"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2079_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2078_oL" (
+                            displayName = "solid_link2.078"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2078_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2077_oL" (
+                            displayName = "solid_link2.077"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2077_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2076_oL" (
+                            displayName = "solid_link2.076"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2076_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2075_oL" (
+                            displayName = "solid_link2.075"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2075_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2074_oL" (
+                            displayName = "solid_link2.074"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2074_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2073_oL" (
+                            displayName = "solid_link2.073"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2073_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2072_oL" (
+                            displayName = "solid_link2.072"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2072_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2071_oL" (
+                            displayName = "solid_link2.071"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2071_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2070_oL" (
+                            displayName = "solid_link2.070"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2070_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2069_oL" (
+                            displayName = "solid_link2.069"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2069_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2068_oL" (
+                            displayName = "solid_link2.068"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2068_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2067_oL" (
+                            displayName = "solid_link2.067"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2067_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2066_oL" (
+                            displayName = "solid_link2.066"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2066_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2065_oL" (
+                            displayName = "solid_link2.065"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2065_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2064_oL" (
+                            displayName = "solid_link2.064"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2064_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2063_oL" (
+                            displayName = "solid_link2.063"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2063_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2062_oL" (
+                            displayName = "solid_link2.062"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2062_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2061_oL" (
+                            displayName = "solid_link2.061"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2061_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2060_oL" (
+                            displayName = "solid_link2.060"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2060_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2059_oL" (
+                            displayName = "solid_link2.059"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2059_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2058_oL" (
+                            displayName = "solid_link2.058"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2058_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2057_oL" (
+                            displayName = "solid_link2.057"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2057_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2056_oL" (
+                            displayName = "solid_link2.056"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2056_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2055_oL" (
+                            displayName = "solid_link2.055"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2055_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2054_oL" (
+                            displayName = "solid_link2.054"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2054_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2053_oL" (
+                            displayName = "solid_link2.053"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2053_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2052_oL" (
+                            displayName = "solid_link2.052"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2052_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2051_oL" (
+                            displayName = "solid_link2.051"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2051_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2050_oL" (
+                            displayName = "solid_link2.050"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2050_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2049_oL" (
+                            displayName = "solid_link2.049"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2049_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2048_oL" (
+                            displayName = "solid_link2.048"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2048_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2047_oL" (
+                            displayName = "solid_link2.047"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2047_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2046_oL" (
+                            displayName = "solid_link2.046"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2046_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2045_oL" (
+                            displayName = "solid_link2.045"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2045_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2044_oL" (
+                            displayName = "solid_link2.044"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2044_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2043_oL" (
+                            displayName = "solid_link2.043"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2043_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2042_oL" (
+                            displayName = "solid_link2.042"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2042_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2041_oL" (
+                            displayName = "solid_link2.041"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2041_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2040_oL" (
+                            displayName = "solid_link2.040"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2040_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2039_oL" (
+                            displayName = "solid_link2.039"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2039_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2038_oL" (
+                            displayName = "solid_link2.038"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2038_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2037_oL" (
+                            displayName = "solid_link2.037"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2037_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2036_oL" (
+                            displayName = "solid_link2.036"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2036_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2035_oL" (
+                            displayName = "solid_link2.035"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2035_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2034_oL" (
+                            displayName = "solid_link2.034"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2034_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2033_oL" (
+                            displayName = "solid_link2.033"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2033_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2032_oL" (
+                            displayName = "solid_link2.032"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2032_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2031_oL" (
+                            displayName = "solid_link2.031"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2031_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2030_oL" (
+                            displayName = "solid_link2.030"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2030_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2029_oL" (
+                            displayName = "solid_link2.029"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2029_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2028_oL" (
+                            displayName = "solid_link2.028"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2028_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2027_oL" (
+                            displayName = "solid_link2.027"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2027_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2026_oL" (
+                            displayName = "solid_link2.026"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2026_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2025_oL" (
+                            displayName = "solid_link2.025"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2025_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2024_oL" (
+                            displayName = "solid_link2.024"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2024_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2023_oL" (
+                            displayName = "solid_link2.023"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2023_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2022_oL" (
+                            displayName = "solid_link2.022"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2022_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2021_oL" (
+                            displayName = "solid_link2.021"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2021_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2020_oL" (
+                            displayName = "solid_link2.020"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2020_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2019_oL" (
+                            displayName = "solid_link2.019"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2019_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2018_oL" (
+                            displayName = "solid_link2.018"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2018_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2017_oL" (
+                            displayName = "solid_link2.017"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2017_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2016_oL" (
+                            displayName = "solid_link2.016"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2016_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2015_oL" (
+                            displayName = "solid_link2.015"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2015_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2014_oL" (
+                            displayName = "solid_link2.014"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2014_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2013_oL" (
+                            displayName = "solid_link2.013"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2013_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2012_oL" (
+                            displayName = "solid_link2.012"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2012_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2011_oL" (
+                            displayName = "solid_link2.011"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2011_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2010_oL" (
+                            displayName = "solid_link2.010"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2010_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2009_oL" (
+                            displayName = "solid_link2.009"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2009_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2008_oL" (
+                            displayName = "solid_link2.008"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2008_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2007_oL" (
+                            displayName = "solid_link2.007"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2007_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2006_oL" (
+                            displayName = "solid_link2.006"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2006_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2005_oL" (
+                            displayName = "solid_link2.005"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2005_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2004_oL" (
+                            displayName = "solid_link2.004"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2004_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2003_oL" (
+                            displayName = "solid_link2.003"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2003_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2002_oL" (
+                            displayName = "solid_link2.002"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2002_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "tn__solid_link2001_oL" (
+                            displayName = "solid_link2.001"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/tn__solid_link2001_oL>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+
+                        def Xform "solid_link2" (
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/solid_link2>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+                    }
+
+                    def Xform "link3"
+                    {
+                        quatf xformOp:orient = (0.77041787, 0, 0, 0.63753927)
+                        float3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0.28503, 0, 0)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                        def Xform "link3" (
+                            prepend apiSchemas = ["MaterialBindingAPI"]
+                        )
+                        {
+                            rel material:binding = </piper_description/Materials/material_4>
+                            quatf xformOp:orient = (0.52133995, 0.47770575, 0.5213419, -0.4777075)
+                            float3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                            def Xform "tn__solid_link3028_oL" (
+                                displayName = "solid_link3.028"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3028_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3027_oL" (
+                                displayName = "solid_link3.027"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3027_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3026_oL" (
+                                displayName = "solid_link3.026"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3026_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3025_oL" (
+                                displayName = "solid_link3.025"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3025_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3024_oL" (
+                                displayName = "solid_link3.024"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3024_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3023_oL" (
+                                displayName = "solid_link3.023"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3023_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3022_oL" (
+                                displayName = "solid_link3.022"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3022_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3021_oL" (
+                                displayName = "solid_link3.021"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3021_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3020_oL" (
+                                displayName = "solid_link3.020"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3020_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3019_oL" (
+                                displayName = "solid_link3.019"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3019_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3018_oL" (
+                                displayName = "solid_link3.018"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3018_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3017_oL" (
+                                displayName = "solid_link3.017"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3017_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3016_oL" (
+                                displayName = "solid_link3.016"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3016_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3015_oL" (
+                                displayName = "solid_link3.015"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3015_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3014_oL" (
+                                displayName = "solid_link3.014"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3014_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3013_oL" (
+                                displayName = "solid_link3.013"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3013_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3012_oL" (
+                                displayName = "solid_link3.012"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3012_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3011_oL" (
+                                displayName = "solid_link3.011"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3011_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3010_oL" (
+                                displayName = "solid_link3.010"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3010_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3009_oL" (
+                                displayName = "solid_link3.009"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3009_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3008_oL" (
+                                displayName = "solid_link3.008"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3008_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3007_oL" (
+                                displayName = "solid_link3.007"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3007_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3006_oL" (
+                                displayName = "solid_link3.006"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3006_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3005_oL" (
+                                displayName = "solid_link3.005"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3005_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3004_oL" (
+                                displayName = "solid_link3.004"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3004_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3003_oL" (
+                                displayName = "solid_link3.003"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3003_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3002_oL" (
+                                displayName = "solid_link3.002"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3002_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "tn__solid_link3001_oL" (
+                                displayName = "solid_link3.001"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/tn__solid_link3001_oL>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+
+                            def Xform "solid_link3" (
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/solid_link3>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+                        }
+
+                        def Xform "link4"
+                        {
+                            quatf xformOp:orient = (-0.70710546, 0.7071081, 0, 0)
+                            float3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0.021984, 0.25075, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                            def Xform "link4" (
+                                prepend apiSchemas = ["MaterialBindingAPI"]
+                            )
+                            {
+                                rel material:binding = </piper_description/Materials/material_5>
+                                quatf xformOp:orient = (0.5221752, 0.47679266, 0.4767944, 0.5221771)
+                                float3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                def Xform "mesh" (
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/mesh>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071068287, 0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                    double3 xformOp:translate = (0, 0, 0)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "tn__mesh001_VB" (
+                                    displayName = "mesh.001"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/tn__mesh001_VB>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071068287, 0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                    double3 xformOp:translate = (0, 0, 0)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "tn__mesh002_VB" (
+                                    displayName = "mesh.002"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/tn__mesh002_VB>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071068287, 0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                    double3 xformOp:translate = (0, 0, 0)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "tn__mesh003_VB" (
+                                    displayName = "mesh.003"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/tn__mesh003_VB>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071068287, 0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                    double3 xformOp:translate = (0, 0, 0)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "tn__mesh004_VB" (
+                                    displayName = "mesh.004"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/tn__mesh004_VB>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071068287, 0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                    double3 xformOp:translate = (0, 0, 0)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+
+                                def Xform "tn__mesh005_VB" (
+                                    displayName = "mesh.005"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/tn__mesh005_VB>
+                                )
+                                {
+                                    quatd xformOp:orient = (0.7071068287, 0.7071067691, 0, 0)
+                                    double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                    double3 xformOp:translate = (0, 0, 0)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+                            }
+
+                            def Xform "link5"
+                            {
+                                quatf xformOp:orient = (0.70710546, 0.7071081, 0, 0)
+                                float3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                def Xform "link5" (
+                                    prepend apiSchemas = ["MaterialBindingAPI"]
+                                )
+                                {
+                                    rel material:binding = </piper_description/Materials/material_6>
+                                    quatf xformOp:orient = (0.52133995, 0.47770575, 0.5213419, -0.4777075)
+                                    float3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0, 0, 0)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                    def Xform "tn__solid_link5007_oL" (
+                                        displayName = "solid_link5.007"
+                                        instanceable = true
+                                        prepend references = @./instances.usda@</Instances/tn__solid_link5007_oL>
+                                    )
+                                    {
+                                        quatd xformOp:orient = (1, 0, 0, 0)
+                                        double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                        double3 xformOp:translate = (0, 0, 0)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                    }
+
+                                    def Xform "tn__solid_link5006_oL" (
+                                        displayName = "solid_link5.006"
+                                        instanceable = true
+                                        prepend references = @./instances.usda@</Instances/tn__solid_link5006_oL>
+                                    )
+                                    {
+                                        quatd xformOp:orient = (1, 0, 0, 0)
+                                        double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                        double3 xformOp:translate = (0, 0, 0)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                    }
+
+                                    def Xform "tn__solid_link5005_oL" (
+                                        displayName = "solid_link5.005"
+                                        instanceable = true
+                                        prepend references = @./instances.usda@</Instances/tn__solid_link5005_oL>
+                                    )
+                                    {
+                                        quatd xformOp:orient = (1, 0, 0, 0)
+                                        double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                        double3 xformOp:translate = (0, 0, 0)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                    }
+
+                                    def Xform "tn__solid_link5004_oL" (
+                                        displayName = "solid_link5.004"
+                                        instanceable = true
+                                        prepend references = @./instances.usda@</Instances/tn__solid_link5004_oL>
+                                    )
+                                    {
+                                        quatd xformOp:orient = (1, 0, 0, 0)
+                                        double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                        double3 xformOp:translate = (0, 0, 0)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                    }
+
+                                    def Xform "tn__solid_link5003_oL" (
+                                        displayName = "solid_link5.003"
+                                        instanceable = true
+                                        prepend references = @./instances.usda@</Instances/tn__solid_link5003_oL>
+                                    )
+                                    {
+                                        quatd xformOp:orient = (1, 0, 0, 0)
+                                        double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                        double3 xformOp:translate = (0, 0, 0)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                    }
+
+                                    def Xform "tn__solid_link5002_oL" (
+                                        displayName = "solid_link5.002"
+                                        instanceable = true
+                                        prepend references = @./instances.usda@</Instances/tn__solid_link5002_oL>
+                                    )
+                                    {
+                                        quatd xformOp:orient = (1, 0, 0, 0)
+                                        double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                        double3 xformOp:translate = (0, 0, 0)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                    }
+
+                                    def Xform "tn__solid_link5001_oL" (
+                                        displayName = "solid_link5.001"
+                                        instanceable = true
+                                        prepend references = @./instances.usda@</Instances/tn__solid_link5001_oL>
+                                    )
+                                    {
+                                        quatd xformOp:orient = (1, 0, 0, 0)
+                                        double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                        double3 xformOp:translate = (0, 0, 0)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                    }
+
+                                    def Xform "solid_link5" (
+                                        instanceable = true
+                                        prepend references = @./instances.usda@</Instances/solid_link5>
+                                    )
+                                    {
+                                        quatd xformOp:orient = (1, 0, 0, 0)
+                                        double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                        double3 xformOp:translate = (0, 0, 0)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                    }
+                                }
+
+                                def Xform "link6"
+                                {
+                                    quatf xformOp:orient = (-0.49999815, 0.5, 0.5, 0.50000185)
+                                    float3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0, 0.091, 0.0014165)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                    def Xform "link6" (
+                                        prepend apiSchemas = ["MaterialBindingAPI"]
+                                    )
+                                    {
+                                        rel material:binding = </piper_description/Materials/material_7>
+                                        quatf xformOp:orient = (1.7604309e-12, 0.0000013267949, 1, 0.0000013267949)
+                                        float3 xformOp:scale = (1, 1, 1)
+                                        double3 xformOp:translate = (0, 0, 0)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                        def Xform "tn__solid_link6008_oL" (
+                                            displayName = "solid_link6.008"
+                                            instanceable = true
+                                            prepend references = @./instances.usda@</Instances/tn__solid_link6008_oL>
+                                        )
+                                        {
+                                            quatd xformOp:orient = (1, 0, 0, 0)
+                                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                        }
+
+                                        def Xform "tn__solid_link6007_oL" (
+                                            displayName = "solid_link6.007"
+                                            instanceable = true
+                                            prepend references = @./instances.usda@</Instances/tn__solid_link6007_oL>
+                                        )
+                                        {
+                                            quatd xformOp:orient = (1, 0, 0, 0)
+                                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                        }
+
+                                        def Xform "tn__solid_link6006_oL" (
+                                            displayName = "solid_link6.006"
+                                            instanceable = true
+                                            prepend references = @./instances.usda@</Instances/tn__solid_link6006_oL>
+                                        )
+                                        {
+                                            quatd xformOp:orient = (1, 0, 0, 0)
+                                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                        }
+
+                                        def Xform "tn__solid_link6005_oL" (
+                                            displayName = "solid_link6.005"
+                                            instanceable = true
+                                            prepend references = @./instances.usda@</Instances/tn__solid_link6005_oL>
+                                        )
+                                        {
+                                            quatd xformOp:orient = (1, 0, 0, 0)
+                                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                        }
+
+                                        def Xform "tn__solid_link6004_oL" (
+                                            displayName = "solid_link6.004"
+                                            instanceable = true
+                                            prepend references = @./instances.usda@</Instances/tn__solid_link6004_oL>
+                                        )
+                                        {
+                                            quatd xformOp:orient = (1, 0, 0, 0)
+                                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                        }
+
+                                        def Xform "tn__solid_link6003_oL" (
+                                            displayName = "solid_link6.003"
+                                            instanceable = true
+                                            prepend references = @./instances.usda@</Instances/tn__solid_link6003_oL>
+                                        )
+                                        {
+                                            quatd xformOp:orient = (1, 0, 0, 0)
+                                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                        }
+
+                                        def Xform "tn__solid_link6002_oL" (
+                                            displayName = "solid_link6.002"
+                                            instanceable = true
+                                            prepend references = @./instances.usda@</Instances/tn__solid_link6002_oL>
+                                        )
+                                        {
+                                            quatd xformOp:orient = (1, 0, 0, 0)
+                                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                        }
+
+                                        def Xform "tn__solid_link6001_oL" (
+                                            displayName = "solid_link6.001"
+                                            instanceable = true
+                                            prepend references = @./instances.usda@</Instances/tn__solid_link6001_oL>
+                                        )
+                                        {
+                                            quatd xformOp:orient = (1, 0, 0, 0)
+                                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                        }
+
+                                        def Xform "solid_link6" (
+                                            instanceable = true
+                                            prepend references = @./instances.usda@</Instances/solid_link6>
+                                        )
+                                        {
+                                            quatd xformOp:orient = (1, 0, 0, 0)
+                                            double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                        }
+                                    }
+
+                                    def Xform "link7"
+                                    {
+                                        quatf xformOp:orient = (0.49999815, 0.5, 0.50000185, 0.5)
+                                        float3 xformOp:scale = (1, 1, 1)
+                                        double3 xformOp:translate = (0, 0, 0.13503)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                        def Xform "link7" (
+                                            prepend apiSchemas = ["MaterialBindingAPI"]
+                                        )
+                                        {
+                                            rel material:binding = </piper_description/Materials/material_8>
+                                            quatf xformOp:orient = (-0.5213401, -0.4777076, 0.5213418, -0.4777057)
+                                            float3 xformOp:scale = (1, 1, 1)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                            def Xform "tn__solid_link7001_oL" (
+                                                displayName = "solid_link7.001"
+                                                instanceable = true
+                                                prepend references = @./instances.usda@</Instances/tn__solid_link7001_oL>
+                                            )
+                                            {
+                                                quatd xformOp:orient = (1, 0, 0, 0)
+                                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                                double3 xformOp:translate = (0, 0, 0)
+                                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                            }
+
+                                            def Xform "solid_link7" (
+                                                instanceable = true
+                                                prepend references = @./instances.usda@</Instances/solid_link7>
+                                            )
+                                            {
+                                                quatd xformOp:orient = (1, 0, 0, 0)
+                                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                                double3 xformOp:translate = (0, 0, 0)
+                                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                            }
+                                        }
+
+                                        def Xform "link7_1" (
+                                            displayName = "link7"
+                                            instanceable = true
+                                            prepend references = @./instances.usda@</Instances/link7_1>
+                                        )
+                                        {
+                                            quatd xformOp:orient = (1, 0, 0, 0)
+                                            double3 xformOp:scale = (1, 1, 1)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                        }
+                                    }
+
+                                    def Xform "link8"
+                                    {
+                                        quatf xformOp:orient = (-0.49999815, 0.5, 0.50000185, -0.5)
+                                        float3 xformOp:scale = (1, 1, 1)
+                                        double3 xformOp:translate = (0, 0, 0.13503)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                        def Xform "link8" (
+                                            prepend apiSchemas = ["MaterialBindingAPI"]
+                                        )
+                                        {
+                                            rel material:binding = </piper_description/Materials/material_9>
+                                            quatf xformOp:orient = (-0.47770375, 0.5213436, -0.4777057, -0.5213418)
+                                            float3 xformOp:scale = (1, 1, 1)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+                                            def Xform "tn__solid_link8001_oL" (
+                                                displayName = "solid_link8.001"
+                                                instanceable = true
+                                                prepend references = @./instances.usda@</Instances/tn__solid_link8001_oL>
+                                            )
+                                            {
+                                                quatd xformOp:orient = (1, 0, 0, 0)
+                                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                                double3 xformOp:translate = (0, 0, 0)
+                                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                            }
+
+                                            def Xform "solid_link8" (
+                                                instanceable = true
+                                                prepend references = @./instances.usda@</Instances/solid_link8>
+                                            )
+                                            {
+                                                quatd xformOp:orient = (1, 0, 0, 0)
+                                                double3 xformOp:scale = (0.001000000047, 0.001000000047, 0.001000000047)
+                                                double3 xformOp:translate = (0, 0, 0)
+                                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                            }
+                                        }
+
+                                        def Xform "link8_1" (
+                                            displayName = "link8"
+                                            instanceable = true
+                                            prepend references = @./instances.usda@</Instances/link8_1>
+                                        )
+                                        {
+                                            quatd xformOp:orient = (1, 0, 0, 0)
+                                            double3 xformOp:scale = (1, 1, 1)
+                                            double3 xformOp:translate = (0, 0, 0)
+                                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                        }
+                                    }
+
+                                    def Xform "link6_1" (
+                                        displayName = "link6"
+                                        instanceable = true
+                                        prepend references = @./instances.usda@</Instances/link6_1>
+                                    )
+                                    {
+                                        quatd xformOp:orient = (1, 0, 0, 0)
+                                        double3 xformOp:scale = (1, 1, 1)
+                                        double3 xformOp:translate = (0, 0, 0)
+                                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                    }
+                                }
+
+                                def Xform "link5_1" (
+                                    displayName = "link5"
+                                    instanceable = true
+                                    prepend references = @./instances.usda@</Instances/link5_1>
+                                )
+                                {
+                                    quatd xformOp:orient = (1, 0, 0, 0)
+                                    double3 xformOp:scale = (1, 1, 1)
+                                    double3 xformOp:translate = (0, 0, 0)
+                                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                                }
+                            }
+
+                            def Xform "link4_1" (
+                                displayName = "link4"
+                                instanceable = true
+                                prepend references = @./instances.usda@</Instances/link4_1>
+                            )
+                            {
+                                quatd xformOp:orient = (1, 0, 0, 0)
+                                double3 xformOp:scale = (1, 1, 1)
+                                double3 xformOp:translate = (0, 0, 0)
+                                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                            }
+                        }
+
+                        def Xform "link3_1" (
+                            displayName = "link3"
+                            instanceable = true
+                            prepend references = @./instances.usda@</Instances/link3_1>
+                        )
+                        {
+                            quatd xformOp:orient = (1, 0, 0, 0)
+                            double3 xformOp:scale = (1, 1, 1)
+                            double3 xformOp:translate = (0, 0, 0)
+                            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                        }
+                    }
+
+                    def Xform "link2_1" (
+                        displayName = "link2"
+                        instanceable = true
+                        prepend references = @./instances.usda@</Instances/link2_1>
+                    )
+                    {
+                        quatd xformOp:orient = (1, 0, 0, 0)
+                        double3 xformOp:scale = (1, 1, 1)
+                        double3 xformOp:translate = (0, 0, 0)
+                        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                    }
+                }
+
+                def Xform "link1_1" (
+                    displayName = "link1"
+                    instanceable = true
+                    prepend references = @./instances.usda@</Instances/link1_1>
+                )
+                {
+                    quatd xformOp:orient = (1, 0, 0, 0)
+                    double3 xformOp:scale = (1, 1, 1)
+                    double3 xformOp:translate = (0, 0, 0)
+                    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+                }
+            }
+
+            def Xform "base_link_1" (
+                displayName = "base_link"
+                instanceable = true
+                prepend references = @./instances.usda@</Instances/base_link_1>
+            )
+            {
+                quatd xformOp:orient = (1, 0, 0, 0)
+                double3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+        }
+    }
+
+    def Scope "Physics"
+    {
+    }
+
+    def Scope "VisualMaterials"
+    {
+    }
+}
+

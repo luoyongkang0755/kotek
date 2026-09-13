@@ -1,0 +1,48 @@
+simple_base_controller:
+  ros__parameters:
+    global_frame: odom
+    base_frame: base_link
+    pose_source: tf              # tf | odom
+    cmd_vel_topic: /cmd_vel
+    odom_topic: odom
+    control_rate: 20.0
+    max_linear_velocity: 0.5     # stage's DifferentialController allows up to 2.7
+    min_linear_velocity: 0.05
+    max_angular_velocity: 0.8    # stage allows up to 1.0
+    min_angular_velocity: 0.1
+    max_linear_accel: 0.5
+    k_linear: 0.8
+    k_angular: 1.5
+    xy_tolerance: 0.08
+    yaw_tolerance: 0.10
+    heading_tolerance: 0.15
+    stop_settle_time: 0.5
+    linear_stopped_threshold: 0.02
+    angular_stopped_threshold: 0.05
+    pose_timeout: 0.5
+    # Raised from 60.0: with the real wheel-drive fix in place (see
+    # docs/pick_and_delivery_report.md section 1.7), the base genuinely
+    # drives and turns correctly, but in-place rotation is physically
+    # slower than straight rolling for these rigid analytic-cylinder
+    # wheels (confirmed directly -- commanded 0.5rad/s took several
+    # seconds to build up meaningful angular velocity, unlike straight
+    # driving's near-instant response) -- a real, expected characteristic
+    # of rigid (non-compliant, non-castering) 4-wheel skid-steer platforms
+    # turning in place, not a bug. A live E2E run with the old 60s value
+    # hit "Goal timed out" (not "insufficient progress" -- i.e. it was
+    # genuinely, continuously making valid progress the whole time, just
+    # needed more of it) on a goal requiring an initial ~15 degree turn
+    # plus ~1.15m of driving.
+    goal_timeout: 120.0
+    min_progress: 0.05
+    progress_window: 10.0
+    obstacle_avoidance_enabled: true
+    scan_topic: /scan
+    scan_timeout: 0.5
+    obstacle_safety_distance: 0.6   # start slowing/steering below this
+    obstacle_stop_distance: 0.25    # force forward speed to 0 below this
+    obstacle_steer_gain: 1.0        # rad/s per meter of left/right clearance diff
+    obstacle_max_steer_angular: 0.6
+    obstacle_forward_half_angle: 0.26   # +/-15 deg forward cone
+    obstacle_side_min_angle: 0.35       # side cones start here
+    obstacle_side_max_angle: 1.57       # ...and end here (+/-90 deg)

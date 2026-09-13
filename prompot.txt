@@ -1,0 +1,15 @@
+I am a robotics student learning this ROS 2 and Isaac Sim project.
+
+Analyze the repository step by step:
+1. Explain the overall architecture and how the packages communicate.
+2. Describe the purpose of each package in simple language.
+3. Trace one complete workflow, such as teleoperation, obstacle avoidance, pick-and-delivery, or wall-mount operation.
+4. Explain the important nodes, topics, services, actions, parameters, and message types.
+5. For each important source file, explain the key classes and functions.
+6. Teach the robotics concepts involved, including coordinate frames, control laws, localization, navigation, manipulation, sensors, and simulation.
+7. Connect every concept to the exact code that implements it.
+8. Identify prerequisites I should study before each topic.
+9. Give small exercises and questions after eakich section.
+10. Do not explain everything at once. Teach me one section at a time and quiz me before continuing.
+11.use in chinese to communiate with me 
+Assume I am unfamiliar with basic Python and C++, but still learning ROS 2 and robotics. Use diagrams, tables, concrete examples, and simple explanations. When you make an assumption, state it clearly.

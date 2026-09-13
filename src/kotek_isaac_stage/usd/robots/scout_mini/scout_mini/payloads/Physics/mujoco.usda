@@ -1,0 +1,815 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.3"
+    }
+    defaultPrim = "scout_mini"
+    doc = """Generated from Composed Stage of root layer /tmp/tmpgbi2n79_/scout_mini.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_scout_mini_vqfvipz5/usdex_scout_mini/scout_mini.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_scout_mini_vqfvipz5/temp_scout_mini/scout_mini.usd
+
+
+Generated from Composed Stage of root layer /home/ranulfo/Projects/kotek_ws/src/kotek_isaac_stage/usd/robots/scout_mini/scout_mini/payloads/base.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./physics.usda@
+    ]
+    upAxis = "Z"
+)
+
+over "scout_mini"
+{
+    over "Physics"
+    {
+        def MjcActuator "front_right_wheel_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, 0, -1.7453292608261108, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = inf
+            uniform double mjc:forceRange:min = -inf
+            uniform double[] mjc:gainPrm = [1.7453292608261108, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </scout_mini/Physics/front_right_wheel>
+        }
+
+        def MjcActuator "front_left_wheel_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, 0, -1.7453292608261108, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = inf
+            uniform double mjc:forceRange:min = -inf
+            uniform double[] mjc:gainPrm = [1.7453292608261108, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </scout_mini/Physics/front_left_wheel>
+        }
+
+        def MjcActuator "rear_left_wheel_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, 0, -1.7453292608261108, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = inf
+            uniform double mjc:forceRange:min = -inf
+            uniform double[] mjc:gainPrm = [1.7453292608261108, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </scout_mini/Physics/rear_left_wheel>
+        }
+
+        def MjcActuator "rear_right_wheel_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, 0, -1.7453292608261108, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = inf
+            uniform double mjc:forceRange:min = -inf
+            uniform double[] mjc:gainPrm = [1.7453292608261108, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </scout_mini/Physics/rear_right_wheel>
+        }
+
+        over "front_right_wheel" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+        }
+
+        over "front_left_wheel" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+        }
+
+        over "rear_left_wheel" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+        }
+
+        over "rear_right_wheel" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+        }
+    }
+
+    over "Geometry"
+    {
+        over "base_link"
+        {
+            over "front_right_wheel_link"
+            {
+                over "wheel"
+                {
+                    over "Part__Feature"
+                    {
+                    }
+
+                    over "Part__Feature001"
+                    {
+                    }
+
+                    over "Part__Feature002"
+                    {
+                    }
+
+                    over "Part__Feature003"
+                    {
+                    }
+
+                    over "Part__Feature004"
+                    {
+                    }
+
+                    over "Part__Feature005"
+                    {
+                    }
+
+                    over "Part__Feature006"
+                    {
+                    }
+                }
+
+                over "wheel_1"
+                {
+                    over "Part__Feature"
+                    {
+                    }
+
+                    over "Part__Feature001"
+                    {
+                    }
+
+                    over "Part__Feature002"
+                    {
+                    }
+
+                    over "Part__Feature003"
+                    {
+                    }
+
+                    over "Part__Feature004"
+                    {
+                    }
+
+                    over "Part__Feature005"
+                    {
+                    }
+
+                    over "Part__Feature006"
+                    {
+                    }
+                }
+            }
+
+            over "front_left_wheel_link"
+            {
+                over "wheel"
+                {
+                    over "Part__Feature"
+                    {
+                    }
+
+                    over "Part__Feature001"
+                    {
+                    }
+
+                    over "Part__Feature002"
+                    {
+                    }
+
+                    over "Part__Feature003"
+                    {
+                    }
+
+                    over "Part__Feature004"
+                    {
+                    }
+
+                    over "Part__Feature005"
+                    {
+                    }
+
+                    over "Part__Feature006"
+                    {
+                    }
+                }
+
+                over "wheel_1"
+                {
+                    over "Part__Feature"
+                    {
+                    }
+
+                    over "Part__Feature001"
+                    {
+                    }
+
+                    over "Part__Feature002"
+                    {
+                    }
+
+                    over "Part__Feature003"
+                    {
+                    }
+
+                    over "Part__Feature004"
+                    {
+                    }
+
+                    over "Part__Feature005"
+                    {
+                    }
+
+                    over "Part__Feature006"
+                    {
+                    }
+                }
+            }
+
+            over "rear_left_wheel_link"
+            {
+                over "wheel"
+                {
+                    over "Part__Feature"
+                    {
+                    }
+
+                    over "Part__Feature001"
+                    {
+                    }
+
+                    over "Part__Feature002"
+                    {
+                    }
+
+                    over "Part__Feature003"
+                    {
+                    }
+
+                    over "Part__Feature004"
+                    {
+                    }
+
+                    over "Part__Feature005"
+                    {
+                    }
+
+                    over "Part__Feature006"
+                    {
+                    }
+                }
+
+                over "wheel_1"
+                {
+                    over "Part__Feature"
+                    {
+                    }
+
+                    over "Part__Feature001"
+                    {
+                    }
+
+                    over "Part__Feature002"
+                    {
+                    }
+
+                    over "Part__Feature003"
+                    {
+                    }
+
+                    over "Part__Feature004"
+                    {
+                    }
+
+                    over "Part__Feature005"
+                    {
+                    }
+
+                    over "Part__Feature006"
+                    {
+                    }
+                }
+            }
+
+            over "rear_right_wheel_link"
+            {
+                over "wheel"
+                {
+                    over "Part__Feature"
+                    {
+                    }
+
+                    over "Part__Feature001"
+                    {
+                    }
+
+                    over "Part__Feature002"
+                    {
+                    }
+
+                    over "Part__Feature003"
+                    {
+                    }
+
+                    over "Part__Feature004"
+                    {
+                    }
+
+                    over "Part__Feature005"
+                    {
+                    }
+
+                    over "Part__Feature006"
+                    {
+                    }
+                }
+
+                over "wheel_1"
+                {
+                    over "Part__Feature"
+                    {
+                    }
+
+                    over "Part__Feature001"
+                    {
+                    }
+
+                    over "Part__Feature002"
+                    {
+                    }
+
+                    over "Part__Feature003"
+                    {
+                    }
+
+                    over "Part__Feature004"
+                    {
+                    }
+
+                    over "Part__Feature005"
+                    {
+                    }
+
+                    over "Part__Feature006"
+                    {
+                    }
+                }
+            }
+
+            over "scout_mini_base_link"
+            {
+                over "Part__Feature134"
+                {
+                }
+
+                over "Part__Feature135"
+                {
+                }
+
+                over "Part__Feature136"
+                {
+                }
+
+                over "Part__Feature137"
+                {
+                }
+
+                over "Part__Feature138"
+                {
+                }
+
+                over "Part__Feature139"
+                {
+                }
+
+                over "Part__Feature140"
+                {
+                }
+
+                over "Part__Feature141"
+                {
+                }
+
+                over "Part__Feature142"
+                {
+                }
+
+                over "Part__Feature143"
+                {
+                }
+
+                over "Part__Feature144"
+                {
+                }
+
+                over "Part__Feature145"
+                {
+                }
+
+                over "Part__Feature146"
+                {
+                }
+
+                over "Part__Feature147"
+                {
+                }
+
+                over "Part__Feature148"
+                {
+                }
+
+                over "Part__Feature149"
+                {
+                }
+
+                over "Part__Feature150"
+                {
+                }
+
+                over "Part__Feature151"
+                {
+                }
+
+                over "Part__Feature152"
+                {
+                }
+
+                over "Part__Feature153"
+                {
+                }
+
+                over "Part__Feature164"
+                {
+                }
+
+                over "Part__Feature166"
+                {
+                }
+
+                over "Part__Feature155"
+                {
+                }
+
+                over "Part__Feature165"
+                {
+                }
+
+                over "Part__Feature156"
+                {
+                }
+
+                over "Part__Feature158"
+                {
+                }
+
+                over "Part__Feature161"
+                {
+                }
+
+                over "Part__Feature162"
+                {
+                }
+
+                over "Part__Feature160"
+                {
+                }
+
+                over "Part__Feature163"
+                {
+                }
+
+                over "Part__Feature157"
+                {
+                }
+
+                over "Part__Feature154"
+                {
+                }
+
+                over "Part__Feature159"
+                {
+                }
+
+                over "Part__Feature167"
+                {
+                }
+
+                over "Part__Feature175"
+                {
+                }
+
+                over "Part__Feature177"
+                {
+                }
+
+                over "Part__Feature171"
+                {
+                }
+
+                over "Part__Feature176"
+                {
+                }
+
+                over "Part__Feature179"
+                {
+                }
+
+                over "Part__Feature182"
+                {
+                }
+
+                over "Part__Feature183"
+                {
+                }
+
+                over "Part__Feature169"
+                {
+                }
+
+                over "Part__Feature168"
+                {
+                }
+
+                over "Part__Feature181"
+                {
+                }
+
+                over "Part__Feature178"
+                {
+                }
+
+                over "Part__Feature174"
+                {
+                }
+
+                over "Part__Feature172"
+                {
+                }
+
+                over "Part__Feature173"
+                {
+                }
+
+                over "Part__Feature170"
+                {
+                }
+
+                over "Part__Feature180"
+                {
+                }
+
+                over "Part__Feature184"
+                {
+                }
+
+                over "Part__Feature185"
+                {
+                }
+
+                over "Part__Feature187"
+                {
+                }
+
+                over "Part__Feature186"
+                {
+                }
+            }
+
+            over "scout_mini_base_link_1"
+            {
+                over "Part__Feature134"
+                {
+                }
+
+                over "Part__Feature135"
+                {
+                }
+
+                over "Part__Feature136"
+                {
+                }
+
+                over "Part__Feature137"
+                {
+                }
+
+                over "Part__Feature138"
+                {
+                }
+
+                over "Part__Feature139"
+                {
+                }
+
+                over "Part__Feature140"
+                {
+                }
+
+                over "Part__Feature141"
+                {
+                }
+
+                over "Part__Feature142"
+                {
+                }
+
+                over "Part__Feature143"
+                {
+                }
+
+                over "Part__Feature144"
+                {
+                }
+
+                over "Part__Feature145"
+                {
+                }
+
+                over "Part__Feature146"
+                {
+                }
+
+                over "Part__Feature147"
+                {
+                }
+
+                over "Part__Feature148"
+                {
+                }
+
+                over "Part__Feature149"
+                {
+                }
+
+                over "Part__Feature150"
+                {
+                }
+
+                over "Part__Feature151"
+                {
+                }
+
+                over "Part__Feature152"
+                {
+                }
+
+                over "Part__Feature153"
+                {
+                }
+
+                over "Part__Feature164"
+                {
+                }
+
+                over "Part__Feature166"
+                {
+                }
+
+                over "Part__Feature155"
+                {
+                }
+
+                over "Part__Feature165"
+                {
+                }
+
+                over "Part__Feature156"
+                {
+                }
+
+                over "Part__Feature158"
+                {
+                }
+
+                over "Part__Feature161"
+                {
+                }
+
+                over "Part__Feature162"
+                {
+                }
+
+                over "Part__Feature160"
+                {
+                }
+
+                over "Part__Feature163"
+                {
+                }
+
+                over "Part__Feature157"
+                {
+                }
+
+                over "Part__Feature154"
+                {
+                }
+
+                over "Part__Feature159"
+                {
+                }
+
+                over "Part__Feature167"
+                {
+                }
+
+                over "Part__Feature175"
+                {
+                }
+
+                over "Part__Feature177"
+                {
+                }
+
+                over "Part__Feature171"
+                {
+                }
+
+                over "Part__Feature176"
+                {
+                }
+
+                over "Part__Feature179"
+                {
+                }
+
+                over "Part__Feature182"
+                {
+                }
+
+                over "Part__Feature183"
+                {
+                }
+
+                over "Part__Feature169"
+                {
+                }
+
+                over "Part__Feature168"
+                {
+                }
+
+                over "Part__Feature181"
+                {
+                }
+
+                over "Part__Feature178"
+                {
+                }
+
+                over "Part__Feature174"
+                {
+                }
+
+                over "Part__Feature172"
+                {
+                }
+
+                over "Part__Feature173"
+                {
+                }
+
+                over "Part__Feature170"
+                {
+                }
+
+                over "Part__Feature180"
+                {
+                }
+
+                over "Part__Feature184"
+                {
+                }
+
+                over "Part__Feature185"
+                {
+                }
+
+                over "Part__Feature187"
+                {
+                }
+
+                over "Part__Feature186"
+                {
+                }
+            }
+        }
+    }
+
+    over "Materials"
+    {
+    }
+
+    over "VisualMaterials"
+    {
+    }
+}
+

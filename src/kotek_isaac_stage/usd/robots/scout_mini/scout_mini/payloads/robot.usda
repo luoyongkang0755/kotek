@@ -1,0 +1,98 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.3"
+    }
+    defaultPrim = "scout_mini"
+    doc = """Generated from Composed Stage of root layer /tmp/tmpgbi2n79_/scout_mini.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_scout_mini_vqfvipz5/usdex_scout_mini/scout_mini.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_scout_mini_vqfvipz5/temp_scout_mini/scout_mini.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+over "scout_mini" (
+    prepend apiSchemas = ["IsaacRobotAPI"]
+)
+{
+    prepend rel isaac:physics:robotJoints = [
+        </scout_mini/Physics/front_right_wheel>,
+        </scout_mini/Physics/front_left_wheel>,
+        </scout_mini/Physics/rear_left_wheel>,
+        </scout_mini/Physics/rear_right_wheel>,
+    ]
+    prepend rel isaac:physics:robotLinks = [
+        </scout_mini/Geometry/base_link>,
+        </scout_mini/Geometry/base_link/front_right_wheel_link>,
+        </scout_mini/Geometry/base_link/front_left_wheel_link>,
+        </scout_mini/Geometry/base_link/rear_left_wheel_link>,
+        </scout_mini/Geometry/base_link/rear_right_wheel_link>,
+    ]
+    token isaac:robotType = "Default"
+
+    over "Geometry"
+    {
+        over "base_link" (
+            prepend apiSchemas = ["IsaacLinkAPI"]
+        )
+        {
+            over "front_right_wheel_link" (
+                prepend apiSchemas = ["IsaacLinkAPI"]
+            )
+            {
+            }
+
+            over "front_left_wheel_link" (
+                prepend apiSchemas = ["IsaacLinkAPI"]
+            )
+            {
+            }
+
+            over "rear_left_wheel_link" (
+                prepend apiSchemas = ["IsaacLinkAPI"]
+            )
+            {
+            }
+
+            over "rear_right_wheel_link" (
+                prepend apiSchemas = ["IsaacLinkAPI"]
+            )
+            {
+            }
+        }
+    }
+
+    over "Physics"
+    {
+        over "front_right_wheel" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "front_left_wheel" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "rear_left_wheel" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+
+        over "rear_right_wheel" (
+            prepend apiSchemas = ["IsaacJointAPI"]
+        )
+        {
+        }
+    }
+}
+

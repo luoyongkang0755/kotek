@@ -1,0 +1,1032 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.3"
+    }
+    defaultPrim = "piper_description"
+    doc = """Generated from Composed Stage of root layer /tmp/tmp3ey0ydz7/piper_description.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_piper_description_ri6gt3mq/usdex_piper_description/piper_description.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_piper_description_ri6gt3mq/temp_piper_description/piper_description.usd
+
+
+Generated from Composed Stage of root layer /home/ranulfo/Projects/kotek_ws/src/kotek_isaac_stage/usd/robots/piper/piper_description/payloads/base.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./physics.usda@
+    ]
+    upAxis = "Z"
+)
+
+over "piper_description"
+{
+    over "Physics"
+    {
+        def MjcActuator "joint1_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -1745.3292236328125, -1.7453292608261108, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 100
+            uniform double mjc:forceRange:min = -100
+            uniform double[] mjc:gainPrm = [1745.3292236328125, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </piper_description/Physics/joint1>
+        }
+
+        def MjcActuator "joint2_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -1745.3292236328125, -1.7453292608261108, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 100
+            uniform double mjc:forceRange:min = -100
+            uniform double[] mjc:gainPrm = [1745.3292236328125, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </piper_description/Physics/joint2>
+        }
+
+        def MjcActuator "joint3_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -1745.3292236328125, -1.7453292608261108, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 100
+            uniform double mjc:forceRange:min = -100
+            uniform double[] mjc:gainPrm = [1745.3292236328125, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </piper_description/Physics/joint3>
+        }
+
+        def MjcActuator "joint4_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -1745.3292236328125, -1.7453292608261108, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 100
+            uniform double mjc:forceRange:min = -100
+            uniform double[] mjc:gainPrm = [1745.3292236328125, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </piper_description/Physics/joint4>
+        }
+
+        def MjcActuator "joint5_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -1745.3292236328125, -1.7453292608261108, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 100
+            uniform double mjc:forceRange:min = -100
+            uniform double[] mjc:gainPrm = [1745.3292236328125, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </piper_description/Physics/joint5>
+        }
+
+        def MjcActuator "joint6_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -1745.3292236328125, -1.7453292608261108, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 100
+            uniform double mjc:forceRange:min = -100
+            uniform double[] mjc:gainPrm = [1745.3292236328125, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </piper_description/Physics/joint6>
+        }
+
+        def MjcActuator "joint7_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -100000, -100, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 100
+            uniform double mjc:forceRange:min = -100
+            uniform double[] mjc:gainPrm = [100000, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </piper_description/Physics/joint7>
+        }
+
+        def MjcActuator "joint8_actuator"
+        {
+            uniform double[] mjc:biasPrm = [0, -100000, -100, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:biasType = "affine"
+            uniform double mjc:forceRange:max = 100
+            uniform double mjc:forceRange:min = -100
+            uniform double[] mjc:gainPrm = [100000, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            uniform token mjc:gainType = "fixed"
+            custom rel mjc:target
+            prepend rel mjc:target = </piper_description/Physics/joint8>
+        }
+
+        over "joint1" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+        }
+
+        over "joint2" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+        }
+
+        over "joint3" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+        }
+
+        over "joint4" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+        }
+
+        over "joint5" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+        }
+
+        over "joint6" (
+            delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+        )
+        {
+        }
+
+        over "joint7" (
+            delete apiSchemas = ["PhysicsDriveAPI:linear", "PhysicsJointStateAPI:linear"]
+        )
+        {
+        }
+
+        over "joint8" (
+            delete apiSchemas = ["PhysicsDriveAPI:linear", "PhysicsJointStateAPI:linear"]
+        )
+        {
+        }
+    }
+
+    over "Geometry"
+    {
+        over "base_link"
+        {
+            over "link1"
+            {
+                over "link2"
+                {
+                    over "link3"
+                    {
+                        over "link4"
+                        {
+                            over "link5"
+                            {
+                                over "link6"
+                                {
+                                    over "link7"
+                                    {
+                                        over "link7"
+                                        {
+                                            over "tn__solid_link7001_oL"
+                                            {
+                                            }
+
+                                            over "solid_link7"
+                                            {
+                                            }
+                                        }
+
+                                        over "link7_1"
+                                        {
+                                        }
+                                    }
+
+                                    over "link8"
+                                    {
+                                        over "link8"
+                                        {
+                                            over "tn__solid_link8001_oL"
+                                            {
+                                            }
+
+                                            over "solid_link8"
+                                            {
+                                            }
+                                        }
+
+                                        over "link8_1"
+                                        {
+                                        }
+                                    }
+
+                                    over "link6"
+                                    {
+                                        over "tn__solid_link6008_oL"
+                                        {
+                                        }
+
+                                        over "tn__solid_link6007_oL"
+                                        {
+                                        }
+
+                                        over "tn__solid_link6006_oL"
+                                        {
+                                        }
+
+                                        over "tn__solid_link6005_oL"
+                                        {
+                                        }
+
+                                        over "tn__solid_link6004_oL"
+                                        {
+                                        }
+
+                                        over "tn__solid_link6003_oL"
+                                        {
+                                        }
+
+                                        over "tn__solid_link6002_oL"
+                                        {
+                                        }
+
+                                        over "tn__solid_link6001_oL"
+                                        {
+                                        }
+
+                                        over "solid_link6"
+                                        {
+                                        }
+                                    }
+
+                                    over "link6_1"
+                                    {
+                                    }
+                                }
+
+                                over "link5"
+                                {
+                                    over "tn__solid_link5007_oL"
+                                    {
+                                    }
+
+                                    over "tn__solid_link5006_oL"
+                                    {
+                                    }
+
+                                    over "tn__solid_link5005_oL"
+                                    {
+                                    }
+
+                                    over "tn__solid_link5004_oL"
+                                    {
+                                    }
+
+                                    over "tn__solid_link5003_oL"
+                                    {
+                                    }
+
+                                    over "tn__solid_link5002_oL"
+                                    {
+                                    }
+
+                                    over "tn__solid_link5001_oL"
+                                    {
+                                    }
+
+                                    over "solid_link5"
+                                    {
+                                    }
+                                }
+
+                                over "link5_1"
+                                {
+                                }
+                            }
+
+                            over "link4"
+                            {
+                                over "mesh"
+                                {
+                                }
+
+                                over "tn__mesh001_VB"
+                                {
+                                }
+
+                                over "tn__mesh002_VB"
+                                {
+                                }
+
+                                over "tn__mesh003_VB"
+                                {
+                                }
+
+                                over "tn__mesh004_VB"
+                                {
+                                }
+
+                                over "tn__mesh005_VB"
+                                {
+                                }
+                            }
+
+                            over "link4_1"
+                            {
+                            }
+                        }
+
+                        over "link3"
+                        {
+                            over "tn__solid_link3028_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3027_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3026_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3025_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3024_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3023_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3022_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3021_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3020_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3019_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3018_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3017_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3016_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3015_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3014_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3013_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3012_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3011_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3010_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3009_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3008_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3007_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3006_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3005_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3004_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3003_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3002_oL"
+                            {
+                            }
+
+                            over "tn__solid_link3001_oL"
+                            {
+                            }
+
+                            over "solid_link3"
+                            {
+                            }
+                        }
+
+                        over "link3_1"
+                        {
+                        }
+                    }
+
+                    over "link2"
+                    {
+                        over "tn__solid_link2111_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2110_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2109_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2108_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2107_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2106_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2105_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2104_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2103_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2102_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2101_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2100_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2099_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2098_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2097_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2096_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2095_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2094_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2093_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2092_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2091_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2090_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2089_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2088_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2087_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2086_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2085_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2084_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2083_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2082_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2081_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2080_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2079_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2078_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2077_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2076_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2075_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2074_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2073_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2072_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2071_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2070_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2069_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2068_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2067_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2066_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2065_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2064_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2063_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2062_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2061_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2060_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2059_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2058_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2057_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2056_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2055_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2054_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2053_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2052_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2051_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2050_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2049_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2048_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2047_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2046_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2045_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2044_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2043_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2042_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2041_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2040_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2039_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2038_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2037_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2036_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2035_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2034_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2033_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2032_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2031_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2030_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2029_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2028_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2027_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2026_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2025_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2024_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2023_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2022_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2021_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2020_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2019_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2018_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2017_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2016_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2015_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2014_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2013_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2012_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2011_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2010_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2009_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2008_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2007_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2006_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2005_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2004_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2003_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2002_oL"
+                        {
+                        }
+
+                        over "tn__solid_link2001_oL"
+                        {
+                        }
+
+                        over "solid_link2"
+                        {
+                        }
+                    }
+
+                    over "link2_1"
+                    {
+                    }
+                }
+
+                over "link1"
+                {
+                }
+
+                over "link1_1"
+                {
+                }
+            }
+
+            over "base_link"
+            {
+                over "tn__solid_base_link012_qR"
+                {
+                }
+
+                over "tn__solid_base_link011_qR"
+                {
+                }
+
+                over "tn__solid_base_link010_qR"
+                {
+                }
+
+                over "tn__solid_base_link009_qR"
+                {
+                }
+
+                over "tn__solid_base_link008_qR"
+                {
+                }
+
+                over "tn__solid_base_link007_qR"
+                {
+                }
+
+                over "tn__solid_base_link006_qR"
+                {
+                }
+
+                over "tn__solid_base_link005_qR"
+                {
+                }
+
+                over "tn__solid_base_link004_qR"
+                {
+                }
+
+                over "tn__solid_base_link003_qR"
+                {
+                }
+
+                over "tn__solid_base_link002_qR"
+                {
+                }
+
+                over "tn__solid_base_link001_qR"
+                {
+                }
+
+                over "solid_base_link"
+                {
+                }
+            }
+
+            over "base_link_1"
+            {
+            }
+        }
+    }
+
+    over "Materials"
+    {
+        over "material_1"
+        {
+        }
+
+        over "material_3"
+        {
+        }
+
+        over "material_4"
+        {
+        }
+
+        over "material_5"
+        {
+        }
+
+        over "material_6"
+        {
+        }
+
+        over "material_7"
+        {
+        }
+
+        over "material_8"
+        {
+        }
+
+        over "material_9"
+        {
+        }
+    }
+
+    over "VisualMaterials"
+    {
+    }
+}
+

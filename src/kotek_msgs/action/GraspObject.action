@@ -1,0 +1,20 @@
+# Goal: grasp an object at the given pose using the Piper arm and lift it.
+geometry_msgs/PoseStamped object_pose
+float64 lift_height            # meters; 0.0 means "use the manipulator's configured default"
+---
+# Result
+bool success
+string message
+---
+# Feedback: stage mirrors the task_coordinator FSM arm states so the
+# coordinator never has to duplicate manipulator-internal logic.
+# STOW_OBJECT (section 4.16): after LIFT_OBJECT, retracts the arm (still
+# holding the object) to the 'zero' SRDF group_state before returning --
+# lift_pose alone left the grasped object at roughly the lidar's own
+# mount height, in its forward scan cone, which applyObstacleAvoidance()
+# (kotek_base_control) then read as "obstacle directly ahead" and zeroed
+# forward velocity for the whole DRIVE_TO_DELIVERY leg. 'zero' is the same
+# pose retreatToSafe() already uses for failure paths and is confirmed
+# clear of the lidar's scan plane.
+string stage                   # MOVE_ARM_TO_PREGRASP | MOVE_ARM_TO_GRASP | CLOSE_GRIPPER | LIFT_OBJECT | STOW_OBJECT
+float64 progress               # 0.0-1.0 within the current stage

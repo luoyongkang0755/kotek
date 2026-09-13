@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>kotek_wall_mount_task</name>
+  <version>0.1.0</version>
+  <description>
+    Orchestrates the wall-mount task's 4 pick+magnetic-mount cycles by
+    calling GraspObject/PlaceObject directly against 8 fixed, pre-measured
+    arm-frame poses. The robot spawns already parked at the wall's standoff
+    (see build_wall_stage.py) and never drives, so this deliberately does
+    NOT go through kotek_task_coordinator's FSM (task_fsm.hpp/
+    task_coordinator_node.cpp) -- that machinery exists for driving between a
+    sensed pickup and a separate delivery point, which this task doesn't
+    need.
+  </description>
+  <maintainer email="dev@example.com">kotek</maintainer>
+  <license>Apache-2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>geometry_msgs</depend>
+  <depend>kotek_msgs</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

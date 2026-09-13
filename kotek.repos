@@ -1,0 +1,5 @@
+repositories:
+  isaac_simulation:
+    type: git
+    url: https://github.com/TitusAwakes/isaac_simulation
+    version: navigation

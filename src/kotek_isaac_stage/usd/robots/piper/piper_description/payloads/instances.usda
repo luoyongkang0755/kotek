@@ -1,0 +1,4327 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "URDF USD Converter v0.1.3"
+    }
+    doc = """Generated from Composed Stage of root layer /tmp/tmp3ey0ydz7/piper_description.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_piper_description_ri6gt3mq/usdex_piper_description/piper_description.usdc
+
+
+Generated from Composed Stage of root layer /tmp/urdf_import_piper_description_ri6gt3mq/temp_piper_description/piper_description.usd
+
+
+Generated from Composed Stage of root layer /home/ranulfo/Projects/kotek_ws/src/kotek_isaac_stage/usd/robots/piper/piper_description/payloads/base.usd
+"""
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Scope "Instances"
+{
+    def Xform "tn__solid_base_link012_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link012_qR>
+    )
+    {
+        over "tn__solid_base_link012_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link012_qR/VisualMaterials/tn__Material018_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material018_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_base_link011_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link011_qR>
+    )
+    {
+        over "tn__solid_base_link011_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link011_qR/VisualMaterials/tn__Material017_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material017_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_base_link010_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link010_qR>
+    )
+    {
+        over "tn__solid_base_link010_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link010_qR/VisualMaterials/tn__Material016_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material016_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_base_link009_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link009_qR>
+    )
+    {
+        over "tn__solid_base_link009_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link009_qR/VisualMaterials/tn__Material015_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material015_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_base_link008_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link008_qR>
+    )
+    {
+        over "tn__solid_base_link008_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link008_qR/VisualMaterials/tn__Material014_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material014_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_base_link007_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link007_qR>
+    )
+    {
+        over "tn__solid_base_link007_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link007_qR/VisualMaterials/tn__Material013_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material013_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_base_link006_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link006_qR>
+    )
+    {
+        over "tn__solid_base_link006_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link006_qR/VisualMaterials/tn__Material012_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material012_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_base_link005_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link005_qR>
+    )
+    {
+        over "tn__solid_base_link005_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link005_qR/VisualMaterials/tn__Material011_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material011_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_base_link004_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link004_qR>
+    )
+    {
+        over "tn__solid_base_link004_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link004_qR/VisualMaterials/tn__Material010_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material010_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_base_link003_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link003_qR>
+    )
+    {
+        over "tn__solid_base_link003_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link003_qR/VisualMaterials/tn__Material009_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material009_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_base_link002_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link002_qR>
+    )
+    {
+        over "tn__solid_base_link002_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link002_qR/VisualMaterials/tn__Material008_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material008_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_base_link001_qR" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_base_link001_qR>
+    )
+    {
+        over "tn__solid_base_link001_qR" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_base_link001_qR/VisualMaterials/tn__Material007_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material007_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "solid_base_link" (
+        prepend references = @./geometries.usd@</Geometries/solid_base_link>
+    )
+    {
+        over "solid_base_link" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/solid_base_link/VisualMaterials/tn__Material__1_003_kMUhnnCnqn5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_003_kMUhnnCnqn5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_003_kMUhnnCnqn5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "link1" (
+        prepend references = @./geometries.usd@</Geometries/link1>
+    )
+    {
+        over "link1" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/link1/VisualMaterials/tn__Material023_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material023_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_003_kMUhnnCnqn5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2111_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2111_oL>
+    )
+    {
+        over "tn__solid_link2111_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2111_oL/VisualMaterials/tn__Material012_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material012_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2110_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2110_oL>
+    )
+    {
+        over "tn__solid_link2110_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2110_oL/VisualMaterials/tn__Material011_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material011_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2109_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2109_oL>
+    )
+    {
+        over "tn__solid_link2109_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2109_oL/VisualMaterials/tn__Material010_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material010_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2108_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2108_oL>
+    )
+    {
+        over "tn__solid_link2108_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2108_oL/VisualMaterials/tn__Material009_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material009_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2107_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2107_oL>
+    )
+    {
+        over "tn__solid_link2107_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2107_oL/VisualMaterials/tn__Material008_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material008_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2106_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2106_oL>
+    )
+    {
+        over "tn__solid_link2106_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2106_oL/VisualMaterials/tn__Material007_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material007_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2105_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2105_oL>
+    )
+    {
+        over "tn__solid_link2105_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2105_oL/VisualMaterials/tn__Material006_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material006_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2104_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2104_oL>
+    )
+    {
+        over "tn__solid_link2104_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2104_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2103_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2103_oL>
+    )
+    {
+        over "tn__solid_link2103_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2103_oL/VisualMaterials/tn__Material060_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material060_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2102_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2102_oL>
+    )
+    {
+        over "tn__solid_link2102_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2102_oL/VisualMaterials/tn__Material059_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material059_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2101_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2101_oL>
+    )
+    {
+        over "tn__solid_link2101_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2101_oL/VisualMaterials/tn__Material058_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material058_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2100_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2100_oL>
+    )
+    {
+        over "tn__solid_link2100_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2100_oL/VisualMaterials/tn__Material057_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material057_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2099_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2099_oL>
+    )
+    {
+        over "tn__solid_link2099_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2099_oL/VisualMaterials/tn__Material056_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material056_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2098_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2098_oL>
+    )
+    {
+        over "tn__solid_link2098_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2098_oL/VisualMaterials/tn__Material055_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material055_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2097_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2097_oL>
+    )
+    {
+        over "tn__solid_link2097_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2097_oL/VisualMaterials/tn__Material054_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material054_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2096_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2096_oL>
+    )
+    {
+        over "tn__solid_link2096_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2096_oL/VisualMaterials/tn__Material__1_019_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_019_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2095_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2095_oL>
+    )
+    {
+        over "tn__solid_link2095_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2095_oL/VisualMaterials/tn__Material053_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material053_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2094_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2094_oL>
+    )
+    {
+        over "tn__solid_link2094_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2094_oL/VisualMaterials/tn__Material052_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material052_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2093_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2093_oL>
+    )
+    {
+        over "tn__solid_link2093_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2093_oL/VisualMaterials/tn__Material051_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material051_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2092_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2092_oL>
+    )
+    {
+        over "tn__solid_link2092_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2092_oL/VisualMaterials/tn__Material050_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material050_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2091_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2091_oL>
+    )
+    {
+        over "tn__solid_link2091_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2091_oL/VisualMaterials/tn__Material002_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material002_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2090_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2090_oL>
+    )
+    {
+        over "tn__solid_link2090_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2090_oL/VisualMaterials/tn__Material049_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material049_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2089_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2089_oL>
+    )
+    {
+        over "tn__solid_link2089_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2089_oL/VisualMaterials/tn__Material048_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material048_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2088_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2088_oL>
+    )
+    {
+        over "tn__solid_link2088_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2088_oL/VisualMaterials/tn__Material047_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material047_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2087_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2087_oL>
+    )
+    {
+        over "tn__solid_link2087_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2087_oL/VisualMaterials/tn__Material046_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material046_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2086_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2086_oL>
+    )
+    {
+        over "tn__solid_link2086_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2086_oL/VisualMaterials/tn__Material__1_018_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_018_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2085_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2085_oL>
+    )
+    {
+        over "tn__solid_link2085_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2085_oL/VisualMaterials/tn__Material045_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material045_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2084_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2084_oL>
+    )
+    {
+        over "tn__solid_link2084_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2084_oL/VisualMaterials/tn__Material044_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material044_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2083_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2083_oL>
+    )
+    {
+        over "tn__solid_link2083_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2083_oL/VisualMaterials/tn__Material043_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material043_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2082_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2082_oL>
+    )
+    {
+        over "tn__solid_link2082_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2082_oL/VisualMaterials/tn__Material__1_017_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_017_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2081_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2081_oL>
+    )
+    {
+        over "tn__solid_link2081_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2081_oL/VisualMaterials/tn__Material042_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material042_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2080_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2080_oL>
+    )
+    {
+        over "tn__solid_link2080_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2080_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2079_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2079_oL>
+    )
+    {
+        over "tn__solid_link2079_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2079_oL/VisualMaterials/tn__Material041_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material041_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2078_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2078_oL>
+    )
+    {
+        over "tn__solid_link2078_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2078_oL/VisualMaterials/tn__Material040_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material040_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2077_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2077_oL>
+    )
+    {
+        over "tn__solid_link2077_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2077_oL/VisualMaterials/tn__Material039_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material039_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2076_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2076_oL>
+    )
+    {
+        over "tn__solid_link2076_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2076_oL/VisualMaterials/tn__Material038_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material038_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2075_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2075_oL>
+    )
+    {
+        over "tn__solid_link2075_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2075_oL/VisualMaterials/tn__Material037_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material037_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2074_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2074_oL>
+    )
+    {
+        over "tn__solid_link2074_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2074_oL/VisualMaterials/tn__Material002_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material002_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2073_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2073_oL>
+    )
+    {
+        over "tn__solid_link2073_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2073_oL/VisualMaterials/tn__Material036_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material036_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2072_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2072_oL>
+    )
+    {
+        over "tn__solid_link2072_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2072_oL/VisualMaterials/tn__Material__1_016_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_016_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2071_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2071_oL>
+    )
+    {
+        over "tn__solid_link2071_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2071_oL/VisualMaterials/tn__Material035_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material035_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2070_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2070_oL>
+    )
+    {
+        over "tn__solid_link2070_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2070_oL/VisualMaterials/tn__Material034_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material034_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2069_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2069_oL>
+    )
+    {
+        over "tn__solid_link2069_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2069_oL/VisualMaterials/tn__Material__1_015_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_015_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2068_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2068_oL>
+    )
+    {
+        over "tn__solid_link2068_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2068_oL/VisualMaterials/tn__Material033_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material033_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2067_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2067_oL>
+    )
+    {
+        over "tn__solid_link2067_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2067_oL/VisualMaterials/tn__Material032_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material032_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2066_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2066_oL>
+    )
+    {
+        over "tn__solid_link2066_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2066_oL/VisualMaterials/tn__Material031_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material031_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2065_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2065_oL>
+    )
+    {
+        over "tn__solid_link2065_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2065_oL/VisualMaterials/tn__Material030_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material030_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2064_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2064_oL>
+    )
+    {
+        over "tn__solid_link2064_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2064_oL/VisualMaterials/tn__Material__1_014_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_014_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2063_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2063_oL>
+    )
+    {
+        over "tn__solid_link2063_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2063_oL/VisualMaterials/tn__Material_fClmw6mnV4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material_fClmw6mnV4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material_fClmw6mnV4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2062_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2062_oL>
+    )
+    {
+        over "tn__solid_link2062_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2062_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2061_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2061_oL>
+    )
+    {
+        over "tn__solid_link2061_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2061_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2060_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2060_oL>
+    )
+    {
+        over "tn__solid_link2060_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2060_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2059_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2059_oL>
+    )
+    {
+        over "tn__solid_link2059_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2059_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2058_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2058_oL>
+    )
+    {
+        over "tn__solid_link2058_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2058_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2057_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2057_oL>
+    )
+    {
+        over "tn__solid_link2057_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2057_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2056_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2056_oL>
+    )
+    {
+        over "tn__solid_link2056_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2056_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2055_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2055_oL>
+    )
+    {
+        over "tn__solid_link2055_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2055_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2054_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2054_oL>
+    )
+    {
+        over "tn__solid_link2054_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2054_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2053_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2053_oL>
+    )
+    {
+        over "tn__solid_link2053_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2053_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2052_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2052_oL>
+    )
+    {
+        over "tn__solid_link2052_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2052_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2051_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2051_oL>
+    )
+    {
+        over "tn__solid_link2051_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2051_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2050_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2050_oL>
+    )
+    {
+        over "tn__solid_link2050_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2050_oL/VisualMaterials/tn__Material005_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material005_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2049_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2049_oL>
+    )
+    {
+        over "tn__solid_link2049_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2049_oL/VisualMaterials/tn__Material004_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material004_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2048_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2048_oL>
+    )
+    {
+        over "tn__solid_link2048_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2048_oL/VisualMaterials/tn__Material029_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material029_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2047_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2047_oL>
+    )
+    {
+        over "tn__solid_link2047_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2047_oL/VisualMaterials/tn__Material028_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material028_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2046_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2046_oL>
+    )
+    {
+        over "tn__solid_link2046_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2046_oL/VisualMaterials/tn__Material__1_013_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_013_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2045_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2045_oL>
+    )
+    {
+        over "tn__solid_link2045_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2045_oL/VisualMaterials/tn__Material027_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material027_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2044_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2044_oL>
+    )
+    {
+        over "tn__solid_link2044_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2044_oL/VisualMaterials/tn__Material026_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material026_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2043_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2043_oL>
+    )
+    {
+        over "tn__solid_link2043_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2043_oL/VisualMaterials/tn__Material025_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material025_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2042_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2042_oL>
+    )
+    {
+        over "tn__solid_link2042_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2042_oL/VisualMaterials/tn__Material024_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material024_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2041_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2041_oL>
+    )
+    {
+        over "tn__solid_link2041_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2041_oL/VisualMaterials/tn__Material__1_012_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_012_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2040_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2040_oL>
+    )
+    {
+        over "tn__solid_link2040_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2040_oL/VisualMaterials/tn__Material023_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material023_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2039_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2039_oL>
+    )
+    {
+        over "tn__solid_link2039_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2039_oL/VisualMaterials/tn__Material022_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material022_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2038_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2038_oL>
+    )
+    {
+        over "tn__solid_link2038_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2038_oL/VisualMaterials/tn__Material021_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material021_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2037_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2037_oL>
+    )
+    {
+        over "tn__solid_link2037_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2037_oL/VisualMaterials/tn__Material020_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material020_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2036_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2036_oL>
+    )
+    {
+        over "tn__solid_link2036_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2036_oL/VisualMaterials/tn__Material__1_011_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_011_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2035_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2035_oL>
+    )
+    {
+        over "tn__solid_link2035_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2035_oL/VisualMaterials/tn__Material019_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material019_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2034_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2034_oL>
+    )
+    {
+        over "tn__solid_link2034_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2034_oL/VisualMaterials/tn__Material018_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material018_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2033_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2033_oL>
+    )
+    {
+        over "tn__solid_link2033_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2033_oL/VisualMaterials/tn__Material017_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material017_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2032_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2032_oL>
+    )
+    {
+        over "tn__solid_link2032_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2032_oL/VisualMaterials/tn__Material__1_010_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_010_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2031_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2031_oL>
+    )
+    {
+        over "tn__solid_link2031_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2031_oL/VisualMaterials/tn__Material003_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material003_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2030_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2030_oL>
+    )
+    {
+        over "tn__solid_link2030_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2030_oL/VisualMaterials/tn__Material__1_009_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_009_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2029_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2029_oL>
+    )
+    {
+        over "tn__solid_link2029_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2029_oL/VisualMaterials/tn__Material016_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material016_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2028_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2028_oL>
+    )
+    {
+        over "tn__solid_link2028_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2028_oL/VisualMaterials/tn__Material__1_008_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_008_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2027_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2027_oL>
+    )
+    {
+        over "tn__solid_link2027_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2027_oL/VisualMaterials/tn__Material__1_007_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_007_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2026_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2026_oL>
+    )
+    {
+        over "tn__solid_link2026_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2026_oL/VisualMaterials/tn__Material015_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material015_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2025_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2025_oL>
+    )
+    {
+        over "tn__solid_link2025_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2025_oL/VisualMaterials/tn__Material002_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material002_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2024_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2024_oL>
+    )
+    {
+        over "tn__solid_link2024_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2024_oL/VisualMaterials/tn__Material014_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material014_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2023_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2023_oL>
+    )
+    {
+        over "tn__solid_link2023_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2023_oL/VisualMaterials/tn__Material013_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material013_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2022_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2022_oL>
+    )
+    {
+        over "tn__solid_link2022_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2022_oL/VisualMaterials/tn__Material__1_006_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_006_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2021_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2021_oL>
+    )
+    {
+        over "tn__solid_link2021_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2021_oL/VisualMaterials/tn__Material__1_005_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_005_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2020_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2020_oL>
+    )
+    {
+        over "tn__solid_link2020_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2020_oL/VisualMaterials/tn__Material012_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material012_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2019_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2019_oL>
+    )
+    {
+        over "tn__solid_link2019_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2019_oL/VisualMaterials/tn__Material001_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material001_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2018_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2018_oL>
+    )
+    {
+        over "tn__solid_link2018_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2018_oL/VisualMaterials/tn__Material__1_004_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_004_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2017_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2017_oL>
+    )
+    {
+        over "tn__solid_link2017_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2017_oL/VisualMaterials/tn__Material011_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material011_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2016_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2016_oL>
+    )
+    {
+        over "tn__solid_link2016_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2016_oL/VisualMaterials/tn__Material010_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material010_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2015_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2015_oL>
+    )
+    {
+        over "tn__solid_link2015_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2015_oL/VisualMaterials/tn__Material009_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material009_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2014_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2014_oL>
+    )
+    {
+        over "tn__solid_link2014_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2014_oL/VisualMaterials/tn__Material008_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material008_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2013_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2013_oL>
+    )
+    {
+        over "tn__solid_link2013_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2013_oL/VisualMaterials/tn__a0000000000000000000000000000000_al0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_al0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2012_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2012_oL>
+    )
+    {
+        over "tn__solid_link2012_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2012_oL/VisualMaterials/tn__Material__1_003_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_003_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2011_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2011_oL>
+    )
+    {
+        over "tn__solid_link2011_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2011_oL/VisualMaterials/tn__Material__1_002_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_002_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2010_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2010_oL>
+    )
+    {
+        over "tn__solid_link2010_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2010_oL/VisualMaterials/tn__Material_fCVtl6iXu2>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material_fCVtl6iXu2" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2009_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2009_oL>
+    )
+    {
+        over "tn__solid_link2009_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2009_oL/VisualMaterials/tn__Material__1_001_kMUjdkHXol0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_001_kMUjdkHXol0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2008_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2008_oL>
+    )
+    {
+        over "tn__solid_link2008_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2008_oL/VisualMaterials/tn__Material__1__ZIppgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1__ZIppgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2007_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2007_oL>
+    )
+    {
+        over "tn__solid_link2007_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2007_oL/VisualMaterials/tn__Material007_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material007_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2006_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2006_oL>
+    )
+    {
+        over "tn__solid_link2006_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2006_oL/VisualMaterials/tn__Material006_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material006_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2005_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2005_oL>
+    )
+    {
+        over "tn__solid_link2005_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2005_oL/VisualMaterials/tn__Material005_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material005_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2004_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2004_oL>
+    )
+    {
+        over "tn__solid_link2004_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2004_oL/VisualMaterials/tn__Material004_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material004_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2003_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2003_oL>
+    )
+    {
+        over "tn__solid_link2003_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2003_oL/VisualMaterials/tn__Material003_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material003_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2002_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2002_oL>
+    )
+    {
+        over "tn__solid_link2002_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2002_oL/VisualMaterials/tn__Material002_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material002_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link2001_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link2001_oL>
+    )
+    {
+        over "tn__solid_link2001_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link2001_oL/VisualMaterials/tn__Material001_qGMbpgDpgb0>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material001_qGMbpgDpgb0" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "solid_link2" (
+        prepend references = @./geometries.usd@</Geometries/solid_link2>
+    )
+    {
+        over "solid_link2" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/solid_link2/VisualMaterials/tn__Material_fCdWd9cZR>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material_fCdWd9cZR" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3028_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3028_oL>
+    )
+    {
+        over "tn__solid_link3028_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3028_oL/VisualMaterials/tn__Material__1_001_kMUhnnCnqn5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_001_kMUhnnCnqn5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3027_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3027_oL>
+    )
+    {
+        over "tn__solid_link3027_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3027_oL/VisualMaterials/tn__Material010_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material010_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3026_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3026_oL>
+    )
+    {
+        over "tn__solid_link3026_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3026_oL/VisualMaterials/tn__Material001_qGMdtVCfa8>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material001_qGMdtVCfa8" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3025_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3025_oL>
+    )
+    {
+        over "tn__solid_link3025_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3025_oL/VisualMaterials/tn__a0000000000000000000000000000000_1_Xo0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_1_Xo0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3024_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3024_oL>
+    )
+    {
+        over "tn__solid_link3024_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3024_oL/VisualMaterials/tn__Material009_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material009_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3023_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3023_oL>
+    )
+    {
+        over "tn__solid_link3023_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3023_oL/VisualMaterials/tn__Material__1_009_kMUlVcDpkq7>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_009_kMUlVcDpkq7" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3022_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3022_oL>
+    )
+    {
+        over "tn__solid_link3022_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3022_oL/VisualMaterials/tn__Material__1_008_kMUlVcDpkq7>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_008_kMUlVcDpkq7" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3021_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3021_oL>
+    )
+    {
+        over "tn__solid_link3021_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3021_oL/VisualMaterials/tn__Material008_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material008_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3020_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3020_oL>
+    )
+    {
+        over "tn__solid_link3020_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3020_oL/VisualMaterials/tn__Material__1_007_kMUlVcDpkq7>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_007_kMUlVcDpkq7" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3019_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3019_oL>
+    )
+    {
+        over "tn__solid_link3019_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3019_oL/VisualMaterials/tn__Material__1_006_kMUlVcDpkq7>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_006_kMUlVcDpkq7" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3018_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3018_oL>
+    )
+    {
+        over "tn__solid_link3018_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3018_oL/VisualMaterials/tn__Material007_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material007_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3017_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3017_oL>
+    )
+    {
+        over "tn__solid_link3017_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3017_oL/VisualMaterials/tn__Material006_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material006_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3016_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3016_oL>
+    )
+    {
+        over "tn__solid_link3016_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3016_oL/VisualMaterials/tn__Material005_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material005_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3015_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3015_oL>
+    )
+    {
+        over "tn__solid_link3015_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3015_oL/VisualMaterials/tn__Material004_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material004_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3014_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3014_oL>
+    )
+    {
+        over "tn__solid_link3014_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3014_oL/VisualMaterials/tn__Material__1_005_kMUlVcDpkq7>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_005_kMUlVcDpkq7" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3013_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3013_oL>
+    )
+    {
+        over "tn__solid_link3013_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3013_oL/VisualMaterials/tn__Material_1_cFaqj8fXy4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material_1_cFaqj8fXy4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3012_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3012_oL>
+    )
+    {
+        over "tn__solid_link3012_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3012_oL/VisualMaterials/tn__Material_fCaZe8fr5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material_fCaZe8fr5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_019_kMUjdkHXol0>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3011_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3011_oL>
+    )
+    {
+        over "tn__solid_link3011_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3011_oL/VisualMaterials/tn__Material__1_004_kMUlVcDpkq7>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_004_kMUlVcDpkq7" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3010_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3010_oL>
+    )
+    {
+        over "tn__solid_link3010_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3010_oL/VisualMaterials/tn__a0000000000000000000000000000000_1_Xo0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_1_Xo0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3009_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3009_oL>
+    )
+    {
+        over "tn__solid_link3009_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3009_oL/VisualMaterials/tn__Material__1_003_kMUlVcDpkq7>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_003_kMUlVcDpkq7" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3008_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3008_oL>
+    )
+    {
+        over "tn__solid_link3008_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3008_oL/VisualMaterials/tn__a0000000000000000000000000000000_1_Xo0DIN>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000_1_Xo0DIN" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3007_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3007_oL>
+    )
+    {
+        over "tn__solid_link3007_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3007_oL/VisualMaterials/tn__Material__1__ZIkqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1__ZIkqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3006_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3006_oL>
+    )
+    {
+        over "tn__solid_link3006_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3006_oL/VisualMaterials/tn__Material__1_002_kMUlVcDpkq7>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_002_kMUlVcDpkq7" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3005_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3005_oL>
+    )
+    {
+        over "tn__solid_link3005_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3005_oL/VisualMaterials/tn__Material003_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material003_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3004_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3004_oL>
+    )
+    {
+        over "tn__solid_link3004_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3004_oL/VisualMaterials/tn__Material002_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material002_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3003_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3003_oL>
+    )
+    {
+        over "tn__solid_link3003_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3003_oL/VisualMaterials/tn__Material001_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material001_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3002_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3002_oL>
+    )
+    {
+        over "tn__solid_link3002_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3002_oL/VisualMaterials/tn__Material__1_001_kMUlVcDpkq7>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_001_kMUlVcDpkq7" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link3001_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link3001_oL>
+    )
+    {
+        over "tn__solid_link3001_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link3001_oL/VisualMaterials/tn__Material__1__ZIutWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1__ZIutWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "solid_link3" (
+        prepend references = @./geometries.usd@</Geometries/solid_link3>
+    )
+    {
+        over "solid_link3" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/solid_link3/VisualMaterials/tn__Material_1_cFsrW8rrk3>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material_1_cFsrW8rrk3" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "mesh" (
+        prepend references = @./geometries.usd@</Geometries/mesh>
+    )
+    {
+        over "mesh" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/mesh/VisualMaterials/tn__HardShinyPlasticBlack1_wMAIOi2>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__HardShinyPlasticBlack1_wMAIOi2" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__HardShinyPlasticBlack1_wMAIOi2>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__mesh001_VB" (
+        prepend references = @./geometries.usd@</Geometries/tn__mesh001_VB>
+    )
+    {
+        over "tn__mesh001_VB" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__mesh001_VB/VisualMaterials/tn__link4color239239239_na0BFJ>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__link4color239239239_na0BFJ" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__link4color239239239_na0BFJ>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__mesh002_VB" (
+        prepend references = @./geometries.usd@</Geometries/tn__mesh002_VB>
+    )
+    {
+        over "tn__mesh002_VB" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__mesh002_VB/VisualMaterials/tn__HardRoughPlasticBlack1_wMAIOi2>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__HardRoughPlasticBlack1_wMAIOi2" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__HardShinyPlasticBlack1_wMAIOi2>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__mesh003_VB" (
+        prepend references = @./geometries.usd@</Geometries/tn__mesh003_VB>
+    )
+    {
+        over "tn__mesh003_VB" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__mesh003_VB/VisualMaterials/tn__HardRoughPlasticBlack1001_zPAIOr2wA>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__HardRoughPlasticBlack1001_zPAIOr2wA" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__HardShinyPlasticBlack1_wMAIOi2>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__mesh004_VB" (
+        prepend references = @./geometries.usd@</Geometries/tn__mesh004_VB>
+    )
+    {
+        over "tn__mesh004_VB" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__mesh004_VB/VisualMaterials/tn__HardRoughPlasticBlack2_wMAIOi2>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__HardRoughPlasticBlack2_wMAIOi2" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__HardShinyPlasticBlack1_wMAIOi2>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__mesh005_VB" (
+        prepend references = @./geometries.usd@</Geometries/tn__mesh005_VB>
+    )
+    {
+        over "tn__mesh005_VB" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__mesh005_VB/VisualMaterials/tn__HardRoughPlasticBlack1002_zPAIOr2wA>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__HardRoughPlasticBlack1002_zPAIOr2wA" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__HardShinyPlasticBlack1_wMAIOi2>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link5007_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link5007_oL>
+    )
+    {
+        over "tn__solid_link5007_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link5007_oL/VisualMaterials/tn__Material001_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material001_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link5006_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link5006_oL>
+    )
+    {
+        over "tn__solid_link5006_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link5006_oL/VisualMaterials/tn__Material015_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material015_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link5005_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link5005_oL>
+    )
+    {
+        over "tn__solid_link5005_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link5005_oL/VisualMaterials/tn__Material014_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material014_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link5004_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link5004_oL>
+    )
+    {
+        over "tn__solid_link5004_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link5004_oL/VisualMaterials/tn__Material013_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material013_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link5003_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link5003_oL>
+    )
+    {
+        over "tn__solid_link5003_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link5003_oL/VisualMaterials/tn__a0000000000000000000000000000000001_lp0DINj1>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__a0000000000000000000000000000000001_lp0DINj1" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__a0000000000000000000000000000000_al0DIN>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link5002_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link5002_oL>
+    )
+    {
+        over "tn__solid_link5002_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link5002_oL/VisualMaterials/tn__Material002_qGMdtVCfa8>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material002_qGMdtVCfa8" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link5001_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link5001_oL>
+    )
+    {
+        over "tn__solid_link5001_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link5001_oL/VisualMaterials/tn__Material012_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material012_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "solid_link5" (
+        prepend references = @./geometries.usd@</Geometries/solid_link5>
+    )
+    {
+        over "solid_link5" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/solid_link5/VisualMaterials/tn__Material011_1_nJOroXBeWx4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material011_1_nJOroXBeWx4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link6008_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link6008_oL>
+    )
+    {
+        over "tn__solid_link6008_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link6008_oL/VisualMaterials/tn__Material004_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material004_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link6007_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link6007_oL>
+    )
+    {
+        over "tn__solid_link6007_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link6007_oL/VisualMaterials/tn__Material020_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material020_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link6006_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link6006_oL>
+    )
+    {
+        over "tn__solid_link6006_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link6006_oL/VisualMaterials/tn__Material019_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material019_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link6005_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link6005_oL>
+    )
+    {
+        over "tn__solid_link6005_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link6005_oL/VisualMaterials/tn__Material018_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material018_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link6004_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link6004_oL>
+    )
+    {
+        over "tn__solid_link6004_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link6004_oL/VisualMaterials/tn__Material003_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material003_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link6003_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link6003_oL>
+    )
+    {
+        over "tn__solid_link6003_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link6003_oL/VisualMaterials/tn__Material017_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material017_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link6002_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link6002_oL>
+    )
+    {
+        over "tn__solid_link6002_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link6002_oL/VisualMaterials/tn__Material__1_002_kMUhnnCnqn5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material__1_002_kMUhnnCnqn5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material__1_002_kMUhnnCnqn5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link6001_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link6001_oL>
+    )
+    {
+        over "tn__solid_link6001_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link6001_oL/VisualMaterials/tn__Material016_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material016_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "solid_link6" (
+        prepend references = @./geometries.usd@</Geometries/solid_link6>
+    )
+    {
+        over "solid_link6" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/solid_link6/VisualMaterials/tn__Material002_1_nJOywoBwVt6>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material002_1_nJOywoBwVt6" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "tn__solid_link7001_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link7001_oL>
+    )
+    {
+        over "tn__solid_link7001_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link7001_oL/VisualMaterials/tn__Material005_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material005_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "solid_link7" (
+        prepend references = @./geometries.usd@</Geometries/solid_link7>
+    )
+    {
+        over "solid_link7" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/solid_link7/VisualMaterials/tn__Material021_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material021_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "link7_1" (
+        prepend references = @./geometries.usd@</Geometries/link7_1>
+    )
+    {
+        over "link7_1" (
+            apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI"]
+        )
+        {
+            token physics:approximation = "convexHull"
+            token purpose = "guide"
+        }
+    }
+
+    def Xform "tn__solid_link8001_oL" (
+        prepend references = @./geometries.usd@</Geometries/tn__solid_link8001_oL>
+    )
+    {
+        over "tn__solid_link8001_oL" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/tn__solid_link8001_oL/VisualMaterials/tn__Material006_qGMgtWAYmv5>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material006_qGMgtWAYmv5" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material018_qGMgtWAYmv5>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "solid_link8" (
+        prepend references = @./geometries.usd@</Geometries/solid_link8>
+    )
+    {
+        over "solid_link8" (
+            apiSchemas = ["MaterialBindingAPI"]
+        )
+        {
+            custom rel material:binding
+            prepend rel material:binding = </Instances/solid_link8/VisualMaterials/tn__Material022_qGMWqm9Vhb4>
+        }
+
+        def Scope "VisualMaterials"
+        {
+            def Material "tn__Material022_qGMWqm9Vhb4" (
+                instanceable = true
+                prepend references = @./materials.usda@</Materials/tn__Material012_qGMWqm9Vhb4>
+            )
+            {
+            }
+        }
+    }
+
+    def Xform "link8_1" (
+        prepend references = @./geometries.usd@</Geometries/link8_1>
+    )
+    {
+        over "link8_1" (
+            apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI"]
+        )
+        {
+            token physics:approximation = "convexHull"
+            token purpose = "guide"
+        }
+    }
+
+    def Xform "link6_1" (
+        prepend references = @./geometries.usd@</Geometries/link6_1>
+    )
+    {
+        over "link6_1" (
+            apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI"]
+        )
+        {
+            token physics:approximation = "convexHull"
+            token purpose = "guide"
+        }
+    }
+
+    def Xform "link5_1" (
+        prepend references = @./geometries.usd@</Geometries/link5_1>
+    )
+    {
+        over "link5_1" (
+            apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI"]
+        )
+        {
+            token physics:approximation = "convexHull"
+            token purpose = "guide"
+        }
+    }
+
+    def Xform "link4_1" (
+        prepend references = @./geometries.usd@</Geometries/link4_1>
+    )
+    {
+        over "link4_1" (
+            apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI"]
+        )
+        {
+            token physics:approximation = "convexHull"
+            token purpose = "guide"
+        }
+    }
+
+    def Xform "link3_1" (
+        prepend references = @./geometries.usd@</Geometries/link3_1>
+    )
+    {
+        over "link3_1" (
+            apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI"]
+        )
+        {
+            token physics:approximation = "convexHull"
+            token purpose = "guide"
+        }
+    }
+
+    def Xform "link2_1" (
+        prepend references = @./geometries.usd@</Geometries/link2_1>
+    )
+    {
+        over "link2_1" (
+            apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI"]
+        )
+        {
+            token physics:approximation = "convexHull"
+            token purpose = "guide"
+        }
+    }
+
+    def Xform "link1_1" (
+        prepend references = @./geometries.usd@</Geometries/link1_1>
+    )
+    {
+        over "link1_1" (
+            apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI"]
+        )
+        {
+            token physics:approximation = "convexHull"
+            token purpose = "guide"
+        }
+    }
+
+    def Xform "base_link_1" (
+        prepend references = @./geometries.usd@</Geometries/base_link_1>
+    )
+    {
+        over "base_link_1" (
+            apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "PhysicsMeshCollisionAPI", "NewtonMeshCollisionAPI"]
+        )
+        {
+            token physics:approximation = "convexHull"
+            token purpose = "guide"
+        }
+    }
+}
+

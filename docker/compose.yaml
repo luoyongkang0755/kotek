@@ -1,0 +1,33 @@
+services:
+  kotek:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: kotek_ws:jazzy
+    container_name: kotek_ws
+    network_mode: host
+    environment:
+      - DISPLAY=${DISPLAY}
+      - ROS_DOMAIN_ID=0
+      # NOT rmw_fastrtps_cpp: confirmed directly that FastRTPS discovery
+      # (endpoint matching) succeeds across the Isaac-Sim-host <->
+      # this-container boundary but actual message delivery never arrives
+      # (subscription_count reaches 1, zero messages received after 100
+      # publishes over 10 real seconds -- reproduced with `ipc: host` too,
+      # no change). CycloneDDS delivers correctly across the same
+      # boundary with no other changes -- see docs/pick_and_delivery_report.md.
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+    volumes:
+      - ../src:/workspace/src/kotek:rw
+      # isaac_simulation is reused read-only from the host clone; it is never
+      # modified by this workspace (see plan section 4).
+      - /home/trs/isaac_simulation:/workspace/src/isaac_simulation:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # SpaceMouse teleop input: spacenavd runs on the host and exposes a
+      # world-accessible AF_UNIX socket. can0 (the Piper leader arm) needs no
+      # mount -- network_mode: host already exposes it as a SocketCAN
+      # interface, confirmed by binding it from inside this image directly.
+      - /run/spnav.sock:/run/spnav.sock:rw
+    working_dir: /workspace
+    stdin_open: true
+    tty: true

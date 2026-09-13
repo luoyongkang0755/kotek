@@ -1,0 +1,13 @@
+# Goal: place a previously-grasped object at the given pose using the Piper
+# arm, then release it and retreat.
+geometry_msgs/PoseStamped place_pose
+float64 retreat_height         # meters; 0.0 means "use the manipulator's configured default"
+---
+# Result
+bool success
+string message
+---
+# Feedback: stage mirrors the task_coordinator FSM arm states so the
+# coordinator never has to duplicate manipulator-internal logic.
+string stage                   # MOVE_ARM_TO_PREPLACE | MOVE_ARM_TO_PLACE | OPEN_GRIPPER | RETREAT_ARM
+float64 progress               # 0.0-1.0 within the current stage

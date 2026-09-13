@@ -1,0 +1,57 @@
+spacemouse_teleop_node:
+  ros__parameters:
+    cmd_vel_topic: /cmd_vel
+    max_raw: 350.0            # spnav_event_motion full-scale, confirmed via live capture
+    deadzone: 0.08
+    scale_linear: 0.5         # matches base_controller.yaml's max_linear_velocity
+    scale_angular: 0.8        # matches base_controller.yaml's max_angular_velocity
+    publish_rate: 30.0
+    event_timeout_s: 0.2      # no motion event for this long -> publish zero Twist
+    # Linear (forward/back): raw z alone, sign-flipped -- see
+    # spacemouse_teleop_node._linear_raw's docstring. A structured 8-gesture
+    # recording session (scripts/spacemouse/record_gesture.py) found raw y
+    # is NOT usable: it sits strongly negative in every gesture tested,
+    # including back_only and pure rotation, so a y-based forward term just
+    # added constant creep that fought genuine backward commands. z was
+    # clean and correctly signed across all 8 gestures instead.
+    #
+    # Angular (turn): raw rz + ry -- see _angular_raw's docstring. The same
+    # session found two distinct turn gestures live on different axes (a
+    # diagonal push-and-tilt drives rz; an in-place twist drives ry), both
+    # sharing the same sign convention, so they're simply summed.
+    # invert_angular flips the combined signal if ever needed for a
+    # different device/grip.
+    invert_angular: false
+    require_no_other_cmd_vel_publisher: true
+    deadman_button: 0
+    estop_button: 1
+
+piper_leader_node:
+  ros__parameters:
+    can_channel: can0
+    isaac_command_topic: /isaac_joint_commands
+    command_rate: 100.0
+    lowpass_fc_hz: 10.0
+    max_joint_rate_rad_s: 3.0     # matches piper_description.urdf's velocity="3"
+    require_deadman_for_follow: true
+
+    # Haptics -- OFF by default. Flip only during a supervised bench session
+    # (see kotek_teleop/scripts/piper/bench_mit_switch.py and the plan's
+    # Phase 0/5). Values below are conservative starting points, not final --
+    # raise only after the bench test's go/no-go gate passes.
+    haptics_enabled: false
+    contact_topic: /isaac/arm_contact
+    control_loop_hz: 100.0
+    motion_ctrl2_rate_hz: 20.0
+    t_max_nm: [2.0, 2.0, 2.0, 1.0, 1.0, 1.0]   # SDK ceiling is +-18 N*m per joint
+    kp_wall: 8.0            # SDK reference value ~10
+    kp_hard_max: 30.0
+    kd_wall: 0.8            # SDK reference value
+    torque_slew_nm_s: 20.0
+    wall_max_offset_rad: 0.15
+    force_to_torque_k: 0.35   # tune empirically once bench-validated
+    contact_enter_debounce_s: 0.05
+    contact_exit_debounce_s: 0.15
+    max_contact_duration_s: 5.0
+    contact_stale_s: 0.25
+    deadman_stale_s: 0.20

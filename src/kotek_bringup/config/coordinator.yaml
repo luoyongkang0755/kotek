@@ -1,0 +1,75 @@
+task_coordinator:
+  ros__parameters:
+    # Was 0.40 -- never accounted for the robot's own forward chassis
+    # extent (0.312m, the front wheel's outer edge -- measured directly
+    # from the composed USD stage, matches scout_mini.urdf's front wheel
+    # joint offset (0.2319755) + wheel radius (0.08)) or the sensor
+    # pedestal's own radius (see build_demo_stage.py's add_sensor_object).
+    # At 0.40, the nominal (zero-tracking-error) clearance between the
+    # chassis front edge and the pedestal was only 8mm -- a live test
+    # confirmed the robot actually driving into the pedestal. 0.48 restored
+    # a real ~10cm nominal margin while staying well inside the arm's
+    # max_reach (was 0.55) -- see docs/pick_and_delivery_report.md
+    # section 4.12.
+    #
+    # Raised again, 0.48 -> 0.60 (section 4.16): computeGraspPose() was
+    # fixed to target link6's origin 0.13503m BEHIND the object along the
+    # approach direction (the fingers, not link6's origin, sit at that
+    # offset -- see pregrasp_geometry.hpp), which was previously missing
+    # entirely and made every real grasp attempt close on empty air. That
+    # fix makes the required arm reach LONGER for a given object distance,
+    # and a live /piper/compute_ik sweep showed the old 0.48 standoff
+    # (object ending up ~0.50m from the arm) is now on the wrong side of a
+    # real reachability boundary -- NO_IK_SOLUTION for both the approach
+    # and grasp poses. The same sweep found object distances of
+    # 0.55-0.70m reachable across the realistic yaw range; 0.60 sits
+    # comfortably inside that band with margin on both sides (only
+    # increases pedestal clearance vs. 0.48, since the base parks farther
+    # away).
+    pregrasp_standoff: 0.60
+    approach_mode: from_current   # from_current | fixed | object_frame
+    approach_yaw: 0.0
+    object_yaw_offset: 0.0
+    min_reach: 0.15
+    # Was 0.55, matched to the old (pre-4.16) standoff. Raised to 0.65 so
+    # the coarse pre-check (isReachable(), tested against the object's raw
+    # position, not the fingertip-offset-adjusted grasp target) doesn't
+    # false-negative-reject the new 0.60 standoff -- see pregrasp_standoff's
+    # comment above.
+    max_reach: 0.65
+    z_min: -0.20
+    z_max: 0.50
+    sensor_topic: /sensor/pose
+    sensor_wait_timeout: 10.0
+    fsm_rate: 10.0
+    auto_start: false
+    global_frame: odom
+    base_frame: base_link
+    yaw_tolerance: 0.10
+    stop_settle_time: 0.5
+    abort_settle_time: 0.5
+    cmd_vel_topic: /cmd_vel
+    grasp_action_name: /piper/grasp_object
+    place_action_name: /piper/place_object
+    arm_mount_xyz: [0.0, 0.0, 0.29101]   # from root_joint's localPos0 in the USD stage
+    delivery_x: 0.3          # matches build_demo_stage.py's obstacle_delivery_leg corridor
+    delivery_y: -1.2
+    # Was 0.05 / 0.35 -- both never accounted for the same finger-offset
+    # fix applied to pregrasp_standoff (section 4.16): PlaceObject reuses
+    # computeGraspPose() (piper_manipulator_node.cpp's executePlace()), so
+    # the same 0.13503m fingertip backoff and the odom->arm-frame Z fix
+    # apply to placement too. A live run reached PLACE_ARM for the first
+    # time (section 4.17) and failed there -- MOVE_ARM_TO_PREPLACE had
+    # NO_IK_SOLUTION. A live /piper/compute_ik sweep found two compounding
+    # causes: (1) delivery_z=0.05 put the place target at arm-frame
+    # z=-0.32, which fails IK at ANY standoff (this arm, at the demo's
+    # gripper_pitch=0.4, can't reach below ~arm-frame z=-0.20 regardless
+    # of horizontal distance -- matches the existing z_min=-0.20 reachability
+    # limit already used for pickup); (2) delivery_standoff=0.35 was, like
+    # pregrasp_standoff, too close once the finger-offset fix was in place.
+    # Raised together (0.22 / 0.60, matching pregrasp_standoff) and
+    # verified reachable across yaw +/-0.15 rad at this standoff.
+    delivery_z: 0.22
+    delivery_yaw: 0.0
+    delivery_standoff: 0.60
+    retreat_height: 0.0      # 0.0 -> piper_manipulator's configured default

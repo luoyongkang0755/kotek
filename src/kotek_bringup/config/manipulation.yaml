@@ -1,0 +1,125 @@
+/piper/piper_manipulator:
+  ros__parameters:
+    arm_group: arm
+    gripper_group: gripper
+    approach_distance: 0.12
+    approach_height: 0.10
+    # 0 = approach the place point straight down, rather than backing off
+    # horizontally the way the grasp approach does. See the comment on
+    # Params::place_approach_distance in piper_manipulator.hpp: the horizontal
+    # back-off pulls the arm in toward its own base, and with the base parked
+    # 0.525 m from the delivery point (rather than the nominal 0.60 -- base
+    # parking error runs +/-0.07 m) the pre-place pose landed at arm-frame
+    # radius 0.281, where OMPL returned FAILURE. Straight down puts it at
+    # 0.401, in the same band as the pre-grasp pose that plans reliably.
+    place_approach_distance: 0.0
+    # Was 0.15. A tally across every "Computed Cartesian path with N points
+    # (followed X% of requested trajectory)" line captured in this session's
+    # live runs (docs/pick_and_delivery_report.md section 4.19) showed
+    # LIFT_OBJECT's straight-line vertical move -- computeLiftPose() just
+    # adds lift_height to grasp_pose.z, no reorientation, no joint-space
+    # freedom -- completing all 17 waypoints (100%) 14/18 times, and falling
+    # short (13-15 of 17 -- always the LAST few centimeters, never the
+    # first) the other 4/18 times, with no other explanation in move_group's
+    # own log (max_step/jump_threshold unchanged, "Found empty JointState
+    # message" is a benign line present identically on every call,
+    # confirmed present even on 100%-complete calls from the same run).
+    # This is IK reachability along the vertical line running out a few cm
+    # short of the top, not a speed or grip-force issue, and not something
+    # the request's velocity/acceleration scaling below affects (planning
+    # happens before those matter) -- it depends on which arm configuration
+    # MOVE_ARM_TO_PREGRASP/MOVE_ARM_TO_GRASP happened to reach for the same
+    # grasp_pose (both plan via OMPL, not deterministic run to run), so it
+    # is not fixable by retuning grasp_pose itself. Worst observed shortfall
+    # was 4 of 17 waypoints (~4cm out of 15cm). Cut to 0.10m -- comfortably
+    # below every observed full-completion length, with margin past the
+    # worst shortfall -- rather than guessed at; STOW_OBJECT's own retreat
+    # to 'zero' immediately afterward still provides the real lidar
+    # clearance (section 4.16), so this lift no longer needs to reach that
+    # height by itself.
+    lift_height: 0.10            # default; GraspObject.action goal may override (>0)
+    retreat_height: 0.15         # default; PlaceObject.action goal may override (>0)
+    # SUPERSEDED DIAGNOSIS. Section 4.19 concluded from 12 live trials that
+    # the object leaving the gripper was "a genuine, unresolved physical
+    # grip/friction question", explicitly noting "no effort/driver telemetry
+    # available", and this parameter was tightened 0.024 -> 0.012 to chase it.
+    # That telemetry did exist -- Articulation.get_dof_gains() reports it --
+    # and reading it showed the cause was not friction at all. See
+    # src/kotek_isaac_stage/kotek_isaac_stage/physics_tuning.py for the full
+    # write-up and the measurements; in short, three asset-level faults:
+    #
+    #   1. joint7/joint8 are PRISMATIC but carried the arm's ROTATIONAL drive
+    #      constants (stiffness 1e5 N/m, maxForce 1e3 N -- the latter sized
+    #      for joint3's holding TORQUE in N*m). Against the observed ~9 mm
+    #      stall error that is ~900 N of squeeze per finger on a 0.2 kg
+    #      object, held continuously.
+    #   2. The arm's own drives ran at a damping/stiffness ratio of 0.001,
+    #      leaving joint1 in a sustained ~3 Hz limit cycle that swung the
+    #      gripper +/-6-7 cm SIDEWAYS during a straight-line approach --
+    #      enough to knock the object off its pedestal before the gripper was
+    #      ever commanded to close.
+    #   3. /World/sensor carried no PhysX APIs at all, so contactOffset sat at
+    #      PhysX's 0.02 m default -- 40% of the object's own width -- with no
+    #      cap on depenetration velocity.
+    #
+    # All three are fixed in the ASSET (import_robots.py / build_demo_stage.py),
+    # so this pipeline inherits the fix without a code change here. Measured
+    # A/B on the same motion, via ~/Projects/kotek_sim/tests/test_grasp.py:
+    #   before: peak object speed 3.60 m/s, object ejected 1.3 m, rise -0.325 m
+    #   after : peak object speed 0.18 m/s, slip 0.6 mm, rise +0.105 m, held
+    #
+    # grasp_width raised 0.012 -> 0.040, for RELEASE rather than for hold.
+    # With the corrected drives the fingers stall on the object's real surface
+    # (measured 0.0519 m against a 0.0514 m object), and the squeeze is
+    #     F_per_finger = stiffness * (stall_width - grasp_width) / 2
+    # capped at the 20 N maxForce. At 0.012 that residual is 0.040 m, i.e. the
+    # cap -- which holds fine but releases badly: opening from a saturated
+    # squeeze threw the object 0.5 m in the standalone rig. At 0.040 the
+    # squeeze is ~5.9 N against the 1.09 N needed to hold 0.2 kg at mu = 0.9
+    # (~5.5x margin) and the release is clean.
+    # The per-finger target (0.020) still clears joint7's URDF lower bound of
+    # exactly 0 -- the exactly-at-limit hazard behind section 4.18 -- and stays
+    # well above piper_manipulator's kContactTolerance check
+    # (actual 0.026 > target 0.020 + 0.0015), so grasp detection is unchanged.
+    grasp_width: 0.040           # per-finger target is grasp_width/2 (SRDF 'open' is 0.04/-0.04)
+    gripper_open: 0.04
+    # Split from a single shared gripper_pitch into grasp_pitch/place_pitch
+    # once the wall-mount task needed different values for its two legs
+    # (see piper_manipulator.hpp's Params comment) -- both keep this demo's
+    # original tuned value so this pedestal pick-and-place is unaffected.
+    grasp_pitch: 0.4             # radians, nose-down tilt while approaching to grasp
+    place_pitch: 0.4             # radians, nose-down tilt while approaching to place
+    # Was 0.9. A live grasp retry (docs/pick_and_delivery_report.md section
+    # 4.17) showed MOVE_ARM_TO_GRASP's cartesian move completing only
+    # 93.75% of the path to grasp_pose -- still accepted under the old
+    # 0.9 threshold -- and landing ~1cm short of the actual target
+    # (commanded (0.5490,0.0178,-0.1186) vs achieved (0.5410,0.0175,
+    # -0.1121)). That short landing is exactly what caused the miss
+    # (gripper contact check: target=0.01200, actual=0.01220, essentially
+    # zero resistance) -- confirmed directly against a SIBLING attempt in
+    # the same run whose cartesian path completed 100% and got solid
+    # contact (actual=0.01510). Raised so a partial path this size is
+    # rejected (triggering the existing grasp_retry_available path)
+    # instead of silently executed short.
+    min_cartesian_fraction: 0.98
+    velocity_scaling: 0.2
+    acceleration_scaling: 0.2
+    # LIFT_OBJECT's cartesian move and STOW_OBJECT's retreat, specifically --
+    # the two motions that carry a just-grasped, marginally-held object.
+    # Live batch testing (docs/pick_and_delivery_report.md section 4.19,
+    # 4 trials) found the tightened grasp_width above did NOT by itself stop
+    # the object slipping free mid-lift (2/4 trials: contact registered at
+    # CLOSE_GRIPPER, then the post-lift holding check found the fingers had
+    # continued closing all the way to their target, i.e. nothing left
+    # between them). Also fixed a real, separate bug found while
+    # investigating: LIFT_OBJECT's cartesian path was running at FULL,
+    # UNSCALED speed the entire time -- computeCartesianPathRaw()'s
+    # GetCartesianPath request never set max_velocity_scaling_factor/
+    # max_acceleration_scaling_factor, which per that service's own doc
+    # comment silently default to 1.0 (not velocity_scaling/
+    # acceleration_scaling above) when left at 0. Both together: a slow,
+    # explicitly-scaled lift/retreat instead of an unscaled one.
+    lift_velocity_scaling: 0.08
+    lift_acceleration_scaling: 0.08
+    planning_time: 5.0
+    planning_attempts: 10

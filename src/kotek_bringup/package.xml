@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>kotek_bringup</name>
+  <version>0.1.0</version>
+  <description>
+    Launch files and parameter configs wiring together the kotek Scout Mini
+    + Piper pick demo. Contains no source code -- see plan section 4.
+  </description>
+  <maintainer email="dev@example.com">kotek</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>kotek_base_control</exec_depend>
+  <exec_depend>kotek_isaac_bridge</exec_depend>
+  <exec_depend>kotek_manipulation</exec_depend>
+  <exec_depend>kotek_task_coordinator</exec_depend>
+  <exec_depend>kotek_wall_mount_task</exec_depend>
+  <exec_depend>piper_camera_moveit_config</exec_depend>
+  <exec_depend>piper_description</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>moveit_ros_move_group</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

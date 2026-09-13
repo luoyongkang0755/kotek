@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>kotek_isaac_stage</name>
+  <version>0.1.0</version>
+  <description>
+    Offline USD stage authoring for the demo scene: overlays a graspable
+    sensor object and the drive/articulation fixes described in plan
+    section 11 onto the existing scout_and_piper_ros2_final.usd, without
+    modifying it. Runs under plain usd-core (pip install usd-core) -- it
+    does not need Isaac Sim or ROS 2, so it is intentionally not run as
+    part of the ROS graph; see kotek_ws/README.md.
+  </description>
+  <maintainer email="dev@example.com">kotek</maintainer>
+  <license>Apache-2.0</license>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

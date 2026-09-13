@@ -1,0 +1,157 @@
+# piper_manipulator overrides for the wall-mount task (4 camera-sensor
+# pick-and-magnetic-mount cycles), loaded INSTEAD of manipulation.yaml via
+# piper_moveit.launch.py's manipulation_config launch argument -- see
+# kotek_wall_mount_demo.launch.py. This is a full copy of manipulation.yaml's
+# piper_manipulator block (not a partial diff) because the launch file swaps
+# ONE param file in for the other rather than layering them: any key left
+# out here silently falls back to piper_manipulator.hpp's Params struct
+# defaults, which are the PEDESTAL demo's tuned values, not necessarily
+# reasonable ones for this task.
+#
+# Every value that differs from manipulation.yaml is called out below with
+# the live /piper/compute_ik measurement that produced it (wall AND the
+# riser cube modeled as real MoveIt CollisionObjects, not just
+# self-collision -- see the wall-mount task's chat history for the full
+# sweep data). Everything else (velocities, planning time/attempts, ...) is
+# copied unchanged from manipulation.yaml's own tuning history -- this task
+# grasps/releases the same gripper hardware, so there is no reason to
+# re-derive those. grasp_width is the one exception -- see its own comment.
+/piper/piper_manipulator:
+  ros__parameters:
+    arm_group: arm
+    gripper_group: gripper
+    # Riser-corner pickups sit close to the arm's own shoulder (radius
+    # ~0.109-0.154m, near arm-mount height) -- unlike the pedestal object
+    # (~0.52m out), the pedestal's approach_distance=0.12 horizontal backoff
+    # is NOT reachable there (every corner failed IK across a wide pitch
+    # sweep at 0.12m backoff). 0.03m is the smallest backoff confirmed
+    # reachable+collision-free (riser cube modeled) at all 4 corners.
+    approach_distance: 0.03
+    approach_height: 0.10
+    # Height-only preplace (no horizontal backoff) -- unchanged from
+    # manipulation.yaml's own reasoning (a horizontal backoff pulls the arm
+    # toward its own base): confirmed to still apply here too. A live sweep
+    # with a real MoveIt CollisionObject for the wall found even a 0.03-0.06m
+    # horizontal preplace backoff collides at 3 of 4 wall targets; height-only
+    # (this default) is reachable+collision-free at all 4.
+    place_approach_distance: 0.0
+    # 0.10 (the pedestal default) left the held box's underside only ~2cm
+    # above the riser top -- fine for the two wall-side corners, but the
+    # rear corners' carry to the wall swings DIRECTLY OVER the riser, and
+    # MoveIt plans that swing knowing nothing about the held box or the
+    # riser (neither is in its planning scene: the box isn't an
+    # AttachedCollisionObject and the riser is a hand-added USD prim, not a
+    # URDF link), so joint-space dips clipped the box against the riser and
+    # knocked it out of the fingers on 4 consecutive rear-corner cycles.
+    # 0.22 clears the riser top by ~14cm; a live isolated rear-corner grasp
+    # confirmed the arm holds the box stably at that height (z~0.72 world).
+    # 0.22 -> 0.12 (2026-09-07): 0.22 is DELIBERATELY unreachable -- every
+    # live lift across multiple full runs executed at fraction 0.609-0.636
+    # (0.22 x 0.609 = 0.134m = the arm's straight-up cartesian ceiling),
+    # leaving the trajectory's END parked exactly at the workspace boundary.
+    # There the arm has almost no velocity authority left: it creeps the
+    # final waypoints under load, overruns MoveIt's expected execution
+    # bound ("Controller is taking too long to execute trajectory ...
+    # Stopping trajectory" -> status=6 abort, observed aborting a full
+    # wall-mount run at grasp[4]'s LIFT_OBJECT), and -- worse -- the
+    # folding rear-corner configuration sweeps the arm's own links through
+    # the held box (invisible to MoveIt), stalling joint2 0.06 rad short
+    # and prying joint7 from its 0.019 stall to 0.131 over ~10s (live
+    # joint telemetry). 0.12 ends the lift ~14mm BELOW the measured
+    # ceiling: the trajectory completes in-bounds with the arm still
+    # having authority, and the box's underside still clears the riser
+    # top by ~12cm (the carries that worked in those same runs swung at
+    # the ACTUAL 0.134 height, so 12mm less is comfortably inside the
+    # envelope that already worked).
+    lift_height: 0.12
+    # Kept from the 0.22-era design: no longer load-bearing (0.12 is
+    # reachable, not ambitious) but harmless, and it preserves the
+    # "at least half" guard if lift_height is ever raised again.
+    min_lift_fraction: 0.5
+    # Loaded carries (the preplace swing + place descent) run at the slow
+    # lift scalings, not the normal 0.2: at full speed the swing's inertial
+    # torque pivoted the box out of the fingers mid-carry (PhysX point
+    # contacts have no torsional friction; boxes were found fallen directly
+    # under the swing path, landed upright on the riser). Same reasoning as
+    # lift_velocity_scaling's own comment, extended to the whole carry.
+    carry_velocity_scaling: 0.08
+    carry_acceleration_scaling: 0.08
+    retreat_height: 0.15
+    # moveGripperToWidth()'s contact check (piper_manipulator_node.cpp) works
+    # by commanding a target DELIBERATELY narrower than the real object, so a
+    # correctly-positioned object always blocks the close before it reaches
+    # that target -- contact = actual_joint7 > target_joint7 + 0.0015.
+    # manipulation.yaml's grasp_width=0.040 (target_joint7=0.020 per finger)
+    # was tuned that way against the PEDESTAL cube's real stall width
+    # (~0.052m, i.e. per-finger ~0.026 -- see manipulation.yaml's own
+    # comment). The sensor-cam box is only 0.035m wide along the grip axis
+    # (confirmed via a live measurement of its actual rotated footprint --
+    # see build_wall_stage.py's box-rotation comment): a 0.040m commanded
+    # gap is WIDER than the object, so the fingers close to the full
+    # commanded target with the object just sitting loose in the slack --
+    # never blocked, never squeezed, contact never detected. This isn't a
+    # position/orientation bug -- confirmed directly via piper_manipulator's
+    # own "grasp diagnostics: actual EE pose" log line, which matched the
+    # commanded grasp_pose to sub-millimeter precision on a live run that
+    # still reported "closed without contact". 0.026 sits meaningfully
+    # inside the object's 0.035m width. First tried 0.026 (per-finger target
+    # 0.013), then tightened to 0.018 (per-finger target 0.009) chasing a
+    # LIFT_OBJECT "slip" -- which later turned out to have nothing to do
+    # with squeeze at all (the object was still bolted to the chassis by a
+    # riser-hold joint PhysX could never release; see physics_tuning.py's
+    # riser-hold HISTORY comment). 0.018 is kept: a live in-Isaac probe at
+    # exactly this width measured a firm stall (actual ~0.0188/finger, ~10N
+    # squeeze) that held a 43N pull, and the finger drive's maxForce cap
+    # (shared, ~20N) bounds the real squeeze force regardless of how deep a
+    # stall is commanded, so there is no crush-force risk.
+    grasp_width: 0.018
+    gripper_open: 0.04
+    # Split gripper_pitch (see piper_manipulator.hpp's Params comment): the
+    # pedestal-tuned 0.4 rad works for NEITHER leg of this task once the
+    # riser cube / wall are modeled as real collision geometry, not just
+    # self-collision.
+    #   grasp_pitch: riser-corner grasp poses are IK-reachable+collision-free
+    #     (riser cube modeled) for pitch in [1.0, 1.4] rad at all 4 corners
+    #     (narrower, [1.1, 1.4], once the pregrasp approach backoff above is
+    #     included) -- 1.2 sits centered in that band with margin both ways.
+    #   place_pitch: wall-target place poses (wall modeled as a real
+    #     CollisionObject, fingertip offset correctly applied) are
+    #     IK-reachable+collision-free at pitch=0.7, getting the object within
+    #     ~0.01-0.03m of the wall face -- comfortably inside
+    #     physics_tuning.py's MAGNET_ATTRACT_RANGE=0.03m, so no magnet
+    #     re-tuning was needed.
+    grasp_pitch: 1.2
+    place_pitch: 0.7
+    min_cartesian_fraction: 0.98
+    velocity_scaling: 0.2
+    acceleration_scaling: 0.2
+    lift_velocity_scaling: 0.08
+    lift_acceleration_scaling: 0.08
+    # Was briefly 0.5s as a diagnostic for the LIFT_OBJECT slip (testing
+    # whether PhysX needed extra ticks after contact detection to build
+    # squeeze force). Disproven -- the slip's real cause was the riser-hold
+    # joints never actually releasing in PhysX (articulation-anchored
+    # FixedJoints ignore runtime disable/remove AND breakForce; see
+    # docs/pick_and_delivery_report.md's wall-mount addendum). The grip
+    # itself measured ~10N squeeze holding a 43N pull in a live probe, so no
+    # settle pause is needed; the param stays available as a general knob.
+    post_grasp_settle_time: 0.0   # s
+    # Pause after OPEN_GRIPPER, before RETREAT_ARM -- see piper_manipulator.
+    # hpp's Params::release_settle_time comment. A live run's joint telemetry
+    # caught the magnet yanking the just-released box against the
+    # still-opening fingers (joint7 pried 0.019 -> 0.131) and the retreat
+    # then dragging it into the arm's elbow links, from which it never
+    # reached the wall. 1.5s lets the magnet finish the capture (it starts
+    # ~4.5cm out, crosses that in well under a second at full force) before
+    # the arm moves back up through the box's airspace.
+    release_settle_time: 1.5      # s
+    # No stow retract after the lift: STOW_OBJECT exists to clear the
+    # lidar's forward scan cone for the pedestal task's DRIVE_TO_DELIVERY
+    # leg -- this task never drives -- and from this task's twisted
+    # rear-corner lift poses the stow swing to 'zero' physically knocks the
+    # held box out of the gripper (MoveIt doesn't model the grasped object;
+    # observed on 3 consecutive corner-3 runs, incl. joint7 pried 11cm past
+    # its limit). See piper_manipulator.hpp's stow_after_lift comment.
+    stow_after_lift: false
+    planning_time: 5.0
+    planning_attempts: 10

@@ -1,0 +1,99 @@
+Panels:
+  - Class: rviz_common/Displays
+    Help Height: 78
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /TF1
+      Splitter Ratio: 0.5
+    Tree Height: 400
+  - Class: rviz_common/Views
+    Name: Views
+  - Class: rviz_common/Image
+    Name: Wrist Camera
+    Topic:
+      Depth: 5
+      Durability Policy: Volatile
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Value: /piper/camera/wrist/image_raw
+  - Class: rviz_common/Image
+    Name: Sensor-in-Hand Camera
+    Topic:
+      Depth: 5
+      Durability Policy: Volatile
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      # Only the sensor currently being carried is meaningful; swap this
+      # topic to /sensor_camera_2.../4/image_raw as needed while operating
+      # -- all 4 publish concurrently (author_camera_graphs.py).
+      Value: /sensor_camera_1/image_raw
+  - Class: rviz_common/Image
+    Name: External Camera
+    Topic:
+      Depth: 5
+      Durability Policy: Volatile
+      History Policy: Keep Last
+      Reliability Policy: Reliable
+      Value: /external_camera/image_raw
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz_default_plugins/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Name: Grid
+      Plane: XY
+      Reference Frame: <Fixed Frame>
+      Value: true
+    - Class: rviz_default_plugins/RobotModel
+      Description Topic:
+        Value: /robot_description
+      Enabled: true
+      Name: RobotModel
+      Value: true
+      Visual Enabled: true
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Name: TF
+      Show Names: true
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: odom
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+      Hide Inactive Objects: true
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 3
+      Focal Point:
+        X: 0.3
+        Y: 0
+        Z: 0.3
+      Name: Current View
+      Pitch: 0.5
+      Yaw: 0.5
+Window Geometry:
+  Displays:
+    collapsed: false
+  External Camera:
+    collapsed: false
+  Height: 900
+  Sensor-in-Hand Camera:
+    collapsed: false
+  Views:
+    collapsed: false
+  Width: 1600
+  Wrist Camera:
+    collapsed: false

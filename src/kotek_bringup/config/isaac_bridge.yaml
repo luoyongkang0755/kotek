@@ -1,0 +1,26 @@
+/piper/isaac_joint_bridge:
+  ros__parameters:
+    isaac_state_topic: /isaac_joint_states       # absolute -- Isaac's own topic, not namespaced
+    isaac_command_topic: /isaac_joint_commands   # absolute -- Isaac's own topic, not namespaced
+    arm_joints: [joint1, joint2, joint3, joint4, joint5, joint6]
+    gripper_joints: [joint7, joint8]
+    command_rate: 100.0          # matches the stage's controller_manager update_rate
+    goal_time_tolerance: 2.0
+    position_tolerance: 0.02
+    stall_position_delta: 0.001
+    stall_ticks_required: 10
+    # rad; absorbs PhysX position-drive settling error at a joint limit
+    # (observed -0.0001 on joint2 after STOW_OBJECT's retreat to the SRDF
+    # 'zero' pose, which sits exactly on joint2's lower bound of 0) so
+    # move_group's CheckStartStateBounds adapter doesn't reject the start
+    # state with START_STATE_INVALID. See isaac_joint_bridge.py's
+    # _isaac_state_cb for the full chain.
+    bounds_clamp_tolerance: 0.01
+
+sensor_pose_publisher:
+  ros__parameters:
+    world_frame: world
+    sensor_frame: sensor
+    output_frame: odom
+    world_to_odom: [0.0, 0.0, 0.0, 0.0]  # x,y,z,yaw of world in odom; identity: scout spawns at world origin
+    publish_rate: 10.0
