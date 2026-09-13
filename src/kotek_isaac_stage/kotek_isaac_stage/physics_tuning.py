@@ -707,6 +707,22 @@ WELD_MAX_SPEED = 0.01                        # m/s, at-rest threshold -- see
 # WELD_MAX_SPEED it also keeps a gripped, still-descending place from
 # welding (the carry never has zero angular velocity for long).
 WELD_MAX_ANG_SPEED = 0.5                     # rad/s, at-rest threshold
+# Misalignment gate, new 2026-09-13 (measured, E2E): the 2026-09-10 stab-ON
+# E2E welded sensor 1 at 45.8 deg misalignment (d=0.0316) -- the d/speed/
+# ang_speed gates alone happily weld a box that is still toppling or is
+# jammed flat against the wall, freezing it crooked by construction (the
+# 2026-08-25 "crooked fridge magnet" acceptance was written under the
+# torque-free model; the dipole model CAN align in free space but has no
+# authority against wall-contact friction, so a crooked weld is a permanent
+# defect, not a cosmetic one). Only weld once the bottom face is already
+# within this angle of the wall normal. 15 deg sits between the misaligned
+# probe's measured free-space settle (30 deg arrival -> 6.6 deg at weld) and
+# every observed bad weld (>= 45.8 deg), so it kills crooked welds without
+# blocking legitimate ones. A box that arrives worse than this must be
+# flattened by the alignment torque BEFORE it may weld -- if it never gets
+# there, that is a delivery-pipeline bug to fix at the source, not to mask
+# with a permissive gate.
+WELD_MAX_MISALIGN_DEG = 15.0                 # deg, bottom-normal vs wall
 # 0.03 -> 0.05 (2026-08-25): with the parking brake pinning the chassis at
 # its true authored standoff, the place release point had to move 4.5cm
 # short of the wall face (the carried box's pitched corner was being driven
@@ -715,7 +731,24 @@ WELD_MAX_ANG_SPEED = 0.5                     # rad/s, at-rest threshold
 # the whole range (Bug 5), and the dipole calibration below derives from
 # this value the same way the old gain did, so the force law scales with
 # it; weld gate/equilibrium unchanged.
-MAGNET_ATTRACT_RANGE = 0.05                  # m
+# 0.05 -> 0.08 (2026-09-13, measured): the stab-ON E2E's misalignment
+# post-mortem (docs/handoff data, /tmp/box_trace_stab_on.csv) showed the
+# delivered boxes tumbling to 39-90 deg -- far outside the dipole capture
+# cone (a probe at 90 deg flat / d=0.075 was REPULSED: d grew 0.075 ->
+# 0.085 and the box escaped). The tumble comes from the 45-deg V-grip at
+# grasp (see piper_manipulator's grasp_yaw_snap_step), but even the
+# reoriented vertical delivery lands its magnet face ~2.5-5cm off the wall,
+# and at 90 deg / 5cm the old 5cm range + 4.6 moment had zero authority.
+# The vertical_65 probe (2026-09-13, box vertical at magnet-face d=0.026,
+# overrides range=0.08 / moment=11.7) captured, pulled in, and welded at
+# 9.7 deg misalignment within 0.6s -- that range is a validated working
+# point.
+# 0.08 -> 0.10 (2026-09-13): the reoriented vertical delivery can only
+# release from above the arm's lower workspace boundary (link6 z ~ -0.05 m,
+# measured by an OMPL plan sweep), putting the box's magnet face ~7-9cm
+# from its patch at the moment of release -- outside a 0.08 range. See the
+# moment recalibration below (same 2 N at the new outer edge).
+MAGNET_ATTRACT_RANGE = 0.10                  # m
 MAGNET_TAPER_DISTANCE = MAGNET_ATTRACT_RANGE   # interaction ramps down over
                                                 # the WHOLE attract range,
                                                 # not just the last few mm --
@@ -730,6 +763,28 @@ MAGNET_MAX_FORCE = 2.0                       # N, clamps |F_dipole| (gravity
 # pull at the attract-range edge (Bug 1's lesson: full strength at the
 # OUTER edge, not just near contact): K = 2.0 * 0.05**4 / 6 = 2.08e-6 N*m^4
 # -> MAGNET_DIPOLE_MOMENT = sqrt(K / 1e-7) = 4.56 -> 4.6.
+# 4.6 -> 11.7 (2026-09-13, recalibrated for MAGNET_ATTRACT_RANGE 0.05 ->
+# 0.08): K = 2.0 * 0.08**4 / 6 = 1.365e-5 -> moment = sqrt(K/1e-7) = 11.68.
+# 11.7 -> 18.3 (2026-09-13, second recalibration for 0.08 -> 0.10):
+# K = 2.0 * 0.10**4 / 6 = 3.33e-5 -> moment = sqrt(K/1e-7) = 18.26. The
+# reoriented delivery releases the box ~7cm ABOVE its patch (the arm's
+# lower workspace boundary, link6 z ~ -0.05 m measured by OMPL sweep,
+# forbids delivering any lower), so the attract range must cover that
+# gap; capture from the new 0.8x-range spawn distance (0.08m) is
+# validated by probe_magnet_tuning.py's in-range/misaligned modes.
+# Same 2 N at the new outer edge; 6x stronger at any FIXED distance (the
+# 1/r**4 law against a larger range), which is what gives the magnet
+# authority over a tumbled box and over the ~2.5-5cm reoriented delivery
+# gap -- measured, not assumed: the vertical_65 probe (moment override
+# 11.7) captured a vertical box from magnet-face d=0.026 and welded it at
+# 9.7 deg in 0.6s, while the production 4.6 values let the 90-deg flat
+# deliveries in the stab-ON E2E jam at d=0.046-0.050 forever unwelded.
+# NOTE: the alignment-torque taper (MAGNET_TAPER_FLOOR /
+# MAGNET_TORQUE_TAPER_DISTANCE) still bottoms out at 3cm -- at larger d
+# the torque-per-degree is WEAKER than before at the same distance
+# (K up 6.6x but taper window 0.08-0.003 vs 0.05-0.003). The misaligned
+# probe must be re-run (stage-D validation) to confirm free-space tilt
+# recovery still converges.
 #
 # SIZING TENSION, measured against the formula, not assumed: the point-
 # dipole torque from the SAME coupling is |tau| = 2*K*sin(theta)/r**3 near
@@ -750,7 +805,7 @@ MAGNET_MAX_FORCE = 2.0                       # N, clamps |F_dipole| (gravity
 # fridge magnet clicks into place, it does not slam-align at hundreds of
 # rad/s^2). The clamp is how that finite-size physics enters the model.
 # Validated by probe_magnet_tuning.py --mode misaligned.
-MAGNET_DIPOLE_MOMENT = 4.6                   # A*m^2, each magnet
+MAGNET_DIPOLE_MOMENT = 18.3                  # A*m^2, each magnet
 # 0.02 -> 0.002 (2026-09-07, measured): the first clamp value, picked as
 # "2x above plausible", turned out 10-100x too hot for this moment of
 # inertia. A live in-range probe (which starts with the bottom face

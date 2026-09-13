@@ -42,6 +42,18 @@ before assuming something is a bug.
   over DDS with `network_mode: host`.
 - **USD/usd-core** for stage authoring (`kotek_isaac_stage`).
 
+## Key configuration files
+
+| File | Role |
+|---|---|
+| `docker/Dockerfile` | `ros:jazzy-ros-base` + MoveIt, CycloneDDS/FastRTPS RMWs, `piper_sdk` + `python-can` (teleop leader arm), `libspnav0` (SpaceMouse) |
+| `docker/compose.yaml` | `network_mode: host`, `RMW_IMPLEMENTATION=rmw_cyclonedds_cpp`, mounts `../src` rw and `/home/trs/isaac_simulation` **read-only** |
+| `run_isaac.sh` | Launches any script with the working Isaac python (`/home/trs/env_isaaclab/bin/python`); preloads `libgomp` (mandatory on this aarch64 host); `KOTEK_WITH_ROS=1` wires Isaac's bundled ROS 2 libs |
+| `kotek.repos` | Documents the `isaac_simulation` dependency for fresh clones |
+| `src/*/package.xml` + `CMakeLists.txt` / `setup.py` | Standard ament_cmake / ament_python package manifests (no pyproject.toml/package.json — this is a pure ROS 2 workspace) |
+| `src/kotek_bringup/config/*.yaml` | **All** tunables (see "Architecture conventions" below) |
+| `src/kotek_bringup/launch/*.launch.py` | The launch files (demo, wall-mount, teleop, base_control, piper_moveit) |
+
 ## Repository layout (src/, all ROS packages)
 
 | Package | Build type | Role |
@@ -89,7 +101,8 @@ docker compose -f docker/compose.yaml run --rm kotek bash -lc '
 ```
 
 Inside the container sources are at `/workspace/src/kotek` and
-`/workspace/src/isaac_simulation`. Last verified: 121 tests, 0 failures.
+`/workspace/src/isaac_simulation`. Last verified: 136 tests, 0 failures
+(the `--packages-select` list is deliberate — see "Testing strategy").
 
 **Isaac Sim runs on the host, never in Docker.** Use `./run_isaac.sh <script.py>`
 (it selects the working Isaac python at `/home/trs/env_isaaclab/bin/python`,
@@ -162,6 +175,15 @@ report §4.1). README §6–§7 give the full Tier-3/E2E recipes and the run ord
 - **Tier 1** — gtest/pytest unit tests of pure logic (control law, obstacle
   avoidance, pose utils, pregrasp geometry, FSM transitions, teleop mapping).
   Run via `colcon test` in the container; no sim needed.
+
+Why the build/test commands above use `--packages-select` / `--packages-skip`:
+`kotek_isaac_stage` has no container-side unit tests by design (its tests are
+the Tier-3 host-side Isaac scripts) and its bare `colcon test` reports a pytest
+collection error; the upstream `isaac_simulation` packages
+(`piper_description`, `piper_camera_moveit_config`) carry their own lint noise.
+The curated selection tests exactly the five kotek packages that own unit
+tests. `kotek_teleop` (75 pytest tests) and `kotek_wall_mount_task` can also be
+added to the selection; both pass.
 - **Tier 2** — launch smoke tests (`ros2 launch kotek_bringup kotek_demo.launch.py`)
   verifying all nodes come up together without Isaac.
 - **Tier 3** — real Isaac Sim tests in `kotek_isaac_stage`:
@@ -170,3 +192,24 @@ report §4.1). README §6–§7 give the full Tier-3/E2E recipes and the run ord
   against the real compiled controller), `pick_and_delivery_e2e_test.py`
   (full live E2E). The wall-mount demo's E2E is run manually via
   `run_wall_stage.py` + `wall_mount_task` (README §7).
+
+## Safety & security considerations
+
+- **The teleop haptic loop drives a real robot arm under torque control.** It
+  is disabled by default (`haptics_enabled: false` in `config/teleop.yaml`);
+  flip it only in a supervised bench session with a hand on the physical e-stop
+  (see `kotek_teleop/scripts/piper/bench_mit_switch.py` and the node's own
+  docstring). The SpaceMouse deadman/estop buttons are part of the safety path —
+  don't bypass `require_deadman_for_follow` / `require_no_other_cmd_vel_publisher`.
+- **Never run the autonomous stack and teleop stack together** — they fight
+  over `/cmd_vel` and `/isaac_joint_commands`; the launch files and startup
+  publisher-count guards are the defense, don't weaken them.
+- **Never modify the read-only mounts**: `isaac_simulation` (external repo),
+  and never hand-edit generated USD — regenerate via the stage scripts so
+  `inspect_stage.py --assert-demo-ready` stays meaningful.
+- The container mounts the host X11 socket and `/run/spnav.sock`; those grants
+  exist for rviz and SpaceMouse input respectively — don't expand the mounts
+  or run the compose service with broader privileges than given.
+- DDS traffic crosses host↔container on `network_mode: host`; isolate demos
+  from other ROS systems (and from the real-robot teleop container) with a
+  non-default `ROS_DOMAIN_ID` rather than exposing services beyond the host.

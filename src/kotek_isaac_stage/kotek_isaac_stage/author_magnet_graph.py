@@ -141,8 +141,11 @@ physics_tuning.py's bug history -- measured, not guessed):
     wildcard. The physical content of the dipole model (orientation-
     dependent force direction + tau = m_s x B_w) is fully retained; only
     the application point moves to the COM.
-  * Weld logic unchanged: a one-shot breakable UsdPhysics.FixedJoint once
-    d < weldDistance and speed < weldMaxSpeed.
+  * Weld logic: a one-shot breakable UsdPhysics.FixedJoint once d <
+    weldDistance, speed < weldMaxSpeed, ang_speed < weldMaxAngSpeed AND
+    misalign_deg < weldMaxMisalign -- the 2026-09-13 addition of the last
+    gate (physics_tuning.py's WELD_MAX_MISALIGN_DEG) stops a still-toppling
+    or wall-jammed box from being frozen crooked by construction.
 
 Reads the fixed (sensor, target) pairs and every tunable constant from
 this node's own input attributes -- see author_magnet_graph.py for where
@@ -230,6 +233,7 @@ def compute(db):
     torque_cutoff = float(db.inputs.torqueCutoff)
     weld_max_speed = float(db.inputs.weldMaxSpeed)
     weld_max_ang_speed = float(db.inputs.weldMaxAngSpeed)
+    weld_max_misalign = float(db.inputs.weldMaxMisalign)
     break_force = float(db.inputs.breakForce)
     break_torque = float(db.inputs.breakTorque)
     bottom_local_z = float(db.inputs.bottomLocalOffsetZ)   # negative half-height
@@ -372,9 +376,18 @@ def compute(db):
         # torque means a box can be LINEARLY at rest yet still rotating
         # into alignment -- welding it mid-swing would freeze it crooked
         # by construction (see physics_tuning.py's WELD_MAX_ANG_SPEED
-        # note). The old torque-free model never needed this.
+        # note). The old torque-free model never needed this. The
+        # MISALIGNMENT gate (2026-09-13, WELD_MAX_MISALIGN_DEG) is the same
+        # lesson one level up: even a linearly AND angularly settled box
+        # can be resting crooked (toppled, or jammed flat against the wall
+        # where the clamped alignment torque has no authority against
+        # contact friction) -- measured live: sensor 1 welded at 45.8 deg.
+        # A crooked weld is permanent, so the gate refuses it and lets the
+        # torque keep working; a box that NEVER aligns is a delivery bug
+        # to fix at the source, not to mask with a permissive weld gate.
         if (d < weld_distance and speed < weld_max_speed
-                and ang_speed_weld < weld_max_ang_speed):
+                and ang_speed_weld < weld_max_ang_speed
+                and misalign_deg < weld_max_misalign):
             joint_path = f'/World/wall/_magnet_weld_{i + 1}'
             if not stage.GetPrimAtPath(joint_path).IsValid():
                 wall_prim = stage.GetPrimAtPath(wall_prim_path)
@@ -450,6 +463,7 @@ def build_magnet_graph(og, graph_path, sensor_paths, wall_targets_flat):
                 (f'{MAGNET_NODE_NAME}.inputs:torqueCutoff', 'double'),
                 (f'{MAGNET_NODE_NAME}.inputs:weldMaxSpeed', 'double'),
                 (f'{MAGNET_NODE_NAME}.inputs:weldMaxAngSpeed', 'double'),
+                (f'{MAGNET_NODE_NAME}.inputs:weldMaxMisalign', 'double'),
                 (f'{MAGNET_NODE_NAME}.inputs:breakForce', 'double'),
                 (f'{MAGNET_NODE_NAME}.inputs:breakTorque', 'double'),
                 (f'{MAGNET_NODE_NAME}.inputs:bottomLocalOffsetZ', 'double'),
@@ -480,6 +494,7 @@ def build_magnet_graph(og, graph_path, sensor_paths, wall_targets_flat):
                 (f'{MAGNET_NODE_NAME}.inputs:torqueCutoff', pt.MAGNET_TORQUE_CUTOFF),
                 (f'{MAGNET_NODE_NAME}.inputs:weldMaxSpeed', pt.WELD_MAX_SPEED),
                 (f'{MAGNET_NODE_NAME}.inputs:weldMaxAngSpeed', pt.WELD_MAX_ANG_SPEED),
+                (f'{MAGNET_NODE_NAME}.inputs:weldMaxMisalign', pt.WELD_MAX_MISALIGN_DEG),
                 (f'{MAGNET_NODE_NAME}.inputs:breakForce', pt.MAGNET_BREAK_FORCE),
                 (f'{MAGNET_NODE_NAME}.inputs:breakTorque', pt.MAGNET_BREAK_TORQUE),
                 (f'{MAGNET_NODE_NAME}.inputs:bottomLocalOffsetZ',

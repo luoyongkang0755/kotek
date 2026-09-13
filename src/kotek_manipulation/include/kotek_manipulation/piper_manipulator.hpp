@@ -82,6 +82,39 @@ private:
     // wall_mount.yaml -- see that file's cross-reference comment.
     double grasp_pitch = 0.4;
     double place_pitch = 0.4;
+    // Wall-mount grasp anti-V-grip fix (2026-09-13, measured): the riser
+    // corners sit at approach_yaw = atan2(+-0.109, +-0.109) = +-45 deg, so
+    // the gripper's opening axis (computeGraspPose's
+    // cross(world_up, approach_dir), always horizontal and perpendicular to
+    // the approach) also lands at 45 deg to the box's edges -- the jaws close
+    // diagonally across the box corner in a V, and nothing geometrically
+    // prevents the box yawing/rolling as the fingers stall (the stab-ON E2E
+    // delivered the 4 boxes at 39.3/90/51.2/90 deg misalignment; see
+    // physics_tuning.py's MAGNET_ATTRACT_RANGE history). Snap the approach
+    // yaw to a multiple of this step (0 = off, pedestal demo unchanged) so
+    // the jaws close PARALLEL to an edge pair instead of diagonally across
+    // the object's corner. wall_mount.yaml uses pi, NOT pi/2: this box is
+    // 8cm along X but only 3.5cm along Y and the gripper opens 4cm max, so
+    // the jaws can straddle the Y width only -- which needs the approach
+    // along +-X (opening axis along Y). pi/2 (approach along +-Y) would
+    // demand an impossible 8cm straddle.
+    double grasp_yaw_snap_step = 0.0;
+    // Wall-mount place reorientation (2026-09-13, measured): the wall
+    // target accepts the box only with its magnet face (local -Z) toward
+    // the wall and its 8cm edge vertical, but the box is carried FLAT from
+    // the riser. When true, executePlace() overrides the place orientation
+    // with a FIXED absolute TCP frame (opening axis -Y, fingertip axis
+    // (sin grasp_pitch, 0, -cos grasp_pitch) -- at the wall, tilted DOWN)
+    // and recomputes link6's position so the FINGERTIPS still land on the
+    // commanded place point. The relative rotation from either snapped
+    // grasp orientation (yaw 0/pi) to this frame is exactly the box's
+    // flat->vertical rotation (verified column-by-column for both yaw
+    // signs); the downward fingertip tilt keeps link6 above the arm's
+    // measured lower workspace boundary (z ~ -0.05 m, live OMPL sweep),
+    // which the plain Ry(-90) composite violated by 12 cm. Requires
+    // grasp_yaw_snap_step to be active so the box is picked up flat and
+    // axis-aligned; false = pedestal demo unchanged.
+    bool place_reorient = false;
     double min_cartesian_fraction = 0.9;
     double velocity_scaling = 0.2;
     double acceleration_scaling = 0.2;
@@ -151,6 +184,15 @@ private:
     double carry_acceleration_scaling = -1.0;
     double planning_time = 5.0;
     int planning_attempts = 10;
+    // Max seconds to wait for a /piper/move_action result once the goal is
+    // accepted. On this Isaac stage a full plan+execute legitimately takes
+    // 30s+ (preplace measured ~35s: 5s OMPL plan plus a ~25-30s real-time
+    // trajectory at the sim's low joint-state rate). A hardcoded 30s timed
+    // out on the first preplace of every E2E run, the retry then sent a
+    // second concurrent goal while the first trajectory was still executing
+    // -- which segfaulted move_group ("Cannot push a new trajectory while
+    // another is being executed", exit -11, 2026-09-13). Default 120s.
+    double move_action_result_timeout = 120.0;
   };
 
   Params loadParams();

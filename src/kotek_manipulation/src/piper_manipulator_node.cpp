@@ -5,6 +5,8 @@
 #include <functional>
 #include <thread>
 
+#include <algorithm>
+
 #include "geometry_msgs/msg/pose.hpp"
 
 namespace kotek_manipulation
@@ -65,6 +67,9 @@ PiperManipulator::Params PiperManipulator::loadParams()
   p.gripper_open = declare_parameter<double>("gripper_open", p.gripper_open);
   p.grasp_pitch = declare_parameter<double>("grasp_pitch", p.grasp_pitch);
   p.place_pitch = declare_parameter<double>("place_pitch", p.place_pitch);
+  p.grasp_yaw_snap_step =
+    declare_parameter<double>("grasp_yaw_snap_step", p.grasp_yaw_snap_step);
+  p.place_reorient = declare_parameter<bool>("place_reorient", p.place_reorient);
   p.min_cartesian_fraction =
     declare_parameter<double>("min_cartesian_fraction", p.min_cartesian_fraction);
   p.velocity_scaling = declare_parameter<double>("velocity_scaling", p.velocity_scaling);
@@ -86,6 +91,8 @@ PiperManipulator::Params PiperManipulator::loadParams()
     declare_parameter<double>("carry_acceleration_scaling", p.carry_acceleration_scaling);
   p.planning_time = declare_parameter<double>("planning_time", p.planning_time);
   p.planning_attempts = declare_parameter<int>("planning_attempts", p.planning_attempts);
+  p.move_action_result_timeout = declare_parameter<double>(
+    "move_action_result_timeout", p.move_action_result_timeout);
   return p;
 }
 
@@ -244,6 +251,19 @@ bool PiperManipulator::sendMoveGroupRequest(
   constexpr int kMoveGroupAttempts = 4;
   constexpr auto kRetryPause = std::chrono::seconds(5);
   for (int attempt = 1;; ++attempt) {
+    if (attempt > 1) {
+      // The previous attempt's goal may STILL be planning/executing inside
+      // move_group even though we already timed out waiting for its result
+      // (this stage's plan+execute legitimately exceeds the result timeout;
+      // see Params::move_action_result_timeout). Sending a second goal while
+      // that trajectory is still executing does not get queued -- it segfaults
+      // move_group ("Cannot push a new trajectory while another is being
+      // executed" -> process exit -11, reproduced on every E2E run,
+      // 2026-09-13). Cancel whatever is still in flight and give its
+      // trajectory_execution_manager a beat to wind down before retrying.
+      raw_move_client_->async_cancel_all_goals();
+      std::this_thread::sleep_for(std::chrono::seconds(2));
+    }
     if (sendMoveGroupRequestOnce(request, error_out)) {
       return true;
     }
@@ -288,7 +308,9 @@ bool PiperManipulator::sendMoveGroupRequestOnce(
   }
 
   auto result_future = raw_move_client_->async_get_result(goal_handle);
-  if (result_future.wait_for(std::chrono::seconds(30)) != std::future_status::ready) {
+  if (result_future.wait_for(std::chrono::duration<double>(params_.move_action_result_timeout)) !=
+    std::future_status::ready)
+  {
     error_out = "move_action result timed out";
     return false;
   }
@@ -630,7 +652,22 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
   const Point3 object_arm{
     goal->object_pose.pose.position.x, goal->object_pose.pose.position.y,
     goal->object_pose.pose.position.z};
-  const double approach_yaw_local = std::atan2(object_arm.y, object_arm.x);
+  double approach_yaw_local = std::atan2(object_arm.y, object_arm.x);
+  if (params_.grasp_yaw_snap_step > 0.0) {
+    // Anti-V-grip snap (see Params::grasp_yaw_snap_step): round the
+    // approach yaw to a multiple of the step so the jaws close parallel to
+    // the object's edges instead of diagonally across a corner. The result
+    // is clamped to +-step as a sanity bound only. wall_mount.yaml uses
+    // step=pi: candidates are {0, +-180 deg} -- approach along +-X, jaw
+    // opening along Y -- which straddles this box's 3.5cm Y width (its only
+    // dimension under the gripper's 4cm max opening). Do NOT use step=pi/2
+    // here: +-90deg points the opening along X, and straddling the box's
+    // 8cm X edge is geometrically impossible for this gripper.
+    approach_yaw_local =
+      std::round(approach_yaw_local / params_.grasp_yaw_snap_step) * params_.grasp_yaw_snap_step;
+    approach_yaw_local =
+      std::clamp(approach_yaw_local, -params_.grasp_yaw_snap_step, params_.grasp_yaw_snap_step);
+  }
   const Pose3 grasp_pose = computeGraspPose(object_arm, approach_yaw_local, params_.grasp_pitch);
   const Pose3 approach_pose = computeApproachPose(
     grasp_pose, params_.approach_distance, params_.approach_height, approach_yaw_local);
@@ -850,7 +887,56 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
     goal->place_pose.pose.position.x, goal->place_pose.pose.position.y,
     goal->place_pose.pose.position.z};
   const double approach_yaw_local = std::atan2(place_arm.y, place_arm.x);
-  const Pose3 place_pose = computeGraspPose(place_arm, approach_yaw_local, params_.place_pitch);
+  Pose3 place_pose = computeGraspPose(place_arm, approach_yaw_local, params_.place_pitch);
+  if (params_.place_reorient) {
+    // Wall-mount place reorientation (2026-09-13, measured): the carried
+    // box must end with its magnet face (local -Z) toward the wall (+X),
+    // 8cm edge vertical. The TCP target frame is a FIXED absolute frame
+    // (independent of the grasp leg): opening axis along -Y, +Z (fingertip
+    // axis) pointing at the wall and tilted DOWN -- see the measured tilt
+    // derivation below. The relative rotation from either snapped grasp
+    // orientation (yaw 0 or pi, see grasp_yaw_snap_step) to this frame is
+    // approximately the box's required flat->vertical rotation: at the
+    // exact box-correct tilt (90deg - grasp_pitch) it IS exact (verified
+    // column-by-column for both yaw signs: cycles 0/1 compose Ry(-90) x
+    // Rz(180), cycles 2/3 compose Ry(-90); both map box -Z -> +X and box
+    // X -> +/-Z vertical). The downward finger tilt also keeps link6 above
+    // the arm's measured lower workspace boundary (link6 z ~ -0.05 m, live
+    // OMPL sweep): the upward-tilt variant (plain Ry(-90)) put link6 at
+    // -0.17 m -- unplannable.
+    // The downward tilt was swept empirically (2026-09-13, live one-shot IK
+    // over tilt x roll x position): the exact box-correct tilt (90deg -
+    // grasp_pitch = 21deg here) is UNREACHABLE at the wall standoff
+    // (0/30 IK seeds), 29deg works only at the outer targets, 37deg only at
+    // some, 45deg works everywhere (12/12 seeds at every target AND the
+    // full production-leg chain reaches fraction 1.0 on every leg, sweep
+    // ik_sweep2.py). The resulting 24deg magnet-face error is inside the
+    // dipole capture cone (measured >=30deg
+    // recovery, probe_magnet_tuning.py --mode misaligned) and the weld gate
+    // (WELD_MAX_MISALIGN_DEG=15) simply defers welding until the alignment
+    // torque settles the box below 15deg -- measured settle 30deg -> 1.9deg.
+    // Capture distance, not reachability, sets the ceiling on this trade:
+    // the box releases ~7cm above its patch, so MAGNET_ATTRACT_RANGE went
+    // 0.08 -> 0.10 (physics_tuning.py) to keep the arrival inside the range.
+    const double tilt = 1.5707963267948966 - params_.grasp_pitch + 0.415;
+    const Point3 approach_dir{std::cos(tilt), 0.0, -std::sin(tilt)};
+    const Point3 opening_axis{0.0, -1.0, 0.0};
+    const Point3 third_axis = vecCross(approach_dir, opening_axis);
+    place_pose.orientation = quaternionFromAxes(opening_axis, third_axis, approach_dir);
+    // Recompute link6's origin so the FINGERTIPS (0.13503m along the new
+    // local +Z) land on the commanded place point -- same offset math as
+    // computeGraspPose's own backing-off.
+    constexpr double kFingertipOffsetFromLink6 = 0.13503;  // meters, piper_description.urdf
+    place_pose.position.x = place_arm.x - kFingertipOffsetFromLink6 * approach_dir.x;
+    place_pose.position.y = place_arm.y - kFingertipOffsetFromLink6 * approach_dir.y;
+    place_pose.position.z = place_arm.z - kFingertipOffsetFromLink6 * approach_dir.z;
+    RCLCPP_INFO(
+      get_logger(),
+      "place reorient: absolute TCP target (opening -Y, fingertips tilted down), "
+      "place_pose.position=(%.4f,%.4f,%.4f) fingertip_axis=(%.3f,%.3f,%.3f)",
+      place_pose.position.x, place_pose.position.y, place_pose.position.z,
+      approach_dir.x, approach_dir.y, approach_dir.z);
+  }
   const Pose3 preplace_pose = computeApproachPose(
     place_pose, params_.place_approach_distance, params_.approach_height,
     approach_yaw_local);

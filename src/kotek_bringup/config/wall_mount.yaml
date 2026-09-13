@@ -27,14 +27,22 @@
     # sweep at 0.12m backoff). 0.03m is the smallest backoff confirmed
     # reachable+collision-free (riser cube modeled) at all 4 corners.
     approach_distance: 0.03
-    approach_height: 0.10
+    # 0.10 -> 0.05 (2026-09-13, measured): with the grasp approach yaw
+    # snapped to {0, +-180} (grasp_yaw_snap_step below), the pregrasp pose
+    # 10cm above the grasp puts link6 at (+/-0.03, +/-0.109, 0.245) -- a
+    # live OMPL sweep (production-identical plan-only requests, wall+riser
+    # as CollisionObjects) found that pose UNPLANNABLE from every start
+    # tried while the same pose at +0.05cm plans cleanly at all 4 corners
+    # (and the 5cm descent to grasp still has fraction 1.0). Only used by
+    # the wall-mount launch (pedestal keeps its own manipulation.yaml).
+    approach_height: 0.05
     # Height-only preplace (no horizontal backoff) -- unchanged from
     # manipulation.yaml's own reasoning (a horizontal backoff pulls the arm
     # toward its own base): confirmed to still apply here too. A live sweep
     # with a real MoveIt CollisionObject for the wall found even a 0.03-0.06m
     # horizontal preplace backoff collides at 3 of 4 wall targets; height-only
     # (this default) is reachable+collision-free at all 4.
-    place_approach_distance: 0.0
+    place_approach_distance: 0.03
     # 0.10 (the pedestal default) left the held box's underside only ~2cm
     # above the riser top -- fine for the two wall-side corners, but the
     # rear corners' carry to the wall swings DIRECTLY OVER the riser, and
@@ -76,7 +84,7 @@
     # lift_velocity_scaling's own comment, extended to the whole carry.
     carry_velocity_scaling: 0.08
     carry_acceleration_scaling: 0.08
-    retreat_height: 0.15
+    retreat_height: 0.12
     # moveGripperToWidth()'s contact check (piper_manipulator_node.cpp) works
     # by commanding a target DELIBERATELY narrower than the real object, so a
     # correctly-positioned object always blocks the close before it reaches
@@ -120,8 +128,30 @@
     #     ~0.01-0.03m of the wall face -- comfortably inside
     #     physics_tuning.py's MAGNET_ATTRACT_RANGE=0.03m, so no magnet
     #     re-tuning was needed.
+    #   place_reorient (2026-09-13, measured): NEUTERS place_pitch entirely --
+    #     executePlace() overrides the place orientation with Ry(-90deg) *
+    #     grasp-orientation (carrying the flat-held box to vertical, magnet
+    #     face to the wall) and recomputes link6's position; place_pitch only
+    #     feeds the discarded orientation. The stab-ON E2E post-mortem
+    #     measured the 4 delivered boxes at 39.3/90/51.2/90 deg misalignment:
+    #     the 45-deg V-grip at grasp lets the box tumble in the fingers, a
+    #     flat box is REPELLED by the dipole magnet outside its capture cone
+    #     (probe: 90-deg flat at d=0.075 escaped), and a box jammed flat
+    #     against the wall welds crooked or never (weld gate now rejects
+    #     >15 deg, physics_tuning.py's WELD_MAX_MISALIGN_DEG). Verified by
+    #     the vertical_65 probe: a vertical box at magnet-face d=0.026 with
+    #     moment 11.7/range 0.08 is captured, pulled in, and welded at 9.7
+    #     deg in 0.6s.
     grasp_pitch: 1.2
     place_pitch: 0.7
+    # Snap the grasp approach yaw to the nearest multiple of pi -- {0, +-180}
+    #     -- so the jaws close parallel to the box's large faces (opening
+    #     axis along Y, straddling the 3.5cm width; the 8cm X width exceeds
+    #     the 4cm max gripper opening and cannot be straddled). See
+    #     piper_manipulator.hpp's grasp_yaw_snap_step for the measured
+    #     tumble evidence.
+    grasp_yaw_snap_step: 3.1415927
+    place_reorient: true
     min_cartesian_fraction: 0.98
     velocity_scaling: 0.2
     acceleration_scaling: 0.2

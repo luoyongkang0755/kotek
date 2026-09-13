@@ -64,10 +64,18 @@ GRASP_POSITIONS = [
 # while pre-parking-brake chassis creep happened to pull the whole robot
 # 2-3cm back before the first place. Released 4.5cm short instead (corner
 # reach + 1cm clearance), the magnet's widened attract range
-# (MAGNET_ATTRACT_RANGE=0.05, physics_tuning.py) covers the final hop and
+# (MAGNET_ATTRACT_RANGE=0.08, physics_tuning.py) covers the final hop and
 # the weld still engages at its usual ~6mm equilibrium.
+# _WALL_Z +0.06 vs the mount target's own height (2026-09-13, measured):
+# with the reoriented vertical delivery (place_reorient), the fingertip
+# axis tilts down by grasp_pitch and link6 must stay above the arm's
+# measured lower workspace boundary (link6 z ~ -0.05 m -- a live OMPL sweep
+# grid found everything below that unplannable at the wall standoff). The
+# box's own magnet target stays at the authored 0.35m; the released box is
+# pulled down onto it during release_settle_time, 5cm is well inside the
+# magnet's capture range.
 _WALL_X = 0.40 - 0.045
-_WALL_Z = 0.35 - 0.18 - 0.29101
+_WALL_Z = 0.35 - 0.18 - 0.29101 + 0.06
 PLACE_POSITIONS = [
     (_WALL_X, -0.15, _WALL_Z),
     (_WALL_X, -0.05, _WALL_Z),
