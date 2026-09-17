@@ -722,7 +722,17 @@ WELD_MAX_ANG_SPEED = 0.5                     # rad/s, at-rest threshold
 # flattened by the alignment torque BEFORE it may weld -- if it never gets
 # there, that is a delivery-pipeline bug to fix at the source, not to mask
 # with a permissive gate.
-WELD_MAX_MISALIGN_DEG = 15.0                 # deg, bottom-normal vs wall
+# 15 -> 23 deg (2026-09-14, measured, 50-run batch docs/wall_mount_e2e_50runs/):
+# the gate as introduced sat exactly in the middle of the dipole's natural
+# equilibrium band. All 134 welded boxes settled at 13.6-15.0 deg, while the 31
+# gate_borderline rejects sat at 15.1-22.1 deg (median 15.5) -- same capture
+# dynamics, same weld quality, coin-flip outcome against a 15 deg line. The
+# distribution is cleanly bimodal: jammed boxes start at 29.5 deg (2x) and the
+# original 45.8 deg crooked weld is far above that, so 23 deg accepts the
+# entire legitimate equilibrium band (<=22.1 observed) and still blocks every
+# jammed/skewed weld the gate was created for. Re-validated with a full 50-run
+# batch after the change (see docs/wall_mount_e2e_50runs/).
+WELD_MAX_MISALIGN_DEG = 23.0                 # deg, bottom-normal vs wall
 # 0.03 -> 0.05 (2026-08-25): with the parking brake pinning the chassis at
 # its true authored standoff, the place release point had to move 4.5cm
 # short of the wall face (the carried box's pitched corner was being driven
