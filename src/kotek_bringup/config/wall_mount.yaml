@@ -84,6 +84,32 @@
     # lift_velocity_scaling's own comment, extended to the whole carry.
     carry_velocity_scaling: 0.08
     carry_acceleration_scaling: 0.08
+    # Task 2a (2026-09-18, measured -- see piper_manipulator.hpp Params):
+    # the 23-deg-gate 50-run batch left carry slips as the ONLY failure
+    # class (32/32 unwelded), with per-tick traces showing the box pivoting
+    # in the fingers through the whole carry. The stow->preplace swing is
+    # the longest loaded segment; these extra-slow scalings apply ONLY when
+    # the current-TCP-to-preplace distance exceeds the threshold, so short
+    # carries keep 0.08 and the ~379 s per-run budget stays roughly intact
+    # (smoke-measured swing distances: 0.235-0.362 m across the 4 targets,
+    # so 0.25 fires on the three longer legs; predicted +~15 s each at 0.06).
+    swing_distance_threshold: 0.25   # m
+    swing_velocity_scaling: 0.06
+    swing_acceleration_scaling: 0.06
+    # Task 2b (2026-09-18): box-in-hand verification against the stage's
+    # sensor_cam_N TF frames (published on the demo's DDS domain after the
+    # useDomainIDEnvVar fix in build_wall_stage.py). The PlaceObject goal
+    # names the carried frame (object_frame) -- nearest-frame guessing was
+    # rejected (riser boxes sit in a tight cone around the stow-pose TCP
+    # and repeatedly won the race by mm, smoke2/5). Metric: RIGID-LINK
+    # distance growth -- a held box keeps a constant box-center-to-TCP
+    # distance through every wrist orientation, so latch d0 at place start
+    # and fail before release if it grows past the margin. Measured: stable
+    # carry drifts ~0.02 m (fingers re-seat in the descent); a lost box
+    # lands >=0.15 m farther. Failure aborts the place loudly (no more
+    # "placing air" + COMPLETE).
+    held_box_max_distance: 0.30      # m, absolute sanity at latch
+    held_box_slip_margin: 0.07       # m, allowed d growth before release
     retreat_height: 0.12
     # moveGripperToWidth()'s contact check (piper_manipulator_node.cpp) works
     # by commanding a target DELIBERATELY narrower than the real object, so a

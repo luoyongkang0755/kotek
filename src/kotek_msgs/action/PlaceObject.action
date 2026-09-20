@@ -2,6 +2,10 @@
 # arm, then release it and retreat.
 geometry_msgs/PoseStamped place_pose
 float64 retreat_height         # meters; 0.0 means "use the manipulator's configured default"
+string object_frame            # TF frame of the object being placed (e.g. the wall-mount
+                               # stage's sensor_cam_N). Empty = the manipulator cannot
+                               # identify the carried object and its held-box TF check
+                               # stays passive (legacy pedestal behavior).
 ---
 # Result
 bool success

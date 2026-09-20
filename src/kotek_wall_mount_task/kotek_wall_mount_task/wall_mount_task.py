@@ -118,6 +118,12 @@ class WallMountTask(Node):
         goal = PlaceObject.Goal()
         goal.place_pose = make_pose(xyz)
         goal.retreat_height = 0.0  # use piper_manipulator's configured default
+        # Task 2b (2026-09-18): tell the manipulator WHICH box it is carrying so
+        # its pre-release held-box TF check tracks that frame instead of
+        # guessing the nearest sensor_cam frame to the TCP (at the stow pose
+        # all four riser boxes sit in a tight cone from the TCP -- nearest-
+        # guessing mis-latched riser boxes twice in smoke testing).
+        goal.object_frame = f'sensor_cam_{index}'
         return self._send_and_wait(self.place_client, goal, f'place[{index}]')
 
     def _send_and_wait(self, client, goal, label):

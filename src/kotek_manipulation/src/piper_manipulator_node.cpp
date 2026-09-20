@@ -3,11 +3,15 @@
 #include <chrono>
 #include <cmath>
 #include <functional>
+#include <limits>
 #include <thread>
 
 #include <algorithm>
 
 #include "geometry_msgs/msg/pose.hpp"
+#include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
+#include "tf2/LinearMath/Matrix3x3.h"
+#include "tf2/LinearMath/Quaternion.h"
 
 namespace kotek_manipulation
 {
@@ -93,6 +97,16 @@ PiperManipulator::Params PiperManipulator::loadParams()
   p.planning_attempts = declare_parameter<int>("planning_attempts", p.planning_attempts);
   p.move_action_result_timeout = declare_parameter<double>(
     "move_action_result_timeout", p.move_action_result_timeout);
+  p.swing_distance_threshold = declare_parameter<double>(
+    "swing_distance_threshold", p.swing_distance_threshold);
+  p.swing_velocity_scaling = declare_parameter<double>(
+    "swing_velocity_scaling", p.swing_velocity_scaling);
+  p.swing_acceleration_scaling = declare_parameter<double>(
+    "swing_acceleration_scaling", p.swing_acceleration_scaling);
+  p.held_box_max_distance = declare_parameter<double>(
+    "held_box_max_distance", p.held_box_max_distance);
+  p.held_box_slip_margin = declare_parameter<double>(
+    "held_box_slip_margin", p.held_box_slip_margin);
   return p;
 }
 
@@ -198,6 +212,13 @@ void PiperManipulator::init(const std::shared_ptr<PiperManipulator> & self)
     self, "execute_trajectory");
   raw_cartesian_path_client_ =
     self->create_client<moveit_msgs::srv::GetCartesianPath>("compute_cartesian_path");
+
+  // Task 2b: TF listener for the stage-published sensor_cam_N box frames
+  // (see Params::held_box_max_distance). Like the raw clients above this is
+  // built on `self`, whose executor only starts spinning after init()
+  // returns -- fine, the buffer is only queried from inside executePlace().
+  tf_buffer_ = std::make_unique<tf2_ros::Buffer>(self->get_clock());
+  tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_, self, false);
 
   RCLCPP_INFO(
     get_logger(), "piper_manipulator ready: arm_group=%s gripper_group=%s planning_frame=%s",
@@ -615,6 +636,83 @@ bool PiperManipulator::stillHoldingObject()
   return holding;
 }
 
+bool PiperManipulator::heldBoxNearTcp(
+  const std::string & object_frame, bool latch, std::string & why_not)
+{
+  // See the declaration and Params::held_box_* for the measured rationale
+  // (50-run slip analysis + TF-domain debugging + five smoke runs,
+  // 2026-09-18). TF positions come back in the planning frame directly --
+  // verified against the authored riser corners to 3 decimals -- so the
+  // only math here is a plain distance. The check is a RIGID-LINK test:
+  // while held, the box keeps a CONSTANT box-center-to-TCP distance through
+  // every wrist orientation, so latch d0 at place start and fail before
+  // release if the distance has grown by more than the slip margin. This
+  // was settled on after nearest-frame-guessing (riser boxes won by mm at
+  // the stow pose, smoke2/5) and pose-based fingertip metrics (the 0.13503
+  // offset direction proved pose-dependent and ambiguous, smoke4/5) both
+  // failed in smoke testing.
+  if (!latch && carried_box_frame_.empty()) {
+    return true;  // nothing latched (no frame given / TF absent) -- passive
+  }
+  const std::string frame = latch ? object_frame : carried_box_frame_;
+  if (frame.empty()) {
+    return true;  // goal carries no object identity (legacy demos) -- passive
+  }
+
+  const auto tcp = move_group_arm_->getCurrentPose().pose;
+  geometry_msgs::msg::TransformStamped t;
+  try {
+    t = tf_buffer_->lookupTransform(
+      move_group_arm_->getPlanningFrame(), frame, tf2::TimePointZero);
+  } catch (const tf2::TransformException & e) {
+    if (!box_check_warned_) {
+      RCLCPP_WARN(
+        get_logger(),
+        "held-box check: TF for %s not available (%s) -- check stays passive",
+        frame.c_str(), e.what());
+      box_check_warned_ = true;
+    }
+    return true;
+  }
+
+  const double dx = t.transform.translation.x - tcp.position.x;
+  const double dy = t.transform.translation.y - tcp.position.y;
+  const double dz = t.transform.translation.z - tcp.position.z;
+  const double d = std::sqrt(dx * dx + dy * dy + dz * dz);
+
+  if (latch) {
+    RCLCPP_INFO(
+      get_logger(),
+      "held-box check (latch): frame=%s tcp=(%.3f,%.3f,%.3f) box=(%.3f,%.3f,%.3f) d0=%.3f m (sanity limit %.3f)",
+      frame.c_str(), tcp.position.x, tcp.position.y, tcp.position.z,
+      t.transform.translation.x, t.transform.translation.y, t.transform.translation.z,
+      d, params_.held_box_max_distance);
+    if (d > params_.held_box_max_distance) {
+      why_not = "held-box check failed at place start: " + frame + " is " +
+        std::to_string(d) + " m from the TCP (sanity limit " +
+        std::to_string(params_.held_box_max_distance) + ") -- box not in hand";
+      return false;
+    }
+    carried_box_frame_ = frame;
+    carried_box_d0_ = d;
+    return true;
+  }
+
+  const double growth = d - carried_box_d0_;
+  RCLCPP_INFO(
+    get_logger(),
+    "held-box check (pre-release): frame=%s d=%.3f m (d0=%.3f, growth %+.3f, limit %+.3f)",
+    frame.c_str(), d, carried_box_d0_, growth, params_.held_box_slip_margin);
+  if (growth > params_.held_box_slip_margin) {
+    why_not = "held-box check failed before release: " + frame + " moved " +
+      std::to_string(growth) + " m away from the TCP since place start " +
+      "(limit " + std::to_string(params_.held_box_slip_margin) +
+      ") -- box lost or slipping";
+    return false;
+  }
+  return true;
+}
+
 bool PiperManipulator::retreatToSafe()
 {
   // 'zero' is a named joint-space group_state defined for the 'arm' group
@@ -971,11 +1069,47 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
     goal_handle->abort(result);
     return;
   }
+  // Task 2b second line of defense: the joint7 width check above cannot see
+  // a box knocked out of stationary fingers (fingers keep their stall
+  // width -- all 32 baseline-batch slips passed it). Verify against the
+  // stage-published box TF and remember which box is carried.
+  carried_box_frame_.clear();
+  {
+    std::string why_not;
+    if (!heldBoxNearTcp(goal->object_frame, true /*latch*/, why_not)) {
+      RCLCPP_ERROR(get_logger(), "place aborted: %s", why_not.c_str());
+      retreatToSafe();
+      result->success = false;
+      result->message = why_not;
+      goal_handle->abort(result);
+      return;
+    }
+  }
+
+  // Task 2a: distance-gated extra slowdown on the LONG preplace swing only
+  // (see Params::swing_*). The 50-run batch's slip traces show the box being
+  // worked loose over the whole carry; the stow->preplace swing is its
+  // longest segment. Short carries keep carry_*_scaling untouched.
+  double preplace_v = params_.carry_velocity_scaling;
+  double preplace_a = params_.carry_acceleration_scaling;
+  {
+    const auto cur = move_group_arm_->getCurrentPose().pose;
+    const double swing_dist = std::sqrt(
+      std::pow(preplace_pose.position.x - cur.position.x, 2) +
+      std::pow(preplace_pose.position.y - cur.position.y, 2) +
+      std::pow(preplace_pose.position.z - cur.position.z, 2));
+    if (swing_dist > params_.swing_distance_threshold) {
+      preplace_v = params_.swing_velocity_scaling;
+      preplace_a = params_.swing_acceleration_scaling;
+    }
+    RCLCPP_INFO(
+      get_logger(), "preplace swing distance %.3f m (threshold %.3f): scaling %.2f/%.2f",
+      swing_dist, params_.swing_distance_threshold, preplace_v, preplace_a);
+  }
 
   publishPlaceStageFeedback(goal_handle, "MOVE_ARM_TO_PREPLACE", 0.0);
   if (!moveArmToPose(
-      toMsg(preplace_pose), error, params_.carry_velocity_scaling,
-      params_.carry_acceleration_scaling))
+      toMsg(preplace_pose), error, preplace_v, preplace_a))
   {
     RCLCPP_ERROR(get_logger(), "MOVE_ARM_TO_PREPLACE failed: %s", error.c_str());
     retreatToSafe();
@@ -999,6 +1133,22 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
     return;
   }
   publishPlaceStageFeedback(goal_handle, "MOVE_ARM_TO_PLACE", 1.0);
+
+  // Task 2b release gate: the latched carried box must still be at the TCP.
+  // Catches everything the place-start check can't -- a box worked loose
+  // DURING the preplace swing or the place descent (the baseline batch's
+  // dominant failure: box on the floor, arm "placing air", task COMPLETE).
+  {
+    std::string why_not;
+    if (!heldBoxNearTcp("", false /*pre-release*/, why_not)) {
+      RCLCPP_ERROR(get_logger(), "place aborted before release: %s", why_not.c_str());
+      retreatToSafe();
+      result->success = false;
+      result->message = why_not;
+      goal_handle->abort(result);
+      return;
+    }
+  }
 
   publishPlaceStageFeedback(goal_handle, "OPEN_GRIPPER", 0.0);
   if (!moveGripperNamed("open", error)) {

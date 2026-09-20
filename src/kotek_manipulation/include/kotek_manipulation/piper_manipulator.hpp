@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 
+#include "geometry_msgs/msg/transform_stamped.hpp"
 #include "kotek_manipulation/pregrasp_geometry.hpp"
 #include "kotek_msgs/action/grasp_object.hpp"
 #include "kotek_msgs/action/place_object.hpp"
@@ -15,6 +16,8 @@
 #include "moveit_msgs/srv/get_cartesian_path.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include "tf2_ros/buffer.h"
+#include "tf2_ros/transform_listener.h"
 
 namespace kotek_manipulation
 {
@@ -182,6 +185,55 @@ private:
     // were found fallen directly under the swing path, landed upright).
     double carry_velocity_scaling = -1.0;
     double carry_acceleration_scaling = -1.0;
+    // --- Wall-mount Task 2a (2026-09-18, measured). The 50-run batch with
+    // the 23 deg gate showed carry slips are the SOLE remaining failure
+    // class (32/32 unwelded boxes), and per-tick magnet-graph traces of
+    // slipping runs (e.g. baseline batch run_05 sensor4) show the box slowly
+    // pivoting in the fingers through the ENTIRE carry at 4.5-7.7 rad/s --
+    // the stow->preplace swing is the longest loaded segment and its
+    // inertial torque is what works the grip loose (PhysX point contacts,
+    // no torsional friction). carry_*_scaling is already down to 0.08;
+    // these swing_* values apply ONLY when the current-TCP-to-preplace
+    // distance exceeds swing_distance_threshold, so short carries keep the
+    // 0.08 pace and the ~379 s per-run budget stays intact (smoke-measured
+    // swing distances 0.235-0.362 m across the 4 targets; predicted +~15 s
+    // on each long leg at 0.06).
+    double swing_distance_threshold = 0.25;      // m
+    double swing_velocity_scaling = 0.06;
+    double swing_acceleration_scaling = 0.06;
+    // --- Wall-mount Task 2b (2026-09-18, measured). Box-in-hand
+    // verification from the stage-published sensor_cam_N TF frames
+    // (kotek_wall_sensor_graph; its DDS-domain bug -- publishing on domain
+    // 0 regardless of ROS_DOMAIN_ID -- was found and fixed 2026-09-18, see
+    // build_wall_stage.py's add_sensor_tf_graph). The joint7-width check
+    // above CANNOT see a box knocked out of stationary fingers: the fingers
+    // keep their stall width, and every one of the 50-run batch's 32 slips
+    // passed stillHoldingObject() at place start while the box lay on the
+    // floor. The goal names the carried frame (object_frame); its distance
+    // to the TCP is recorded at place start and re-checked right BEFORE
+    // OPEN_GRIPPER -- a growing distance means the box is slipping out,
+    // which the joint7 check cannot see.
+    // TF positions come back in the planning frame directly (measured:
+    // base_link->sensor_cam_1 == riser corner (0.109,0.109,0.01929) to 3
+    // decimals). Failures abort the place loudly -- a lost box must not
+    // "place air" and report success.
+    //
+    // Identity: the PlaceObject goal carries the object frame explicitly
+    // (object_frame, e.g. sensor_cam_2). Nearest-frame guessing was tried
+    // and REJECTED: at the stow pose all four riser boxes plus the carried
+    // one sit in a tight cone from the TCP (tcp distances 0.185-0.287 m)
+    // and riser boxes repeatedly won the "nearest" race by millimetres
+    // (smoke2/5 2026-09-18).
+    //
+    // Metric: RIGID-LINK distance growth, no fingertip geometry at all --
+    // a held box keeps a CONSTANT box-center-to-TCP distance through every
+    // wrist orientation, so the check is |d_now - d_latch| and pose-based
+    // fingertip metrics are unnecessary (smoke4/5 showed the 0.13503 offset
+    // direction is pose-dependent and ambiguous). Measured: a stable carry
+    // drifts ~0.02 m (fingers re-seat during the descent); a lost box
+    // lands >=0.15 m farther.
+    double held_box_max_distance = 0.30;   // m, absolute sanity at latch
+    double held_box_slip_margin = 0.07;    // m, allowed d growth pre-release
     double planning_time = 5.0;
     int planning_attempts = 10;
     // Max seconds to wait for a /piper/move_action result once the goal is
@@ -272,6 +324,21 @@ private:
   /// confirm" the same as "lost it" -- the safer default for a retry
   /// decision.
   bool stillHoldingObject();
+
+  /// Task 2b box-in-hand verification from the stage-published sensor_cam_N
+  /// TF frames -- see Params::held_box_max_distance for the full measured
+  /// rationale. `object_frame` (from the PlaceObject goal) names the carried
+  /// box; at place start (`latch`=true) its current box-to-TCP distance d0 is
+  /// recorded, and before release (`latch`=false) the check fails if the
+  /// distance has grown past d0 + Params::held_box_slip_margin (rigid-link
+  /// test: a held box keeps a CONSTANT distance to the TCP in any wrist
+  /// orientation, so no fingertip-frame geometry is needed -- smoke4/5
+  /// 2026-09-18 proved pose-based fingertip metrics ambiguous at the stow
+  /// pose, where all four riser boxes sit in a tight cone from the TCP).
+  /// Returns true (check passed / nothing to check) and fills `why_not` on
+  /// failure. Stays passive (warns once) when `object_frame` is empty or its
+  /// TF is unavailable.
+  bool heldBoxNearTcp(const std::string & object_frame, bool latch, std::string & why_not);
 
   bool retreatToSafe();
 
@@ -375,6 +442,19 @@ private:
 
   rclcpp_action::Server<GraspObject>::SharedPtr action_server_;
   rclcpp_action::Server<PlaceObject>::SharedPtr place_action_server_;
+
+  // Task 2b TF state -- sees the stage-published sensor_cam_N frames (the
+  // wall stage's kotek_wall_sensor_graph; DDS-domain bug fixed 2026-09-18).
+  // Lives on `self` (the node's own executor spins it), lookups are
+  // non-blocking with TimePointZero (latest available transform).
+  std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
+  std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
+  // Carried-box tracking across executePlace(): the object frame from the
+  // PlaceObject goal and its box-to-TCP distance at place start (see
+  // heldBoxNearTcp()). Frame empty = check passive.
+  std::string carried_box_frame_;
+  double carried_box_d0_ = 0.0;
+  bool box_check_warned_ = false;
 };
 
 }  // namespace kotek_manipulation

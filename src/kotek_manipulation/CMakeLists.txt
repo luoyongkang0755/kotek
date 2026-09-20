@@ -17,6 +17,9 @@ find_package(moveit_core REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package(kotek_msgs REQUIRED)
 find_package(kotek_base_control REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 include_directories(include)
 
@@ -30,6 +33,9 @@ ament_target_dependencies(piper_manipulator_node
   moveit_msgs
   kotek_msgs
   kotek_base_control
+  tf2
+  tf2_ros
+  tf2_geometry_msgs
 )
 target_include_directories(piper_manipulator_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
