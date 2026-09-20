@@ -123,10 +123,16 @@
     # while the box still rests on the riser -- the flat-lying box's -Z
     # must point straight down; a larger angle means the close-kick
     # rotated it, and the grasp aborts (box released back onto the riser)
-    # so the task's retry loop can re-grasp. Looser than the pre-release
-    # gate on purpose: healthy grasps settle to 19-29 deg, kicks are
-    # 50-97 deg, and a marginal box here can simply be re-grasped.
-    grasp_kick_max_tilt_deg: 35.0
+    # so the task's retry loop can re-grasp. Same 30 deg as the
+    # pre-release gate: a looser gate created a deadband where boxes passed
+    # here but failed at release (e2e10_task2_retry runs 7/10).
+    grasp_kick_max_tilt_deg: 30.0
+    # Scout->arm TF z correction (2026-09-20, smoke9-measured): the stage's
+    # sensor_cam TF hangs under a base_link that name-collides with the arm
+    # planning frame, so raw lookups return SCOUT-frame z (riser box 0.310)
+    # while the planner works in the ARM frame (riser box 0.019 = 0.310 -
+    # this). Planning with the raw TF z made pregrasp unplannable.
+    arm_mount_height: 0.29101
     retreat_height: 0.12
     # moveGripperToWidth()'s contact check (piper_manipulator_node.cpp) works
     # by commanding a target DELIBERATELY narrower than the real object, so a

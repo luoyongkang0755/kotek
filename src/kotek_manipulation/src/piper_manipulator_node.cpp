@@ -111,6 +111,8 @@ PiperManipulator::Params PiperManipulator::loadParams()
     "held_box_max_tilt_deg", p.held_box_max_tilt_deg);
   p.grasp_kick_max_tilt_deg = declare_parameter<double>(
     "grasp_kick_max_tilt_deg", p.grasp_kick_max_tilt_deg);
+  p.arm_mount_height = declare_parameter<double>(
+    "arm_mount_height", p.arm_mount_height);
   return p;
 }
 
@@ -681,7 +683,8 @@ bool PiperManipulator::heldBoxNearTcp(
 
   const double dx = t.transform.translation.x - tcp.position.x;
   const double dy = t.transform.translation.y - tcp.position.y;
-  const double dz = t.transform.translation.z - tcp.position.z;
+  const double dz =
+    (t.transform.translation.z - params_.arm_mount_height) - tcp.position.z;
   const double d = std::sqrt(dx * dx + dy * dy + dz * dz);
 
   if (latch) {
@@ -689,7 +692,8 @@ bool PiperManipulator::heldBoxNearTcp(
       get_logger(),
       "held-box check (latch): frame=%s tcp=(%.3f,%.3f,%.3f) box=(%.3f,%.3f,%.3f) d0=%.3f m (sanity limit %.3f)",
       frame.c_str(), tcp.position.x, tcp.position.y, tcp.position.z,
-      t.transform.translation.x, t.transform.translation.y, t.transform.translation.z,
+      t.transform.translation.x, t.transform.translation.y,
+      t.transform.translation.z - params_.arm_mount_height,
       d, params_.held_box_max_distance);
     if (d > params_.held_box_max_distance) {
       why_not = "held-box check failed at place start: " + frame + " is " +
@@ -783,9 +787,43 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
   const auto goal = goal_handle->get_goal();
   auto result = std::make_shared<GraspObject::Result>();
 
-  const Point3 object_arm{
+  Point3 object_arm{
     goal->object_pose.pose.position.x, goal->object_pose.pose.position.y,
     goal->object_pose.pose.position.z};
+  if (!goal->object_frame.empty()) {
+    // Grasp where the box ACTUALLY is, not where it was authored: a
+    // kick-reject releases a rotated box that lands displaced from its
+    // riser corner (measured 2026-09-20 -- the retry batch's contact-misses:
+    // attempts 2/3 after a kick closed on empty space at the old corner
+    // while the box sat centimeters away). The retry loop in
+    // wall_mount_task re-sends the same authored corner, so without this
+    // the re-grasp usually misses again.
+    try {
+      const auto t = tf_buffer_->lookupTransform(
+        move_group_arm_->getPlanningFrame(), goal->object_frame, tf2::TimePointZero);
+      // Scout frame -> arm frame: x/y share the origin, z differs by the
+      // arm mount height (see Params::arm_mount_height -- the TF name
+      // collision makes raw lookups come back in the scout frame).
+      const Point3 actual{
+        t.transform.translation.x, t.transform.translation.y,
+        t.transform.translation.z - params_.arm_mount_height};
+      const double shift = std::sqrt(
+        std::pow(actual.x - object_arm.x, 2) + std::pow(actual.y - object_arm.y, 2));
+      if (shift > 0.005) {
+        RCLCPP_INFO(
+          get_logger(),
+          "grasp target adjusted to %s current position (%.3f,%.3f,%.3f), "
+          "%.3f m off the authored corner",
+          goal->object_frame.c_str(), actual.x, actual.y, actual.z, shift);
+      }
+      object_arm = actual;
+    } catch (const tf2::TransformException &) {
+      RCLCPP_WARN(
+        get_logger(),
+        "grasp target: TF for %s unavailable, using the authored corner",
+        goal->object_frame.c_str());
+    }
+  }
   double approach_yaw_local = std::atan2(object_arm.y, object_arm.x);
   if (params_.grasp_yaw_snap_step > 0.0) {
     // Anti-V-grip snap (see Params::grasp_yaw_snap_step): round the

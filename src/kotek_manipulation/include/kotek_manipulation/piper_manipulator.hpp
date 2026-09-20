@@ -252,8 +252,25 @@ private:
     // grasp aborts so the caller can re-grasp. Slightly looser than the
     // pre-release gate: this one fires before any lift, where a marginal
     // box can still be re-grasped, and healthy grasps were measured at
-    // 19-29 deg pre-release (settling) vs kicks at 50-97 deg.
-    double grasp_kick_max_tilt_deg = 35.0;
+    // 19-29 deg pre-release (settling) vs kicks at 50-97 deg. Same value
+    // as the pre-release gate on purpose (2026-09-20): a 35 deg grasp gate
+    // created a 30-35 deg deadband where boxes passed here but failed at
+    // release (e2e10_task2_retry runs 7/10) -- reject early, re-grasp.
+    double grasp_kick_max_tilt_deg = 30.0;
+    // TF frame correction (2026-09-20, measured -- CRITICAL): the stage's
+    // sensor_cam TF tree publishes box transforms relative to the SCOUT
+    // base_link, whose name COLLIDES with the arm planning frame's
+    // base_link in the merged TF tree -- so a raw base_link->sensor_cam_N
+    // lookup returns positions in the scout/world frame (riser box at
+    // z=0.310, see the task's own SENSOR_CAM_LOCAL_Z) while getCurrentPose
+    // and the planner work in the ARM frame (riser box at z=0.019). The two
+    // frames share x/y origin and differ only by the arm mount height.
+    // Verified live: planning with the raw TF z (0.310) made pregrasp
+    // unplannable (grasp_pose z=0.436, status=6, smoke9); subtracting this
+    // constant restores it. The held-box distance check also mixes frames
+    // without this correction (constant z offset) -- it separated well
+    // enough empirically, but corrected distances are exact.
+    double arm_mount_height = 0.29101;   // m, coordinator.yaml arm_mount_xyz.z
     double planning_time = 5.0;
     int planning_attempts = 10;
     // Max seconds to wait for a /piper/move_action result once the goal is
