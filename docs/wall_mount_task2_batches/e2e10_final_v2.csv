@@ -1,0 +1,15 @@
+run,result,welds,misalign_deg,abort_stage,error,duration_s,classification
+1,ABORTED,0
+0,-,-,grasp-close kick rotated the box 89.860310 deg in the gripper (re-grasp needed),214,move_group_crash
+2,ABORTED,3,13.9|14.9|15.6,MOVE_ARM_TO_PREGRASP,MOVE_ARM_TO_PREGRASP failed: move_action did not succeed (status=6),426,move_group_crash
+3,ABORTED,3,14.5|14.3|15.8,MOVE_ARM_TO_PREGRASP,MOVE_ARM_TO_PREGRASP failed: move_action did not succeed (status=6),431,move_group_crash
+4,ABORTED,2,13.6|15.7,MOVE_ARM_TO_PREGRASP,MOVE_ARM_TO_PREGRASP failed: move_action did not succeed (status=6),366,move_group_crash
+5,ABORTED,3,15.2|15.2|14.7,MOVE_ARM_TO_PREGRASP,MOVE_ARM_TO_PREGRASP failed: move_action did not succeed (status=6),428,move_group_crash
+6,ABORTED,0
+0,-,-,grasp-close kick rotated the box 89.071700 deg in the gripper (re-grasp needed),214,move_group_crash
+7,ABORTED,0
+0,-,-,grasp-close kick rotated the box 89.910006 deg in the gripper (re-grasp needed),216,move_group_crash
+8,ABORTED,2,13.9|15.3,MOVE_ARM_TO_PREGRASP,MOVE_ARM_TO_PREGRASP failed: move_action did not succeed (status=6),374,move_group_crash
+9,COMPLETE,4,13.7|15.5|14.4|14.5,-,-,404,pass
+10,ABORTED,0
+0,-,-,grasp-close kick rotated the box 89.782808 deg in the gripper (re-grasp needed),219,move_group_crash

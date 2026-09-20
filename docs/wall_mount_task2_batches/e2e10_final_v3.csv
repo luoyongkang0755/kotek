@@ -1,0 +1,14 @@
+run,result,welds,misalign_deg,abort_stage,error,duration_s,classification
+1,COMPLETE,4,14.6|15.0|14.6|14.6,-,-,402,pass
+2,ABORTED,0
+0,-,-,grasp-close kick rotated the box 90.004807 deg in the gripper (re-grasp needed),212,move_group_crash
+3,ABORTED,3,14.8|14.2|16.0,-,gripper closed without contacting the object,407,move_group_crash
+4,ABORTED,2,14.6|14.4,-,gripper closed without contacting the object,353,move_group_crash
+5,ABORTED,3,14.9|14.9|15.2,-,gripper closed without contacting the object,417,move_group_crash
+6,ABORTED,0
+0,-,-,grasp-close kick rotated the box 90.037297 deg in the gripper (re-grasp needed),214,move_group_crash
+7,COMPLETE,4,15.0|15.2|14.1|14.4,-,-,408,pass
+8,ABORTED,2,14.7|14.9,-,gripper closed without contacting the object,357,move_group_crash
+9,ABORTED,2,13.8|14.9,-,gripper closed without contacting the object,352,move_group_crash
+10,ABORTED,0
+0,-,-,grasp-close kick rotated the box 89.792648 deg in the gripper (re-grasp needed),213,move_group_crash
