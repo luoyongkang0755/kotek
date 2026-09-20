@@ -234,6 +234,26 @@ private:
     // lands >=0.15 m farther.
     double held_box_max_distance = 0.30;   // m, absolute sanity at latch
     double held_box_slip_margin = 0.07;    // m, allowed d growth pre-release
+    // Grasp-orientation sanity, pre-release only (2026-09-20, measured):
+    // the e2e10_task2 batch's 6 unwelded boxes all reached the release point
+    // RIGIDLY held (distance growth ~0.00-0.03) but rotated 62-90 deg in the
+    // gripper -- the grasp-close contact kick spins the box about the
+    // finger-contact line, the magnet face ends up pointing away from the
+    // wall, capture fails and the box falls. A held-but-unpresentable box
+    // must fail loudly too. With place_reorient, a healthy carried box has
+    // its -Z (magnet face) aligned with the reorient approach_dir
+    // (cos(tilt), 0, -sin(tilt)); fail above this angle. Inactive when
+    // place_reorient is false (grasp orientation is task-specific there).
+    double held_box_max_tilt_deg = 30.0;
+    // Grasp-leg companion to held_box_max_tilt_deg (2026-09-20, measured):
+    // checked right after CLOSE_GRIPPER while the box still rests on the
+    // riser -- the flat-lying box's -Z must point straight down; a larger
+    // angle means the close-kick rotated it, and the (reopened, retreated)
+    // grasp aborts so the caller can re-grasp. Slightly looser than the
+    // pre-release gate: this one fires before any lift, where a marginal
+    // box can still be re-grasped, and healthy grasps were measured at
+    // 19-29 deg pre-release (settling) vs kicks at 50-97 deg.
+    double grasp_kick_max_tilt_deg = 35.0;
     double planning_time = 5.0;
     int planning_attempts = 10;
     // Max seconds to wait for a /piper/move_action result once the goal is

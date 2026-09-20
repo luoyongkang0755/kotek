@@ -1,6 +1,14 @@
 # Goal: grasp an object at the given pose using the Piper arm and lift it.
 geometry_msgs/PoseStamped object_pose
 float64 lift_height            # meters; 0.0 means "use the manipulator's configured default"
+string object_frame            # TF frame of the object being grasped (e.g. the wall-mount
+                               # stage's sensor_cam_N). When set, the manipulator verifies
+                               # after CLOSE_GRIPPER that the box is still flat (magnet face
+                               # down) -- a grasp-close contact kick rotates it in the
+                               # fingers ~30-50% of the time (measured 2026-09-20), and a
+                               # rotated box fails wall capture later. Kick -> reopen +
+                               # abort so the caller can re-grasp. Empty = check inactive
+                               # (legacy pedestal behavior).
 ---
 # Result
 bool success

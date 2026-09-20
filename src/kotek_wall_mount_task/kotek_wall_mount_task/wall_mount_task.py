@@ -111,6 +111,13 @@ class WallMountTask(Node):
         goal = GraspObject.Goal()
         goal.object_pose = make_pose(xyz)
         goal.lift_height = 0.0  # use piper_manipulator's configured default
+        # Task 2b (2026-09-18/20): name the box so piper_manipulator can verify
+        # after CLOSE_GRIPPER that the close-kick did not rotate it in the
+        # fingers (a 30-50% event on this stage, measured; a rotated box
+        # fails wall capture later no matter how well the carry goes). A
+        # kick aborts the grasp BEFORE the lift with the box still on the
+        # riser -- the retry loop in main() then simply re-grasps.
+        goal.object_frame = f'sensor_cam_{index}'
         return self._send_and_wait(self.grasp_client, goal, f'grasp[{index}]')
 
     def run_place(self, index, xyz):
@@ -152,7 +159,19 @@ def main():
     ok = True
     for i in range(4):
         index = i + 1
-        if not node.run_grasp(index, GRASP_POSITIONS[i]):
+        # Re-grasp retry (Task 2b, 2026-09-20): the grasp-close kick rotates
+        # the box 30-50% of the time on this stage (chaotic contact
+        # dynamics, measured across the e2e10 batches); piper now rejects a
+        # kicked grasp before the lift (box still on the riser), so retrying
+        # the SAME grasp is cheap and usually seats the box on attempt 2.
+        grasp_ok = False
+        for attempt in (1, 2, 3):
+            if node.run_grasp(index, GRASP_POSITIONS[i]):
+                grasp_ok = True
+                break
+            node.get_logger().warn(
+                f'grasp[{index}] attempt {attempt}/3 failed (kick?) -- re-grasping')
+        if not grasp_ok:
             ok = False
             break
         if not node.run_place(index, PLACE_POSITIONS[i]):

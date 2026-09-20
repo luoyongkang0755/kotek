@@ -110,6 +110,23 @@
     # "placing air" + COMPLETE).
     held_box_max_distance: 0.30      # m, absolute sanity at latch
     held_box_slip_margin: 0.07       # m, allowed d growth before release
+    # Grasp-orientation sanity (2026-09-20, measured): boxes rotated in the
+    # gripper by the grasp-close contact kick reach the release point
+    # rigidly held (pass the distance check) but with the magnet face away
+    # from the wall (e2e10_task2 batch: 6/6 unwelded boxes entered capture
+    # at 62-90 deg misalign and fell). With place_reorient the healthy
+    # carried orientation is known (box -Z along the reorient approach
+    # dir); fail above this tilt error -- abort loudly instead of dropping
+    # the box.
+    held_box_max_tilt_deg: 30.0
+    # Grasp-leg companion (2026-09-20): checked right after CLOSE_GRIPPER
+    # while the box still rests on the riser -- the flat-lying box's -Z
+    # must point straight down; a larger angle means the close-kick
+    # rotated it, and the grasp aborts (box released back onto the riser)
+    # so the task's retry loop can re-grasp. Looser than the pre-release
+    # gate on purpose: healthy grasps settle to 19-29 deg, kicks are
+    # 50-97 deg, and a marginal box here can simply be re-grasped.
+    grasp_kick_max_tilt_deg: 35.0
     retreat_height: 0.12
     # moveGripperToWidth()'s contact check (piper_manipulator_node.cpp) works
     # by commanding a target DELIBERATELY narrower than the real object, so a

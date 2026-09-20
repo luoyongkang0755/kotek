@@ -107,6 +107,10 @@ PiperManipulator::Params PiperManipulator::loadParams()
     "held_box_max_distance", p.held_box_max_distance);
   p.held_box_slip_margin = declare_parameter<double>(
     "held_box_slip_margin", p.held_box_slip_margin);
+  p.held_box_max_tilt_deg = declare_parameter<double>(
+    "held_box_max_tilt_deg", p.held_box_max_tilt_deg);
+  p.grasp_kick_max_tilt_deg = declare_parameter<double>(
+    "grasp_kick_max_tilt_deg", p.grasp_kick_max_tilt_deg);
   return p;
 }
 
@@ -710,6 +714,38 @@ bool PiperManipulator::heldBoxNearTcp(
       ") -- box lost or slipping";
     return false;
   }
+
+  // Grasp-orientation sanity (2026-09-20, measured -- see
+  // Params::held_box_max_tilt_deg): a box the grasp-close kick rotated in
+  // the gripper is held rigidly (passes the distance check) but its magnet
+  // face points away from the wall, so capture fails and it falls. With
+  // place_reorient the healthy carried orientation is KNOWN -- the box -Z
+  // aligns with the reorient approach_dir -- so this is an absolute check.
+  if (params_.place_reorient) {
+    const double tilt = 1.5707963267948966 - params_.grasp_pitch + 0.415;
+    const tf2::Vector3 expected(
+      std::cos(tilt), 0.0, -std::sin(tilt));
+    tf2::Quaternion box_q;
+    tf2::fromMsg(t.transform.rotation, box_q);
+    const tf2::Vector3 box_neg_z =
+      tf2::Matrix3x3(box_q) * tf2::Vector3(0.0, 0.0, -1.0);
+    const double dot = std::max(
+      -1.0, std::min(1.0, box_neg_z.x() * expected.x() +
+        box_neg_z.y() * expected.y() + box_neg_z.z() * expected.z()));
+    const double tilt_err_deg = std::acos(dot) * 180.0 / M_PI;
+    RCLCPP_INFO(
+      get_logger(),
+      "held-box check (orientation): frame=%s magnet-face tilt error %.1f deg (limit %.1f)",
+      frame.c_str(), tilt_err_deg, params_.held_box_max_tilt_deg);
+    if (tilt_err_deg > params_.held_box_max_tilt_deg) {
+      why_not = "held-box orientation check failed: " + frame +
+        " magnet face is " + std::to_string(tilt_err_deg) +
+        " deg off the wall approach direction (limit " +
+        std::to_string(params_.held_box_max_tilt_deg) +
+        ") -- grasp-close kick rotated the box in the gripper";
+      return false;
+    }
+  }
   return true;
 }
 
@@ -857,6 +893,52 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
     // still physically developing when the lift starts pulling on it.
     std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::nanoseconds>(
         std::chrono::duration<double>(params_.post_grasp_settle_time)));
+  }
+
+  // Grasp-kick orientation check (2026-09-20, measured -- see
+  // Params::grasp_kick_max_tilt_deg and the e2e10_task2 batches): the
+  // grasp-close contact kick rotates the box in the fingers 30-50% of the
+  // time on this stage (chaotic point-contact dynamics; the rate varies
+  // with machine load). A kicked box is held rigidly -- every downstream
+  // distance check passes -- but its magnet face points away from the wall
+  // at place time and capture fails. Catching it HERE means the box is
+  // still on the riser (pre-lift), so the caller can simply re-grasp.
+  // A healthy grasp leaves the flat-lying box's -Z (magnet face) pointing
+  // straight down.
+  if (!goal->object_frame.empty()) {
+    try {
+      const auto t = tf_buffer_->lookupTransform(
+        move_group_arm_->getPlanningFrame(), goal->object_frame, tf2::TimePointZero);
+      tf2::Quaternion box_q;
+      tf2::fromMsg(t.transform.rotation, box_q);
+      const tf2::Vector3 box_neg_z =
+        tf2::Matrix3x3(box_q) * tf2::Vector3(0.0, 0.0, -1.0);
+      const double dot = std::max(
+        -1.0, std::min(1.0, -box_neg_z.z()));  // vs straight down (0,0,-1)
+      const double kick_deg = std::acos(dot) * 180.0 / M_PI;
+      RCLCPP_INFO(
+        get_logger(),
+        "grasp-kick check: frame=%s magnet-face off vertical %.1f deg (limit %.1f)",
+        goal->object_frame.c_str(), kick_deg, params_.grasp_kick_max_tilt_deg);
+      if (kick_deg > params_.grasp_kick_max_tilt_deg) {
+        std::string ignored;
+        moveGripperNamed("open", ignored);  // release the rotated box back onto the riser
+        retreatToSafe();
+        result->success = false;
+        result->message = "grasp-close kick rotated the box " +
+          std::to_string(kick_deg) + " deg in the gripper (re-grasp needed)";
+        goal_handle->abort(result);
+        return;
+      }
+    } catch (const tf2::TransformException &) {
+      if (!box_check_warned_) {
+        RCLCPP_WARN(
+          get_logger(),
+          "grasp-kick check: TF for %s not available -- check stays passive",
+          goal->object_frame.c_str());
+        box_check_warned_ = true;
+      }
+    }
   }
 
   publishStageFeedback(goal_handle, "LIFT_OBJECT", 0.0);
