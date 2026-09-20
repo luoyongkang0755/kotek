@@ -809,14 +809,33 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
         t.transform.translation.z - params_.arm_mount_height};
       const double shift = std::sqrt(
         std::pow(actual.x - object_arm.x, 2) + std::pow(actual.y - object_arm.y, 2));
-      if (shift > 0.005) {
-        RCLCPP_INFO(
+      // Sanity window: only follow a displacement the arm can actually
+      // grasp. A kick-rejected box sometimes falls OFF the riser onto the
+      // chassis (measured 2026-09-20: retry target z=-0.43 arm frame,
+      // unplannable, and the weird approach state then made the FOLLOWING
+      // preplace fail 4x with status=6 -- e2e10_final_v2 runs 2/4/5/8/10).
+      // Beyond ~0.15 m lateral or outside the arm's workspace z band the
+      // box is ungraspable anyway: keep the authored corner and let the
+      // contact check report the miss.
+      const bool sane =
+        shift < 0.15 && actual.z > -0.05 && actual.z < 0.45;
+      if (sane) {
+        if (shift > 0.005) {
+          RCLCPP_INFO(
+            get_logger(),
+            "grasp target adjusted to %s current position (%.3f,%.3f,%.3f), "
+            "%.3f m off the authored corner",
+            goal->object_frame.c_str(), actual.x, actual.y, actual.z, shift);
+        }
+        object_arm = actual;
+      } else {
+        RCLCPP_WARN(
           get_logger(),
-          "grasp target adjusted to %s current position (%.3f,%.3f,%.3f), "
-          "%.3f m off the authored corner",
+          "grasp target: %s reports (%.3f,%.3f,%.3f) -- outside the sane "
+          "grasp window (lateral %.3f m, z band [-0.05,0.45]); keeping the "
+          "authored corner (box likely fell off the riser)",
           goal->object_frame.c_str(), actual.x, actual.y, actual.z, shift);
       }
-      object_arm = actual;
     } catch (const tf2::TransformException &) {
       RCLCPP_WARN(
         get_logger(),
