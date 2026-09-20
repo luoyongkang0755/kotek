@@ -324,6 +324,13 @@ def add_sensor_tf_graph(stage: Usd.Stage):
 
     context = _og_node(stage, f'{graph_path}/ros2_context', 'isaacsim.ros2.bridge.ROS2Context')
     context.CreateAttribute('outputs:context', Sdf.ValueTypeNames.UInt64)
+    # WITHOUT this the context ignores ROS_DOMAIN_ID and publishes on the DDS
+    # default domain 0 -- found 2026-09-18: the wall-mount stack runs on
+    # domain 77 and its /tf never carried sensor_cam_N frames (15 s listen,
+    # zero samples) while the pick-and-delivery demo's Controller-authored
+    # graphs (same node type, no explicit flag) defaulted to env-var use.
+    use_env = context.CreateAttribute('inputs:useDomainIDEnvVar', Sdf.ValueTypeNames.Bool)
+    use_env.Set(True)
 
     # Without this wired, every message carries timeStamp=0 forever -- see
     # build_demo_stage.py's add_sensor_tf_graph for the exact failure this
