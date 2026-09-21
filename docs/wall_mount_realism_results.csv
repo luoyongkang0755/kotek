@@ -1,0 +1,20 @@
+run,result,welds,misalign_deg,abort_stage,error,duration_s,classification
+1,ABORTED,0
+0,-,-,held-box orientation check failed: sensor_cam_4 magnet face is 30.918444 deg off the wall approach direction (limit 30.0,520,move_group_crash
+2,ABORTED,0
+0,-,-,grasp-close kick rotated the box 90.022543 deg in the gripper (re-grasp needed),212,move_group_crash
+3,ABORTED,0
+0,-,-,grasp-close kick rotated the box 89.686437 deg in the gripper (re-grasp needed),212,move_group_crash
+4,ABORTED,0
+0,-,-,held-box orientation check failed: sensor_cam_3 magnet face is 31.272004 deg off the wall approach direction (limit 30.0,424,move_group_crash
+5,ABORTED,0
+0,-,-,grasp-close kick rotated the box 90.027440 deg in the gripper (re-grasp needed),218,move_group_crash
+6,COMPLETE,1,5.5,-,-,512,partial_weld+slip[s1]+slip[s2]+slip[s3]
+7,COMPLETE,0
+0,-,-,-,511,partial_weld+slip[s1]+slip[s2]+slip[s3]+slip[s4]
+8,ABORTED,0
+0,-,-,grasp-close kick rotated the box 90.066744 deg in the gripper (re-grasp needed),213,move_group_crash
+9,ABORTED,0
+0,-,-,held-box orientation check failed: sensor_cam_3 magnet face is 30.719692 deg off the wall approach direction (limit 30.0,423,move_group_crash
+10,ABORTED,0
+0,-,-,grasp-close kick rotated the box 89.800045 deg in the gripper (re-grasp needed),217,move_group_crash
