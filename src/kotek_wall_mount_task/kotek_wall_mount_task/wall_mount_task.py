@@ -54,28 +54,25 @@ GRASP_POSITIONS = [
 # way), so world x/y equal arm-frame x/y directly, and world z is converted
 # via the chassis's own settled height (~0.18m, physics_tuning.py) plus the
 # arm mount offset.
-# NOT the wall face itself: commanding the object CENTER onto the face
-# (x=0.40) drives the pitched box's leading corner (the 8cm axis tilted at
-# place_pitch=0.7 reaches ~3.5cm beyond the center along x) INTO the wall
-# during MOVE_ARM_TO_PREPLACE -- MoveIt does not model the carried object,
-# so the arm keeps driving while the wall pries the fingers open (a live
-# monitor trace caught joint7 forced from its 0.019 grip stall to 0.058 as
-# the box corner met the wall, then free-fall). This only ever "worked"
-# while pre-parking-brake chassis creep happened to pull the whole robot
-# 2-3cm back before the first place. Released 4.5cm short instead (corner
-# reach + 1cm clearance), the magnet's widened attract range
-# (MAGNET_ATTRACT_RANGE=0.08, physics_tuning.py) covers the final hop and
-# the weld still engages at its usual ~6mm equilibrium.
-# _WALL_Z +0.06 vs the mount target's own height (2026-09-13, measured):
-# with the reoriented vertical delivery (place_reorient), the fingertip
-# axis tilts down by grasp_pitch and link6 must stay above the arm's
-# measured lower workspace boundary (link6 z ~ -0.05 m -- a live OMPL sweep
-# grid found everything below that unplannable at the wall standoff). The
-# box's own magnet target stays at the authored 0.35m; the released box is
-# pulled down onto it during release_settle_time, 5cm is well inside the
-# magnet's capture range.
-_WALL_X = 0.40 - 0.045
-_WALL_Z = 0.35 - 0.18 - 0.29101 + 0.06
+# 0.40 - 0.045 -> 0.30 -> 0.386 (2026-09-21, realism pass, measured twice):
+# the carried box is now an AttachedCollisionObject during the place leg
+# (piper_manipulator Params::attach_carried_box), so the planner keeps the
+# box's corners off the wall by construction. MAGNET_ATTRACT_RANGE is now a
+# realistic 0.03 m, so the RELEASE must put the box's magnet face within
+# ~2.5cm of its patch (d = sqrt(horiz^2 + vert^2) budget). Smoke-r1 measured
+# the actual release geometry at _WALL_X=0.30: face-to-patch d=0.103 m --
+# horizontal 10.6cm (box face lands at cmd_x - 0.006: fingertips AT cmd,
+# box center +0.014 along the tilted axis, face -0.02) plus ~6cm VERTICAL
+# (the old +0.06 _WALL_Z lift, a 10cm-range-era cushion). Working backwards
+# with the reoriented carry (corner reach only 3.46cm at the residual
+# ~24deg tilt): face gap 0.40 - (cmd - 0.006), corner clearance 0.40 -
+# (cmd - 0.0206); cmd=0.386 gives face 2.0cm / corner 3.5cm clearance.
+# Vertical: dropping the +0.06 lift puts the face AT patch height (cmd_z =
+# 0.35 - 0.18 - 0.29101) and link6 at z = cmd_z + 0.0955 = -0.0255, still
+# above the measured -0.05 workspace boundary. The magnet's pull-down
+# during release_settle handles the last fraction.
+_WALL_X = 0.386
+_WALL_Z = 0.35 - 0.18 - 0.29101
 PLACE_POSITIONS = [
     (_WALL_X, -0.15, _WALL_Z),
     (_WALL_X, -0.05, _WALL_Z),
