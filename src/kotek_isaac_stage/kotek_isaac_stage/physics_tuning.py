@@ -675,12 +675,7 @@ MAGNET_TORQUE_CUTOFF = 0.01                  # m, torque tapers to zero by here
 # re-welds -- the near-zero speed threshold restricts welding to boxes
 # genuinely at rest, which the gripped carry never is and the released,
 # magnet-settled hover always is.
-# 0.04 -> 0.02 (2026-09-21, realism pass): with MAGNET_ATTRACT_RANGE now
-# 0.03, a 0.04 gate is vacuous (d < 0.04 is implied by being in range at
-# all) -- a slow-flying box at 2.5cm could in principle weld mid-air. 0.02
-# restores "meaningfully close" (the settled equilibrium is ~0.006-0.015m)
-# with margin above the taper floor's dead zone.
-WELD_DISTANCE = 0.02                         # m, contact tolerance for the weld
+WELD_DISTANCE = 0.04                         # m, contact tolerance for the weld
 # Bug 5 (cap locks at whatever value it's set to, not "0.3 specifically"):
 # a live A/B test with SENSOR_CAM_MAX_LINEAR_VELOCITY temporarily patched to
 # 5.0 m/s (effectively off) showed damping DOES converge speed to ~0 cleanly
@@ -763,30 +758,13 @@ WELD_MAX_MISALIGN_DEG = 23.0                 # deg, bottom-normal vs wall
 # measured by an OMPL plan sweep), putting the box's magnet face ~7-9cm
 # from its patch at the moment of release -- outside a 0.08 range. See the
 # moment recalibration below (same 2 N at the new outer edge).
-# 0.10 -> 0.03 (2026-09-21, realism pass): a real small neodymium magnet has
-# effectively ZERO pull beyond a few mm; the 10cm capture range was a demo
-# abstraction so the arm could release 4.5-9cm short of the wall (MoveIt
-# does not model the carried box -- driving it into the wall pried the
-# fingers open). Closing that gap properly: the carried box is now an
-# AttachedCollisionObject during the place leg (piper_manipulator), so the
-# planner keeps the box's corners off the wall by construction, and the
-# release point moved to ~2.5cm face gap (wall_mount_task._WALL_X 0.355 ->
-# 0.30, geometry in that file's comment). Moment recalibrated below (same
-# 2 N at the new outer edge); probes + 10-run batch re-validate.
-MAGNET_ATTRACT_RANGE = 0.03                  # m
+MAGNET_ATTRACT_RANGE = 0.10                  # m
 MAGNET_TAPER_DISTANCE = MAGNET_ATTRACT_RANGE   # interaction ramps down over
                                                 # the WHOLE attract range,
                                                 # not just the last few mm --
                                                 # see Bug 5 above
-MAGNET_MAX_FORCE = 3.0                       # N, clamps |F_dipole| (gravity
-                                              # handled separately below).
-                                              # 2.0 -> 3.0 (2026-09-21 realism
-                                              # pass, smoke_r3-measured): a
-                                              # real magnet's NEAR-CONTACT pull
-                                              # exceeds its edge pull, and the
-                                              # release-flick margin needed it
-                                              # (boxes entered the 3cm band at
-                                              # f=1.5N and still fell)
+MAGNET_MAX_FORCE = 2.0                       # N, clamps |F_dipole| (gravity
+                                              # handled separately below)
 # Dipole moment magnitude of EACH magnet (sensor bottom face + wall patch),
 # in A*m^2. Calibration, matching the old law's measured strength: with
 # K = 1e-7 * MAGNET_DIPOLE_MOMENT**2 (N*m^4) the axial (face-on) attraction
@@ -811,26 +789,6 @@ MAGNET_MAX_FORCE = 3.0                       # N, clamps |F_dipole| (gravity
 # 11.7) captured a vertical box from magnet-face d=0.026 and welded it at
 # 9.7 deg in 0.6s, while the production 4.6 values let the 90-deg flat
 # deliveries in the stab-ON E2E jam at d=0.046-0.050 forever unwelded.
-# 18.3 -> 1.64 (2026-09-21, realism pass): recalibrated for
-# MAGNET_ATTRACT_RANGE 0.10 -> 0.03, same 2 N at the outer edge:
-# K = 2.0 * 0.03**4 / 6 = 2.7e-7 -> moment = sqrt(K/1e-7) = 1.64.
-# 1.64 -> 3.2 (2026-09-21, smoke_r3-measured): the 2 N EDGE calibration was
-# carried over from the 10cm-range abstraction and is NOT the realistic near
-# field -- a real small neodymium magnet pulls 5-10 N in near-contact, only
-# its REACH is millimetric. The E2E smoke showed release-dynamics margins
-# the static probe cannot see: the opening fingers flick the box and it
-# re-accelerates downward at ~g, crossing the 3cm band in ~5 ticks -- at 1.64
-# (1.5 N at d=0.025) the field could not arrest it (s1/s2 entered at d=0.025
-# with f=1.5N and still fell). Doubling the moment gives ~3 N at the edge and
-# ~10+ N near the taper floor (realistic near-contact saturation: the 2 N
-# MAGNET_MAX_FORCE clamp still bounds it, raised alongside). Torque at the
-# clamp 0.002 unchanged; stiffness re-check: 2*K/r**3 with K=1e-7*3.2**2
-# at r=3cm = 0.076 N*m/rad -> omega_n=48 rad/s, still integration-safe.
-# Torque check at the new working band (1-3cm): raw |tau| = 2*K*sin/r**3
-# at r=3cm/45deg = 0.014 N*m (clamped by MAGNET_MAX_TORQUE as designed);
-# linearized stiffness 2*K/r**3 = 0.02-0.16 N*m/rad across the band ->
-# omega_n = 24-69 rad/s, below the Nyquist of the effective 60Hz step --
-# integration-safe, re-verified by the misaligned probe.
 # NOTE: the alignment-torque taper (MAGNET_TAPER_FLOOR /
 # MAGNET_TORQUE_TAPER_DISTANCE) still bottoms out at 3cm -- at larger d
 # the torque-per-degree is WEAKER than before at the same distance
@@ -857,10 +815,7 @@ MAGNET_MAX_FORCE = 3.0                       # N, clamps |F_dipole| (gravity
 # fridge magnet clicks into place, it does not slam-align at hundreds of
 # rad/s^2). The clamp is how that finite-size physics enters the model.
 # Validated by probe_magnet_tuning.py --mode misaligned.
-MAGNET_DIPOLE_MOMENT = 3.2                    # A*m^2, each magnet
-                                              # (realism pass 2026-09-21:
-                                              # near-contact-dominated, see
-                                              # the calibration history above)
+MAGNET_DIPOLE_MOMENT = 18.3                  # A*m^2, each magnet
 # 0.02 -> 0.002 (2026-09-07, measured): the first clamp value, picked as
 # "2x above plausible", turned out 10-100x too hot for this moment of
 # inertia. A live in-range probe (which starts with the bottom face
