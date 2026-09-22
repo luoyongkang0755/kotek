@@ -356,7 +356,15 @@ SENSOR_CAM_REST_OFFSET = 0.0                # m
 # that crossing the same 3cm zone takes ~0.1s (~12 ticks) -- comfortable
 # room for damping to act -- while still fast enough not to look sluggish
 # during normal arm-carried handling (which this cap also governs).
-SENSOR_CAM_MAX_LINEAR_VELOCITY = 0.3        # m/s
+# 0.3 -> 0.05 (2026-09-22, contact-placement rework, MEASURED): with the
+# attract range now 0.012m, the 0.3 m/s cap is the approach SPEED, not a
+# safety: the box enters the last 9mm at the cap (force 0.4-0.9N >> damping
+# bleed), has only the 3mm taper-floor dead zone to stop in, sails through
+# and bounces back out (probe trace: d 0.0093 -> 0.0035 at speed pinned
+# 0.3000 -> back out to 0.0137, never welding). 0.05 m/s crosses the band in
+# ~0.24s with damping able to arrest inside it. Also governs arm-carried
+# handling -- 0.05 is still snappy at manipulator scale.
+SENSOR_CAM_MAX_LINEAR_VELOCITY = 0.05        # m/s
 
 # apply_graspable_rigid_body_tuning() also sets sleepThreshold=0.0 and
 # stabilizationThreshold=0.0 on every graspable object (needed so a resting
@@ -618,8 +626,18 @@ SENSOR_CAM_ANGULAR_DAMPING = 5.0
 # d~6-12mm and pulled into contact). The near-field torque problem is
 # handled separately by MAGNET_TORQUE_CUTOFF below, not by moving the
 # force's zero-crossing.
-MAGNET_TAPER_FLOOR = 0.003                   # m, fixed -- NOT the same knob as
+MAGNET_TAPER_FLOOR = 0.001                   # m, fixed -- NOT the same knob as
                                               # WELD_DISTANCE (see Bug 8 above)
+                                              # 0.003 -> 0.001 (2026-09-22,
+                                              # contact-placement rework): the
+                                              # author script now floors the
+                                              # near-contact taper at 0.6
+                                              # inside 4mm (real magnets pull
+                                              # HARDER into contact), so the
+                                              # floor only needs to keep the
+                                              # 1/r**4 law off the singularity;
+                                              # the clamp-first ordering bounds
+                                              # the plateau at maxForce
 # Torque-only near-field cutoff (2026-09-07): the alignment torque tapers
 # to zero by THIS distance (linearly, from MAGNET_ATTRACT_RANGE down),
 # independently of the force taper. Measured reason: the point-dipole
@@ -633,7 +651,18 @@ MAGNET_TAPER_FLOOR = 0.003                   # m, fixed -- NOT the same knob as
 # CONTACT (the force law below still pulls the box into the wall face;
 # 0.9-friction contact at a ~2N press out-torques the 0.002 N*m clamp by
 # an order of magnitude -- which is also how a real fridge magnet aligns).
-MAGNET_TORQUE_CUTOFF = 0.01                  # m, torque tapers to zero by here
+MAGNET_TORQUE_CUTOFF = 0.004                # m, torque tapers to zero by here
+                                              # 0.01 -> 0.004 (2026-09-22,
+                                              # contact-placement rework): the
+                                              # attract range is now 0.012m, so
+                                              # a 0.01 cutoff would leave the
+                                              # torque band ~2mm wide. 0.004
+                                              # keeps alignment authority over
+                                              # 4-12mm and leaves the last 4mm
+                                              # to contact friction (how a real
+                                              # magnet seats). Stability:
+                                              # 2*K/r**3 at r=4mm = 0.027 N*m/rad
+                                              # -> omega_n ~28 rad/s << Nyquist
 # 0.03 -> 0.01 (2026-09-08): the "inside 3cm the 120Hz tau feedback is
 # unstable at any clamp" evidence that set 0.03 was CONTAMINATED -- every
 # run that showed the cap-pinned spin also had Bug 9's script damping
@@ -675,7 +704,20 @@ MAGNET_TORQUE_CUTOFF = 0.01                  # m, torque tapers to zero by here
 # re-welds -- the near-zero speed threshold restricts welding to boxes
 # genuinely at rest, which the gripped carry never is and the released,
 # magnet-settled hover always is.
-WELD_DISTANCE = 0.04                         # m, contact tolerance for the weld
+WELD_DISTANCE = 0.008                        # m, contact tolerance for the weld
+                                              # 0.04 -> 0.008 (2026-09-22,
+                                              # contact-placement rework):
+                                              # with the attract range now
+                                              # 0.012m, a 0.04 gate welds
+                                              # boxes HOVERING at the range
+                                              # edge -- probe-measured: a
+                                              # misaligned-arrival box
+                                              # aligned in place to 13.8deg
+                                              # at d=0.0121 and welded
+                                              # mid-air. 0.008 restricts
+                                              # welding to genuinely pressed
+                                              # contact (face within 8mm of
+                                              # the patch point)
 # Bug 5 (cap locks at whatever value it's set to, not "0.3 specifically"):
 # a live A/B test with SENSOR_CAM_MAX_LINEAR_VELOCITY temporarily patched to
 # 5.0 m/s (effectively off) showed damping DOES converge speed to ~0 cleanly
@@ -758,13 +800,29 @@ WELD_MAX_MISALIGN_DEG = 23.0                 # deg, bottom-normal vs wall
 # measured by an OMPL plan sweep), putting the box's magnet face ~7-9cm
 # from its patch at the moment of release -- outside a 0.08 range. See the
 # moment recalibration below (same 2 N at the new outer edge).
-MAGNET_ATTRACT_RANGE = 0.10                  # m
+# 0.10 -> 0.012 (2026-09-22, CONTACT-PLACEMENT rework): the magnet is now a
+# CONTACT HOLDDOWN ONLY -- the arm presses the box onto the wall (carried
+# box modeled as an AttachedCollisionObject, wall contact enforced by the
+# planner) and the magnet's entire job is keeping it from sliding/falling
+# after the fingers open. 12mm covers the press-and-seat window (real
+# small-magnet reach is millimetric; industrial magnetic mounting is always
+# contact placement). Remote capture is gone by design.
+MAGNET_ATTRACT_RANGE = 0.012                 # m
 MAGNET_TAPER_DISTANCE = MAGNET_ATTRACT_RANGE   # interaction ramps down over
                                                 # the WHOLE attract range,
                                                 # not just the last few mm --
                                                 # see Bug 5 above
-MAGNET_MAX_FORCE = 2.0                       # N, clamps |F_dipole| (gravity
-                                              # handled separately below)
+MAGNET_MAX_FORCE = 3.0                       # N, clamps |F_dipole| (gravity
+                                              # handled separately below).
+                                              # 2.0 -> 3.0 (2026-09-22 contact-
+                                              # placement rework): the working
+                                              # point is now NEAR CONTACT, and a
+                                              # real magnet's holddown pull at
+                                              # touch exceeds its edge pull --
+                                              # 3N normal x 0.9 friction = 2.7N
+                                              # shear vs the box's 0.49N weight
+                                              # (5.5x margin for the open-finger
+                                              # window)
 # Dipole moment magnitude of EACH magnet (sensor bottom face + wall patch),
 # in A*m^2. Calibration, matching the old law's measured strength: with
 # K = 1e-7 * MAGNET_DIPOLE_MOMENT**2 (N*m^4) the axial (face-on) attraction
@@ -815,7 +873,16 @@ MAGNET_MAX_FORCE = 2.0                       # N, clamps |F_dipole| (gravity
 # fridge magnet clicks into place, it does not slam-align at hundreds of
 # rad/s^2). The clamp is how that finite-size physics enters the model.
 # Validated by probe_magnet_tuning.py --mode misaligned.
-MAGNET_DIPOLE_MOMENT = 18.3                  # A*m^2, each magnet
+MAGNET_DIPOLE_MOMENT = 0.093                 # A*m^2, each magnet
+                                              # (2026-09-22 contact-placement
+                                              # rework: recalibrated for
+                                              # ATTRACT_RANGE 0.012, ~2.5 N at
+                                              # the outer edge -- K = 2.5 *
+                                              # 0.012**4 / 6 = 8.6e-10 -> m =
+                                              # sqrt(K/1e-7) = 0.093. At the
+                                              # contact working point d=0.006:
+                                              # raw F = 6K/d**4 = 4 N, clamped
+                                              # to MAGNET_MAX_FORCE 3.0)
 # 0.02 -> 0.002 (2026-09-07, measured): the first clamp value, picked as
 # "2x above plausible", turned out 10-100x too hot for this moment of
 # inertia. A live in-range probe (which starts with the bottom face

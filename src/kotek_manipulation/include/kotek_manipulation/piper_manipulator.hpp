@@ -12,6 +12,7 @@
 #include "moveit_msgs/action/execute_trajectory.hpp"
 #include "moveit_msgs/action/move_group.hpp"
 #include "moveit_msgs/msg/motion_plan_request.hpp"
+#include "moveit_msgs/msg/planning_scene.hpp"
 #include "moveit_msgs/msg/robot_trajectory.hpp"
 #include "moveit_msgs/srv/get_cartesian_path.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -271,6 +272,23 @@ private:
     // without this correction (constant z offset) -- it separated well
     // enough empirically, but corrected distances are exact.
     double arm_mount_height = 0.29101;   // m, coordinator.yaml arm_mount_xyz.z
+    // --- Realism pass (2026-09-21): model the carried box as an
+    // ATTACHED collision object during the carry, so MoveIt plans
+    // (preplace swing, place descent, retreat) account for the box and
+    // can never drive its corners into the wall. This is what finally
+    // allows the release point to sit ~2.5cm from the wall (face gap),
+    // which the shortened MAGNET_ATTRACT_RANGE=0.03 demands -- before,
+    // the release had to stay 4.5-9cm short precisely because the
+    // planner was blind to the box (the corner-pry bug,
+    // wall_mount_task.py's _WALL_X comment). Attached after CLOSE_GRIPPER
+    // passes the kick check (box confirmed held and healthy), detached
+    // after OPEN_GRIPPER. Published as PlanningScene diffs on
+    // /piper/planning_scene (direct publisher -- see the raw_* clients'
+    // comment for why nothing MoveGroupInterface-internal is used).
+    bool attach_carried_box = false;
+    double carried_box_size_x = 0.08;    // m, sensor box 8 x 3.5 x 4
+    double carried_box_size_y = 0.035;
+    double carried_box_size_z = 0.04;
     double planning_time = 5.0;
     int planning_attempts = 10;
     // Max seconds to wait for a /piper/move_action result once the goal is
@@ -377,6 +395,15 @@ private:
   /// TF is unavailable.
   bool heldBoxNearTcp(const std::string & object_frame, bool latch, std::string & why_not);
 
+  /// Realism pass: attach the carried box (object_frame's TF pose) to the
+  /// arm end-effector as an AttachedCollisionObject via a PlanningScene
+  /// diff on /piper/planning_scene, so subsequent plans model the box.
+  /// Detach (removeCarriedBox) after OPEN_GRIPPER. Both no-op unless
+  /// Params::attach_carried_box is true; TF failure logs and continues
+  /// unattached (planning then has the old blind-to-the-box behavior).
+  void attachCarriedBox(const std::string & object_frame);
+  void removeCarriedBox();
+
   bool retreatToSafe();
 
   /// Sends `request` to /piper/move_action directly via `raw_move_client_`
@@ -479,6 +506,12 @@ private:
 
   rclcpp_action::Server<GraspObject>::SharedPtr action_server_;
   rclcpp_action::Server<PlaceObject>::SharedPtr place_action_server_;
+
+  // Realism pass: /piper/planning_scene diff publisher for attaching the
+  // carried box to the end-effector during the carry (see Params::
+  // attach_carried_box).
+  rclcpp::Publisher<moveit_msgs::msg::PlanningScene>::SharedPtr planning_scene_pub_;
+  std::string carried_box_name_;
 
   // Task 2b TF state -- sees the stage-published sensor_cam_N frames (the
   // wall stage's kotek_wall_sensor_graph; DDS-domain bug fixed 2026-09-18).

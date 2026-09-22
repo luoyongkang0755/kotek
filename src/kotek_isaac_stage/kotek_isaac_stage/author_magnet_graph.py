@@ -238,6 +238,27 @@ def compute(db):
     break_torque = float(db.inputs.breakTorque)
     bottom_local_z = float(db.inputs.bottomLocalOffsetZ)   # negative half-height
     wall_prim_path = str(db.inputs.wallStaticPrim)
+    # Gripper-open weld gate (2026-09-22, contact-placement rework): weld
+    # only when joint7 says the fingers are OPEN. The contact-placement
+    # sequence presses the box against the wall with the fingers closed,
+    # and during that press the box is linearly AND angularly at rest at
+    # d~0.006 -- every existing weld gate passes, so without this gate the
+    # box welds mid-hold: the breakable weld then snaps in the arm-vs-weld
+    # tug when the gripper retreats, and state.welded latches, never re-
+    # welding (physics_tuning.py's WELD_DISTANCE note). joint states come
+    # from /piper/joint_states via a ROS2SubscribeJointState node (the same
+    # type author_robot_graphs.py uses); both arrays are wired in and joint7
+    # is located by name at runtime (robust to the bridge's filtering). If
+    # no joint states ever arrive the position input keeps its authored
+    # default (1.0, above the threshold = "open") so probes and non-ROS
+    # runs weld normally. Threshold: SRDF gripper states are close=0 /
+    # open=0.04, measured grasp stall ~0.019 -- 0.03 separates them 2x over.
+    joint_names = list(db.inputs.jointNamesObserved)
+    joint_positions = list(db.inputs.jointPositions)
+    joint7_position = 1.0   # default: open (welding allowed)
+    if 'joint7' in joint_names:
+        joint7_position = float(joint_positions[joint_names.index('joint7')])
+    weld_enable = joint7_position > 0.03
 
     positions, orientations = state.rigid_prims.get_world_poses()
     linear_vel, angular_vel = state.rigid_prims.get_velocities()
@@ -278,7 +299,19 @@ def compute(db):
         cos_mis = float(np.dot(current_normal, inward))
         misalign_deg = float(np.degrees(np.arccos(np.clip(cos_mis, -1.0, 1.0))))
 
-        if d < attract_range and d > 1e-6:
+        # Soft range edge (2026-09-22, contact-placement era, MEASURED): the
+        # old hard d < attract_range switch worked at the 0.10m range (the
+        # box crossed the boundary once and had meters of band to settle),
+        # but at 0.012m the hard switch PUMPS A LIMIT CYCLE: every orbit
+        # crossing toggles the dipole force AND the 0.49N gravity
+        # feedforward on/off, sustaining a ~0.13 m/s spin-orbit right at
+        # the boundary (probe-measured: box circling at d=0.013-0.014 for
+        # hundreds of ticks, weld speed gate never passing). A 4mm linear
+        # rolloff removes the discontinuity; fully on at d <= range-4mm,
+        # identical physics inside the band.
+        soft_edge = 0.004
+        soft = min(1.0, max(0.0, (attract_range + soft_edge - d) / soft_edge))
+        if soft > 0.0 and d > 1e-6:
             r_hat = r_vec / d
             m_w = moment * inward
             m_s = moment * current_normal
@@ -299,6 +332,18 @@ def compute(db):
             taper = 0.0
             if d > taper_floor:
                 taper = min(1.0, (d - taper_floor) / max(taper_distance - taper_floor, 1e-9))
+            # Near-contact plateau (2026-09-22, contact-placement era,
+            # MEASURED): tapering the force to ZERO at the floor created a
+            # 1mm-wide weak-force float zone where the box stands
+            # oscillating at d~0.004, speed 0.03-0.05 m/s, never passing
+            # the weld speed gate (probe trace). A REAL magnet's force
+            # RISES into contact -- so inside 4mm the taper is floored at
+            # 0.6 and the box is pressed firmly onto the wall, where the
+            # contact normal stops it (d settles ~0.001-0.003, pressed).
+            # The 1/r**4 singularity is still neutralized clamp-first
+            # above, so the plateau is bounded by maxForce.
+            if d < 0.004:
+                taper = max(taper, 0.6)
             # Separate, EARLIER cutoff for the TORQUE (physics_tuning.py's
             # MAGNET_TORQUE_CUTOFF -- measured): inside ~3cm the discrete
             # 120Hz tau feedback goes unstable at any clamp value tried
@@ -327,10 +372,10 @@ def compute(db):
             if t_n > max_torque:
                 tau_vec *= max_torque / t_n
                 t_n = max_torque
-            f_vec *= taper
-            f_mag = f_n * taper
-            tau_vec *= tau_taper
-            tau_mag = t_n * tau_taper
+            f_vec *= taper * soft
+            f_mag = f_n * taper * soft
+            tau_vec *= tau_taper * soft
+            tau_mag = t_n * tau_taper * soft
             dipole_forces[i] = f_vec
             dipole_torques[i] = tau_vec
             # Stabilizers, applied at the COM: linear drag (Bug 2/4 --
@@ -339,9 +384,11 @@ def compute(db):
             # Bug 9's live bisect, which retired only the ANGULAR twin)
             # plus the gravity feedforward (Bug 3: the radial term must
             # never be relied on to "accidentally" cover gravity).
-            # Deliberately NOT tapered -- gravity and momentum do not turn
-            # themselves off near contact.
-            stabilizer_forces[i] = (
+            # Untapered near contact BUT soft-gated at the range EDGE --
+            # the feedforward's hard on/off at the boundary was the
+            # limit-cycle pump (see the soft_edge note above); inside the
+            # band it is unchanged.
+            stabilizer_forces[i] = soft * (
                 -damping_coeff * linear_vel[i]
                 + np.array([0.0, 0.0, gravity_feedforward_z]))
             stabilizer_torques[i] = -angular_damping_coeff * angular_vel[i]
@@ -385,7 +432,7 @@ def compute(db):
         # A crooked weld is permanent, so the gate refuses it and lets the
         # torque keep working; a box that NEVER aligns is a delivery bug
         # to fix at the source, not to mask with a permissive weld gate.
-        if (d < weld_distance and speed < weld_max_speed
+        if (weld_enable and d < weld_distance and speed < weld_max_speed
                 and ang_speed_weld < weld_max_ang_speed
                 and misalign_deg < weld_max_misalign):
             joint_path = f'/World/wall/_magnet_weld_{i + 1}'
@@ -467,8 +514,16 @@ def build_magnet_graph(og, graph_path, sensor_paths, wall_targets_flat):
                 (f'{MAGNET_NODE_NAME}.inputs:breakForce', 'double'),
                 (f'{MAGNET_NODE_NAME}.inputs:breakTorque', 'double'),
                 (f'{MAGNET_NODE_NAME}.inputs:bottomLocalOffsetZ', 'double'),
+                (f'{MAGNET_NODE_NAME}.inputs:jointNamesObserved', 'token[]'),
+                (f'{MAGNET_NODE_NAME}.inputs:jointPositions', 'double[]'),
             ],
             keys.SET_VALUES: [
+                # Authored defaults = empty: with no joint states wired in
+                # (probes, non-ROS runs) joint7_position falls back to the
+                # 1.0 open-default inside compute() and welding works as
+                # before.
+                (f'{MAGNET_NODE_NAME}.inputs:jointNamesObserved', []),
+                (f'{MAGNET_NODE_NAME}.inputs:jointPositions', []),
                 (f'{MAGNET_NODE_NAME}.inputs:script', MAGNET_SCRIPT_SOURCE),
                 (f'{MAGNET_NODE_NAME}.inputs:sensorPaths', list(sensor_paths)),
                 (f'{MAGNET_NODE_NAME}.inputs:wallTargets', list(wall_targets_flat)),
@@ -506,6 +561,32 @@ def build_magnet_graph(og, graph_path, sensor_paths, wall_targets_flat):
     og.Controller.edit(
         graph,
         {keys.CONNECT: [(f'{graph_path}/tick.outputs:tick', f'{node_ref}.inputs:execIn')]},
+    )
+
+    # Gripper-open weld gate (2026-09-22): see the compute() comment on
+    # db.inputs.joint7Position. ROS2SubscribeJointState -- the same node type
+    # author_robot_graphs.py already uses -- filtered to joint7, wired
+    # straight into the magnet node. When no publisher is alive the
+    # connection never fires and the authored 1.0 default stands (probes /
+    # non-ROS runs weld normally).
+    og.Controller.edit(
+        graph,
+        {
+            keys.CREATE_NODES: [
+                ('ros2_context', 'isaacsim.ros2.bridge.ROS2Context'),
+                ('joint_states_sub', 'isaacsim.ros2.bridge.ROS2SubscribeJointState'),
+            ],
+            keys.SET_VALUES: [
+                ('joint_states_sub.inputs:topicName', '/piper/joint_states'),
+                ('joint_states_sub.inputs:queueSize', 1),
+            ],
+            keys.CONNECT: [
+                (f'{graph_path}/tick.outputs:tick', 'joint_states_sub.inputs:execIn'),
+                ('ros2_context.outputs:context', 'joint_states_sub.inputs:context'),
+                ('joint_states_sub.outputs:jointNames', f'{node_ref}.inputs:jointNamesObserved'),
+                ('joint_states_sub.outputs:positionCommand', f'{node_ref}.inputs:jointPositions'),
+            ],
+        },
     )
     return graph
 
