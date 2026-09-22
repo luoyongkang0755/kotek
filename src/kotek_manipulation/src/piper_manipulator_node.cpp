@@ -9,7 +9,6 @@
 #include <algorithm>
 
 #include "geometry_msgs/msg/pose.hpp"
-#include "shape_msgs/msg/solid_primitive.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "tf2/LinearMath/Matrix3x3.h"
 #include "tf2/LinearMath/Quaternion.h"
@@ -114,14 +113,6 @@ PiperManipulator::Params PiperManipulator::loadParams()
     "grasp_kick_max_tilt_deg", p.grasp_kick_max_tilt_deg);
   p.arm_mount_height = declare_parameter<double>(
     "arm_mount_height", p.arm_mount_height);
-  p.attach_carried_box = declare_parameter<bool>(
-    "attach_carried_box", p.attach_carried_box);
-  p.carried_box_size_x = declare_parameter<double>(
-    "carried_box_size_x", p.carried_box_size_x);
-  p.carried_box_size_y = declare_parameter<double>(
-    "carried_box_size_y", p.carried_box_size_y);
-  p.carried_box_size_z = declare_parameter<double>(
-    "carried_box_size_z", p.carried_box_size_z);
   return p;
 }
 
@@ -234,11 +225,6 @@ void PiperManipulator::init(const std::shared_ptr<PiperManipulator> & self)
   // returns -- fine, the buffer is only queried from inside executePlace().
   tf_buffer_ = std::make_unique<tf2_ros::Buffer>(self->get_clock());
   tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_, self, false);
-
-  // Realism pass: PlanningScene diff publisher for the carried-box
-  // attachment (see Params::attach_carried_box).
-  planning_scene_pub_ = self->create_publisher<moveit_msgs::msg::PlanningScene>(
-    "planning_scene", rclcpp::QoS(10));
 
   RCLCPP_INFO(
     get_logger(), "piper_manipulator ready: arm_group=%s gripper_group=%s planning_frame=%s",
@@ -767,80 +753,6 @@ bool PiperManipulator::heldBoxNearTcp(
   return true;
 }
 
-void PiperManipulator::attachCarriedBox(const std::string & object_frame)
-{
-  if (!params_.attach_carried_box) {
-    return;
-  }
-  const std::string link = move_group_arm_->getEndEffectorLink();
-  geometry_msgs::msg::TransformStamped t;
-  try {
-    // Box pose relative to the attach link (TF lookup covers it; the
-    // arm links are published by robot_state_publisher).
-    t = tf_buffer_->lookupTransform(link, object_frame, tf2::TimePointZero);
-  } catch (const tf2::TransformException & e) {
-    RCLCPP_WARN(
-      get_logger(), "attachCarriedBox: TF %s->%s failed (%s) -- carrying "
-      "WITHOUT a collision object", link.c_str(), object_frame.c_str(), e.what());
-    return;
-  }
-  carried_box_name_ = "carried_box";
-
-  moveit_msgs::msg::AttachedCollisionObject aco;
-  aco.link_name = link;
-  aco.touch_links = {link, "link7", "link8"};  // fingers may touch the box
-  aco.object.id = carried_box_name_;
-  aco.object.header.frame_id = link;
-  aco.object.pose.position.x = t.transform.translation.x;
-  aco.object.pose.position.y = t.transform.translation.y;
-  aco.object.pose.position.z = t.transform.translation.z;
-  aco.object.pose.orientation = t.transform.rotation;
-  shape_msgs::msg::SolidPrimitive prim;
-  prim.type = shape_msgs::msg::SolidPrimitive::BOX;
-  prim.dimensions = {params_.carried_box_size_x, params_.carried_box_size_y,
-    params_.carried_box_size_z};
-  aco.object.primitives = {prim};
-  // Primitive pose is IDENTITY within the object frame -- the object pose
-  // above already carries the link->box transform (a second copy would
-  // double-apply it).
-  geometry_msgs::msg::Pose identity;
-  identity.orientation.w = 1.0;
-  aco.object.primitive_poses = {identity};
-  aco.object.operation = moveit_msgs::msg::CollisionObject::ADD;
-
-  moveit_msgs::msg::PlanningScene ps;
-  ps.is_diff = true;
-  ps.robot_state.is_diff = true;
-  ps.robot_state.attached_collision_objects = {aco};
-  planning_scene_pub_->publish(ps);
-  RCLCPP_INFO(
-    get_logger(), "carried box attached to %s as '%s' (%.3fx%.3fx%.3f m)",
-    link.c_str(), carried_box_name_.c_str(), params_.carried_box_size_x,
-    params_.carried_box_size_y, params_.carried_box_size_z);
-}
-
-void PiperManipulator::removeCarriedBox()
-{
-  if (!params_.attach_carried_box || carried_box_name_.empty()) {
-    return;
-  }
-  moveit_msgs::msg::AttachedCollisionObject rm;
-  rm.link_name = move_group_arm_->getEndEffectorLink();
-  rm.object.id = carried_box_name_;
-  rm.object.operation = moveit_msgs::msg::CollisionObject::REMOVE;
-  moveit_msgs::msg::PlanningScene ps;
-  ps.is_diff = true;
-  ps.robot_state.is_diff = true;
-  ps.robot_state.attached_collision_objects = {rm};
-  // Also drop any world copy of the same id (defensive -- the box only
-  // ever lived attached).
-  moveit_msgs::msg::CollisionObject w = rm.object;
-  ps.world.collision_objects = {w};
-  planning_scene_pub_->publish(ps);
-  RCLCPP_INFO(get_logger(), "carried box '%s' detached", carried_box_name_.c_str());
-  carried_box_name_.clear();
-}
-
 bool PiperManipulator::retreatToSafe()
 {
   // 'zero' is a named joint-space group_state defined for the 'arm' group
@@ -1087,9 +999,6 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
   }
 
   publishStageFeedback(goal_handle, "LIFT_OBJECT", 0.0);
-  // Realism pass: the box is confirmed held and healthy -- from here until
-  // OPEN_GRIPPER the planner must see it (see Params::attach_carried_box).
-  attachCarriedBox(goal->object_frame);
   // Slower than the default velocity/acceleration scaling -- this cartesian
   // move carries a just-grasped, marginally-held object, and its
   // acceleration was previously unscaled entirely (see
@@ -1390,10 +1299,6 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
     return;
   }
   publishPlaceStageFeedback(goal_handle, "OPEN_GRIPPER", 1.0);
-  // Realism pass: fingers are open -- the box is either captured by the
-  // magnet or falling; either way it is no longer carried, so drop the
-  // collision object before the retreat plans its path.
-  removeCarriedBox();
 
   if (params_.release_settle_time > 0.0) {
     // See Params::release_settle_time's comment -- the magnet begins
@@ -1404,64 +1309,14 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
         std::chrono::duration<double>(params_.release_settle_time)));
   }
 
-  // Post-release confirmation (2026-09-22, contact-placement rework):
-  // with the grip-open weld gate the box should now be magnet-held or
-  // welded against the wall. Verify it DIDN'T fall -- a release can pass
-  // every pre-release check and still drop the box (the 2026-09-21
-  // realism batch had a COMPLETE-with-0-welds run). The box's TF must sit
-  // within a loose window of its patch; otherwise abort loudly instead of
-  // retreating and reporting success. Skipped when no object_frame/TF
-  // (legacy demos).
-  if (!carried_box_frame_.empty()) {
-    try {
-      const auto t = tf_buffer_->lookupTransform(
-        move_group_arm_->getPlanningFrame(), carried_box_frame_, tf2::TimePointZero);
-      const double bx = t.transform.translation.x;
-      const double by = t.transform.translation.y;
-      const double bz = t.transform.translation.z - params_.arm_mount_height;
-      const double patch_x = 0.40;                          // wall face, arm frame
-      const double patch_y = place_arm.y;
-      const double patch_z = 0.35 - 0.18 - params_.arm_mount_height;  // 0.35 world patch
-      const bool held =
-        std::abs(bx - patch_x) < 0.07 && std::abs(by - patch_y) < 0.05 &&
-        std::abs(bz - patch_z) < 0.09;
-      RCLCPP_INFO(
-        get_logger(),
-        "post-release check: %s at (%.3f,%.3f,%.3f) vs patch (%.3f,%.3f,%.3f) -> %s",
-        carried_box_frame_.c_str(), bx, by, bz, patch_x, patch_y, patch_z,
-        held ? "HELD" : "LOST");
-      if (!held) {
-        retreatToSafe();
-        result->success = false;
-        result->message = "box lost after release (not held at the wall)";
-        goal_handle->abort(result);
-        return;
-      }
-    } catch (const tf2::TransformException &) {
-      RCLCPP_WARN(
-        get_logger(), "post-release check: TF for %s unavailable -- skipping",
-        carried_box_frame_.c_str());
-    }
-  }
-
   publishPlaceStageFeedback(goal_handle, "RETREAT_ARM", 0.0);
-  // Realism pass (2026-09-21, smoke_r3-measured): with the release point
-  // now ~2.5cm from the wall, the straight-up cartesian retreat line
-  // collides with the wall (fraction 0.15) -- the arm is at full forward
-  // extension there and its links graze the face on the way up. A
-  // joint-space OMPL plan (default scalings) routes around it.
-  if (!moveArmToPose(toMsg(retreat_pose), error)) {
-    RCLCPP_WARN(
-      get_logger(), "RETREAT_ARM OMPL plan failed (%s) -- falling back to "
-      "cartesian straight-up", error.c_str());
-    if (!cartesianMoveTo(toMsg(retreat_pose), error)) {
-      RCLCPP_ERROR(get_logger(), "RETREAT_ARM failed: %s", error.c_str());
-      retreatToSafe();
-      result->success = false;
-      result->message = "RETREAT_ARM failed: " + error;
-      goal_handle->abort(result);
-      return;
-    }
+  if (!cartesianMoveTo(toMsg(retreat_pose), error)) {
+    RCLCPP_ERROR(get_logger(), "RETREAT_ARM failed: %s", error.c_str());
+    retreatToSafe();
+    result->success = false;
+    result->message = "RETREAT_ARM failed: " + error;
+    goal_handle->abort(result);
+    return;
   }
   publishPlaceStageFeedback(goal_handle, "RETREAT_ARM", 1.0);
 

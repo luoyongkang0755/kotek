@@ -118,18 +118,7 @@
     # carried orientation is known (box -Z along the reorient approach
     # dir); fail above this tilt error -- abort loudly instead of dropping
     # the box.
-    # 30 -> 50 (2026-09-22, contact-placement rework, MEASURED): the
-    # near-contact force plateau gives the magnet enough authority at
-    # 8-12mm to drag the GRIPPED box toward the wall normal during the
-    # place descent -- the pre-release tilt vs the approach direction
-    # settles at ~45deg (both a flat-carried box and a wall-normal box
-    # measure 45deg against the 45deg-tilted approach frame), so the old
-    # 30deg gate rejected EVERY placement (10/10 batch). Release-time
-    # orientation is now the magnet's own job -- the misaligned probe
-    # seats a 30deg arrival to 0.0deg at contact. This gate stays only
-    # as a coarse sanity bound against upside-down-class disasters; the
-    # grasp-leg kick check (vs vertical) still catches rotated grasps.
-    held_box_max_tilt_deg: 50.0
+    held_box_max_tilt_deg: 30.0
     # Grasp-leg companion (2026-09-20): checked right after CLOSE_GRIPPER
     # while the box still rests on the riser -- the flat-lying box's -Z
     # must point straight down; a larger angle means the close-kick
@@ -144,16 +133,6 @@
     # while the planner works in the ARM frame (riser box 0.019 = 0.310 -
     # this). Planning with the raw TF z made pregrasp unplannable.
     arm_mount_height: 0.29101
-    # Realism pass (2026-09-21): model the carried box as an
-    # AttachedCollisionObject (PlanningScene diff on /piper/planning_scene)
-    # from post-grasp to OPEN_GRIPPER -- the planner then keeps the box's
-    # corners off the wall, which is what allows the release point to move
-    # to ~2.5cm face gap (see wall_mount_task.py's _WALL_X comment) now
-    # that MAGNET_ATTRACT_RANGE is a realistic 0.03 m.
-    attach_carried_box: true
-    carried_box_size_x: 0.08
-    carried_box_size_y: 0.035
-    carried_box_size_z: 0.04
     retreat_height: 0.12
     # moveGripperToWidth()'s contact check (piper_manipulator_node.cpp) works
     # by commanding a target DELIBERATELY narrower than the real object, so a

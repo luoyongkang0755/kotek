@@ -176,43 +176,6 @@ def _run(args, simulation_app) -> int:
     from isaacsim.core.experimental.prims import RigidPrim
     probe = RigidPrim(args.sensor_path)
 
-    if start_pos is not None:
-        # Spawn-accuracy correction (2026-09-22, contact-placement era): the
-        # sensor prims are children of a settled/mounted parent, so the local
-        # teleport above lands the box's bottom face OFF from the intended
-        # (target - 0.8*range) point by several mm of parent-transform
-        # residual -- irrelevant at the old 0.10m range, but fatal at
-        # MAGNET_ATTRACT_RANGE=0.012 (measured: intended d=0.0096, actual
-        # d=0.0121 -> 0.1mm outside range -> the box free-fell). Measure the
-        # actual bottom-face point after one settle tick and re-teleport by
-        # the exact world-space residual (parent has no rotation at the
-        # parked standoff, so the delta applies to the local translate as-is).
-        target_bottom = target - np.array([offset, 0.0, 0.0])
-        for _ in range(2):
-            simulation_app.update()
-            wpos, wquat = probe.get_world_poses()
-            wpos = np.array(wpos[0]); wquat = np.asarray(wquat[0])
-            # same bottom-face convention as the magnet graph: local -Z by
-            # half height, rotated into world by the current orientation
-            bottom_now = wpos + half_h * np.array(
-                _rotate_vec_by_quat_wxyz(tuple(wquat), (0.0, 0.0, -1.0)))
-            residual = target_bottom - bottom_now
-            if np.linalg.norm(residual) < 0.001:
-                break
-            cur = list(xf.GetPrim().GetAttribute('xformOp:translate').Get())
-            xf.GetPrim().GetAttribute('xformOp:translate').Set(
-                Gf.Vec3d(*(float(c + r) for c, r in zip(cur, residual))))
-            print(f'### spawn corrected by {residual}', flush=True)
-        # Zero the residual velocity from the settling/correction steps:
-        # contact placement delivers the box at rest (the arm holds it), so
-        # the physics under test is settle-from-rest -> hold -> weld, not
-        # capture-from-flight (a 0.3 m/s arrival sails through the 3mm taper
-        # floor dead zone and bounces off the wall -- probe-measured, and
-        # not a situation the E2E pipeline produces).
-        import numpy as _np
-        probe.set_velocities(_np.zeros((1, 3)), _np.zeros((1, 3)))
-        simulation_app.update()
-
     start_world_pos, _ = probe.get_world_poses()
     start_world_pos = np.array(start_world_pos[0])
 

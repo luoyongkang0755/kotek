@@ -54,32 +54,28 @@ GRASP_POSITIONS = [
 # way), so world x/y equal arm-frame x/y directly, and world z is converted
 # via the chassis's own settled height (~0.18m, physics_tuning.py) plus the
 # arm mount offset.
-# CONTACT-PLACEMENT rework (2026-09-22): the magnet is now a CONTACT
-# HOLDDOWN ONLY (MAGNET_ATTRACT_RANGE=0.012, physics_tuning.py) -- the arm
-# PRESSES the box onto the wall, the fingers open against the wall's
-# support, and the magnet just keeps the box from sliding. The carried box
-# is modeled as an AttachedCollisionObject during the place leg
-# (piper_manipulator Params::attach_carried_box), so the planner enforces
-# the corner clearance that used to require the 4.5cm standoff -- which is
-# what finally allows touching distance:
-#   _WALL_X = 0.398 -> box magnet face lands ~8mm off the wall face
-#   (measured face-to-cmd relation from smoke_r3: face_x = cmd - 0.006),
-#   comfortably inside the 12mm attract range; corner clearance ~6cm.
-#   _WALL_Z drops the +0.06 lift AND compensates the 45deg-carry drop
-#   (2026-09-22, batch-measured): the box rides the tilted fingertip axis
-#   (approach_dir points DOWN-forward at 45deg), so its magnet-face center
-#   hangs BELOW the fingertip point by ~0.0141 m (smoke_r3: cmd_z at patch
-#   height gave min-d 0.0248 = 8mm horizontal + ~14mm vertical). LEFT
-#   UNCOMPENSATED the vertical miss alone exceeds the entire 12mm attract
-#   range (batch2: min-d 0.0167-0.0185, zero in-range, all fell; batch3
-#   with the WRONG SIGN: min-d 0.0226, all fell). +0.0141 raises the
-#   command so the hanging face center meets the patch at contact; link6
-#   ends at z=-0.011, well above the measured -0.05 workspace boundary.
-# Weld-while-held is blocked by the gripper-open weld gate
-# (author_magnet_graph.py reads /piper/joint_states joint7); a lost box is
-# caught by the post-release confirmation before RETREAT.
-_WALL_X = 0.398
-_WALL_Z = 0.35 - 0.18 - 0.29101 + 0.0141
+# NOT the wall face itself: commanding the object CENTER onto the face
+# (x=0.40) drives the pitched box's leading corner (the 8cm axis tilted at
+# place_pitch=0.7 reaches ~3.5cm beyond the center along x) INTO the wall
+# during MOVE_ARM_TO_PREPLACE -- MoveIt does not model the carried object,
+# so the arm keeps driving while the wall pries the fingers open (a live
+# monitor trace caught joint7 forced from its 0.019 grip stall to 0.058 as
+# the box corner met the wall, then free-fall). This only ever "worked"
+# while pre-parking-brake chassis creep happened to pull the whole robot
+# 2-3cm back before the first place. Released 4.5cm short instead (corner
+# reach + 1cm clearance), the magnet's widened attract range
+# (MAGNET_ATTRACT_RANGE=0.08, physics_tuning.py) covers the final hop and
+# the weld still engages at its usual ~6mm equilibrium.
+# _WALL_Z +0.06 vs the mount target's own height (2026-09-13, measured):
+# with the reoriented vertical delivery (place_reorient), the fingertip
+# axis tilts down by grasp_pitch and link6 must stay above the arm's
+# measured lower workspace boundary (link6 z ~ -0.05 m -- a live OMPL sweep
+# grid found everything below that unplannable at the wall standoff). The
+# box's own magnet target stays at the authored 0.35m; the released box is
+# pulled down onto it during release_settle_time, 5cm is well inside the
+# magnet's capture range.
+_WALL_X = 0.40 - 0.045
+_WALL_Z = 0.35 - 0.18 - 0.29101 + 0.06
 PLACE_POSITIONS = [
     (_WALL_X, -0.15, _WALL_Z),
     (_WALL_X, -0.05, _WALL_Z),
