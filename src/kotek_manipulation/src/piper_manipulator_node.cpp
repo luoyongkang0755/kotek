@@ -1309,6 +1309,47 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
         std::chrono::duration<double>(params_.release_settle_time)));
   }
 
+  // Post-release confirmation (2026-09-23): a release can pass every
+  // pre-release check and still drop the box -- the contact-placement
+  // batches produced a COMPLETE-with-0-welds run, and the gap exists in
+  // this config too, just masked by the high capture rate. Verify the
+  // box actually went to the wall: its TF must sit within a LOOSE window
+  // of its patch (the 10cm-range capture can still be in flight after
+  // release_settle, so this only catches the obvious losses -- box on
+  // the floor at z ~-0.43 arm or back at riser height ~0.02). Failure
+  // aborts loudly; missing TF (demos without the sensor graph) skips.
+  if (!carried_box_frame_.empty()) {
+    try {
+      const auto t = tf_buffer_->lookupTransform(
+        move_group_arm_->getPlanningFrame(), carried_box_frame_, tf2::TimePointZero);
+      const double bx = t.transform.translation.x;
+      const double by = t.transform.translation.y;
+      const double bz = t.transform.translation.z - params_.arm_mount_height;
+      const double patch_x = 0.40;                          // wall face, arm frame
+      const double patch_y = place_arm.y;
+      const double patch_z = 0.35 - 0.18 - params_.arm_mount_height;  // 0.35 world patch
+      const bool held =
+        std::abs(bx - patch_x) < 0.15 && std::abs(by - patch_y) < 0.10 &&
+        std::abs(bz - patch_z) < 0.15;
+      RCLCPP_INFO(
+        get_logger(),
+        "post-release check: %s at (%.3f,%.3f,%.3f) vs patch (%.3f,%.3f,%.3f) -> %s",
+        carried_box_frame_.c_str(), bx, by, bz, patch_x, patch_y, patch_z,
+        held ? "HELD" : "LOST");
+      if (!held) {
+        retreatToSafe();
+        result->success = false;
+        result->message = "box lost after release (not held at the wall)";
+        goal_handle->abort(result);
+        return;
+      }
+    } catch (const tf2::TransformException &) {
+      RCLCPP_WARN(
+        get_logger(), "post-release check: TF for %s unavailable -- skipping",
+        carried_box_frame_.c_str());
+    }
+  }
+
   publishPlaceStageFeedback(goal_handle, "RETREAT_ARM", 0.0);
   if (!cartesianMoveTo(toMsg(retreat_pose), error)) {
     RCLCPP_ERROR(get_logger(), "RETREAT_ARM failed: %s", error.c_str());
