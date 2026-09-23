@@ -1366,12 +1366,26 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
       toMsg(place_pose), error, params_.carry_velocity_scaling,
       params_.carry_acceleration_scaling, 0.85))
   {
-    RCLCPP_ERROR(get_logger(), "MOVE_ARM_TO_PLACE failed: %s", error.c_str());
-    retreatToSafe();
-    result->success = false;
-    result->message = "MOVE_ARM_TO_PLACE failed: " + error;
-    goal_handle->abort(result);
-    return;
+    // The straight-line interpolation can dead-end one step short of the
+    // target (measured 0.833333 = the last 1/6 of the line, deterministically,
+    // on stretched positive-y targets: e2e10_contact_place4 run 9 at
+    // x=0.398, e2e10_holddown3 run 4 and e2e10_holddown_final runs 2/3 at
+    // x=0.39 -- with and without the carried-box attachment, so it is the
+    // raw IK/collision boundary, not the attachment). The line is a
+    // convenience, not a requirement: the wall-side outcome is guarded by
+    // the held-box check, the press and the post-release confirmation, so
+    // route the last leg in joint space instead of aborting the cycle.
+    RCLCPP_WARN(
+      get_logger(), "MOVE_ARM_TO_PLACE cartesian incomplete (%s) -- falling "
+      "back to OMPL joint-space plan", error.c_str());
+    if (!moveArmToPose(toMsg(place_pose), error)) {
+      RCLCPP_ERROR(get_logger(), "MOVE_ARM_TO_PLACE failed: %s", error.c_str());
+      retreatToSafe();
+      result->success = false;
+      result->message = "MOVE_ARM_TO_PLACE failed: " + error;
+      goal_handle->abort(result);
+      return;
+    }
   }
   publishPlaceStageFeedback(goal_handle, "MOVE_ARM_TO_PLACE", 1.0);
 
