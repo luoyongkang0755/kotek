@@ -238,6 +238,27 @@ def compute(db):
     break_torque = float(db.inputs.breakTorque)
     bottom_local_z = float(db.inputs.bottomLocalOffsetZ)   # negative half-height
     wall_prim_path = str(db.inputs.wallStaticPrim)
+    # Gripper-open weld gate (2026-09-22, contact-placement rework): weld
+    # only when joint7 says the fingers are OPEN. The contact-placement
+    # sequence presses the box against the wall with the fingers closed,
+    # and during that press the box is linearly AND angularly at rest at
+    # d~0.006 -- every existing weld gate passes, so without this gate the
+    # box welds mid-hold: the breakable weld then snaps in the arm-vs-weld
+    # tug when the gripper retreats, and state.welded latches, never re-
+    # welding (physics_tuning.py's WELD_DISTANCE note). joint states come
+    # from /piper/joint_states via a ROS2SubscribeJointState node (the same
+    # type author_robot_graphs.py uses); both arrays are wired in and joint7
+    # is located by name at runtime (robust to the bridge's filtering). If
+    # no joint states ever arrive the position input keeps its authored
+    # default (1.0, above the threshold = "open") so probes and non-ROS
+    # runs weld normally. Threshold: SRDF gripper states are close=0 /
+    # open=0.04, measured grasp stall ~0.019 -- 0.03 separates them 2x over.
+    joint_names = list(db.inputs.jointNamesObserved)
+    joint_positions = list(db.inputs.jointPositions)
+    joint7_position = 1.0   # default: open (welding allowed)
+    if 'joint7' in joint_names:
+        joint7_position = float(joint_positions[joint_names.index('joint7')])
+    weld_enable = joint7_position > 0.03
 
     positions, orientations = state.rigid_prims.get_world_poses()
     linear_vel, angular_vel = state.rigid_prims.get_velocities()
@@ -278,73 +299,58 @@ def compute(db):
         cos_mis = float(np.dot(current_normal, inward))
         misalign_deg = float(np.degrees(np.arccos(np.clip(cos_mis, -1.0, 1.0))))
 
-        if d < attract_range and d > 1e-6:
-            r_hat = r_vec / d
-            m_w = moment * inward
-            m_s = moment * current_normal
-            m_w_r = float(np.dot(m_w, r_hat))
-            m_s_r = float(np.dot(m_s, r_hat))
-            m_dot = float(np.dot(m_w, m_s))
-            b_field = (MU0_OVER_4PI / d ** 3) * (3.0 * m_w_r * r_hat - m_w)
-            f_vec = ((3.0 * MU0_OVER_4PI / d ** 4)
-                     * (m_w_r * m_s + m_s_r * m_w + m_dot * r_hat
-                        - 5.0 * m_w_r * m_s_r * r_hat))
-            tau_vec = np.cross(m_s, b_field)
-            # Near-contact taper on the FORCE -- see the docstring: the
-            # dipole law is singular at r=0 and invalid in the near field,
-            # and the old model's bang-bang near-contact oscillation
-            # (physics_tuning.py Bug 4) would be even worse under a
-            # 1/r**4 law without it. taperFloor stays decoupled from
-            # weldDistance (Bug 8) -- a gate, not the zero-crossing moved.
-            taper = 0.0
-            if d > taper_floor:
-                taper = min(1.0, (d - taper_floor) / max(taper_distance - taper_floor, 1e-9))
-            # Separate, EARLIER cutoff for the TORQUE (physics_tuning.py's
-            # MAGNET_TORQUE_CUTOFF -- measured): inside ~3cm the discrete
-            # 120Hz tau feedback goes unstable at any clamp value tried
-            # (0.02 and 0.002 N*m both pinned ang_speed at the velocity
-            # cap). This deliberately breaks the F:tau physical ratio in
-            # the near field; the wall contact finishes the alignment.
-            tau_taper = 0.0
-            if d > torque_cutoff:
-                tau_taper = min(1.0, (d - torque_cutoff) / max(attract_range - torque_cutoff, 1e-9))
-            # Clamp BEFORE the taper, in that order -- this is the old
-            # model's semantics (min(GAIN/d**2, MAX) * taper), and the
-            # order matters twice as much here: the dipole raw force at
-            # 5mm is ~1.7e4 N, so tapering FIRST and clamping AFTER pins
-            # |F| at maxForce for the entire near field (measured: box
-            # pressed into the wall at a constant 2N, contact solver in a
-            # permanent fight, pose frozen while both velocity caps
-            # renormalized every tick, never welding). Clamp-first reduces
-            # the near-field press to maxForce*taper (~0.1N at 5mm --
-            # exactly the old model's proven contact behavior), and the
-            # direction physics of the dipole formula is untouched.
-            f_n = float(np.linalg.norm(f_vec))
-            if f_n > max_force:
-                f_vec *= max_force / f_n
-                f_n = max_force
-            t_n = float(np.linalg.norm(tau_vec))
-            if t_n > max_torque:
-                tau_vec *= max_torque / t_n
-                t_n = max_torque
-            f_vec *= taper
-            f_mag = f_n * taper
-            tau_vec *= tau_taper
-            tau_mag = t_n * tau_taper
-            dipole_forces[i] = f_vec
-            dipole_torques[i] = tau_vec
-            # Stabilizers, applied at the COM: linear drag (Bug 2/4 --
-            # load-bearing: a constant attractive force with no velocity
-            # feedback is bang-bang and cannot converge; freeze-free per
-            # Bug 9's live bisect, which retired only the ANGULAR twin)
-            # plus the gravity feedforward (Bug 3: the radial term must
-            # never be relied on to "accidentally" cover gravity).
-            # Deliberately NOT tapered -- gravity and momentum do not turn
-            # themselves off near contact.
+        # CONTACT-HOLDDOWN model (2026-09-23, user-directed route A):
+        # the magnet does NOT exist before the box face touches the wall.
+        # No distance-triggered dipole force at all -- the six
+        # contact_place batches proved every pre-contact force level
+        # fails in this grip/wall system: 100% yanks the 50g box out of
+        # the fingers (1.8N > finger friction, box spinning at 2.7 rad/s
+        # when the grip opens), 40% repels tilted boxes, 15% crawls at
+        # 0.2mm/s. Placement and positioning are the ARM's job (light
+        # contact -> position confirm -> deliberate press); the magnet
+        # only provides what a real weak magnet on a metal wall provides
+        # ONCE TOUCHING: a normal holddown force (the wall's contact
+        # normal takes the load; the force keeps contact pressure so
+        # friction resists the box's 0.49N shear weight) plus a small
+        # aligning torque that seats the face (a real fridge magnet
+        # clicks flat; the probes measured 0.0deg). There is no radial
+        # capture, no lateral pull to a patch point, no pre-contact
+        # anything -- and therefore no oscillation, no yank, no repulsion.
+        #
+        # INPUT REPURPOSING (same node inputs, new semantics -- avoids an
+        # author-script interface change): attractRange = contact
+        # threshold (face gap below which the magnet is ON); maxForce =
+        # holddown normal force; maxTorque = aligning torque cap;
+        # dipoleMoment / taper* / soft* are retired with the dipole law.
+        face_gap = float(target[0] - bottom_world[0])   # wall face x minus
+                                            # magnet-face-center x; box
+                                            # approaches from -x
+        d = abs(face_gap)                   # weld gate distance: face-to-
+                                            # wall-plane (point patch
+                                            # distance retired with the
+                                            # dipole era)
+        pressed = face_gap < attract_range  # attractRange input = threshold
+        f_mag = 0.0
+        tau_mag = 0.0
+        if pressed:
+            dipole_forces[i] = inward * max_force
+            f_mag = max_force
+            # Aligning torque about the axis that rotates the magnet-face
+            # normal onto the wall normal; magnitude capped (finite-size
+            # saturation -- the contact finishes the seating).
+            align_axis = np.cross(current_normal, inward)
+            axis_n = float(np.linalg.norm(align_axis))
+            if axis_n > 1e-9:
+                dipole_torques[i] = (align_axis / axis_n) * min(
+                    max_torque, max_torque * axis_n / 0.5)
+                tau_mag = float(np.linalg.norm(dipole_torques[i]))
+            # Stabilizers while held: linear drag (Bug 2/4 semantics) plus
+            # the gravity feedforward -- on the WALL the magnet+friction
+            # carry the box, not the fingers, so its weight is cancelled
+            # here exactly as the old in-range gate did.
             stabilizer_forces[i] = (
                 -damping_coeff * linear_vel[i]
                 + np.array([0.0, 0.0, gravity_feedforward_z]))
-            stabilizer_torques[i] = -angular_damping_coeff * angular_vel[i]
             any_active = True
 
         # Diagnostic heartbeat for every not-yet-welded sensor, every 60
@@ -385,7 +391,7 @@ def compute(db):
         # A crooked weld is permanent, so the gate refuses it and lets the
         # torque keep working; a box that NEVER aligns is a delivery bug
         # to fix at the source, not to mask with a permissive weld gate.
-        if (d < weld_distance and speed < weld_max_speed
+        if (weld_enable and d < weld_distance and speed < weld_max_speed
                 and ang_speed_weld < weld_max_ang_speed
                 and misalign_deg < weld_max_misalign):
             joint_path = f'/World/wall/_magnet_weld_{i + 1}'
@@ -467,8 +473,16 @@ def build_magnet_graph(og, graph_path, sensor_paths, wall_targets_flat):
                 (f'{MAGNET_NODE_NAME}.inputs:breakForce', 'double'),
                 (f'{MAGNET_NODE_NAME}.inputs:breakTorque', 'double'),
                 (f'{MAGNET_NODE_NAME}.inputs:bottomLocalOffsetZ', 'double'),
+                (f'{MAGNET_NODE_NAME}.inputs:jointNamesObserved', 'token[]'),
+                (f'{MAGNET_NODE_NAME}.inputs:jointPositions', 'double[]'),
             ],
             keys.SET_VALUES: [
+                # Authored defaults = empty: with no joint states wired in
+                # (probes, non-ROS runs) joint7_position falls back to the
+                # 1.0 open-default inside compute() and welding works as
+                # before.
+                (f'{MAGNET_NODE_NAME}.inputs:jointNamesObserved', []),
+                (f'{MAGNET_NODE_NAME}.inputs:jointPositions', []),
                 (f'{MAGNET_NODE_NAME}.inputs:script', MAGNET_SCRIPT_SOURCE),
                 (f'{MAGNET_NODE_NAME}.inputs:sensorPaths', list(sensor_paths)),
                 (f'{MAGNET_NODE_NAME}.inputs:wallTargets', list(wall_targets_flat)),
@@ -506,6 +520,32 @@ def build_magnet_graph(og, graph_path, sensor_paths, wall_targets_flat):
     og.Controller.edit(
         graph,
         {keys.CONNECT: [(f'{graph_path}/tick.outputs:tick', f'{node_ref}.inputs:execIn')]},
+    )
+
+    # Gripper-open weld gate (2026-09-22): see the compute() comment on
+    # db.inputs.joint7Position. ROS2SubscribeJointState -- the same node type
+    # author_robot_graphs.py already uses -- filtered to joint7, wired
+    # straight into the magnet node. When no publisher is alive the
+    # connection never fires and the authored 1.0 default stands (probes /
+    # non-ROS runs weld normally).
+    og.Controller.edit(
+        graph,
+        {
+            keys.CREATE_NODES: [
+                ('ros2_context', 'isaacsim.ros2.bridge.ROS2Context'),
+                ('joint_states_sub', 'isaacsim.ros2.bridge.ROS2SubscribeJointState'),
+            ],
+            keys.SET_VALUES: [
+                ('joint_states_sub.inputs:topicName', '/piper/joint_states'),
+                ('joint_states_sub.inputs:queueSize', 1),
+            ],
+            keys.CONNECT: [
+                (f'{graph_path}/tick.outputs:tick', 'joint_states_sub.inputs:execIn'),
+                ('ros2_context.outputs:context', 'joint_states_sub.inputs:context'),
+                ('joint_states_sub.outputs:jointNames', f'{node_ref}.inputs:jointNamesObserved'),
+                ('joint_states_sub.outputs:positionCommand', f'{node_ref}.inputs:jointPositions'),
+            ],
+        },
     )
     return graph
 

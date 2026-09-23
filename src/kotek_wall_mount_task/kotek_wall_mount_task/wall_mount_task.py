@@ -74,8 +74,8 @@ GRASP_POSITIONS = [
 # box's own magnet target stays at the authored 0.35m; the released box is
 # pulled down onto it during release_settle_time, 5cm is well inside the
 # magnet's capture range.
-_WALL_X = 0.40 - 0.045
-_WALL_Z = 0.35 - 0.18 - 0.29101 + 0.06
+_WALL_X = 0.39     # face ~20mm off the wall at PLACE (arm less stretched at the trajectory end -- the 10mm pose left joints 0.03rad off and the controller timed out settling, holddown2 runs 2/3/6)
+_WALL_Z = 0.3734 - 0.18 - 0.29101
 PLACE_POSITIONS = [
     (_WALL_X, -0.15, _WALL_Z),
     (_WALL_X, -0.05, _WALL_Z),

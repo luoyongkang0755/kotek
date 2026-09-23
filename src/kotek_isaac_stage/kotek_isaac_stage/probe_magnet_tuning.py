@@ -119,7 +119,15 @@ def _run(args, simulation_app) -> int:
         # /piper/compute_ik reachability sweep is for). misaligned tilts
         # the arrival 30 deg off, see below.
         target = np.array([ws.WALL_FACE_X, ws.WALL_TARGET_Y[args.sensor_index - 1], ws.WALL_TARGET_Z])
-        offset = 0.8 * pt.MAGNET_ATTRACT_RANGE
+        # Holddown-era spawn (2026-09-23): the magnet does not exist
+        # before contact, so spawn the box EMBEDDED into the wall and let
+        # contact resolution seat it -- the magnet then engages and must
+        # hold + weld it. Depth: 1mm for the straight arrival (seats at
+        # the rest offset), 8mm for the tilted arrival -- measured: a
+        # 1mm-embedded tilted box gets EJECTED to 7.8mm by resolution and
+        # never presses; the deeper embed leaves corner contact inside
+        # the 6mm threshold where the aligning torque can work.
+        offset = -0.008 if args.mode == 'misaligned' else -0.001
         half_h = pt.SENSOR_CAM_SIZE_XYZ[2] / 2.0
         # Base orientation: rotate -90 deg about Y so local -Z (the bottom
         # face) points along +X (toward the wall), quaternion wxyz.
@@ -195,8 +203,12 @@ def _run(args, simulation_app) -> int:
 
     ok = True
     if args.mode in ('in-range', 'misaligned'):
-        ok = ok and _check(displacement > 0.005, 'sensor moved toward the target (attract force active)')
-        ok = ok and _check(welded, 'weld joint was authored')
+        # Holddown era (2026-09-23): the box spawns AT the wall (embedded,
+        # contact-resolved) and the magnet's job is HOLDING, not capture --
+        # it barely moves. The meaningful checks are the weld and the final
+        # pose, so the old "moved toward the target" displacement check is
+        # retired (it tested the dipole capture era's radial pull).
+        ok = ok and _check(welded, 'weld joint was authored (magnet engaged on contact and held)')
         if welded:
             target = np.array([ws.WALL_FACE_X, ws.WALL_TARGET_Y[args.sensor_index - 1], ws.WALL_TARGET_Z])
             half_h = pt.SENSOR_CAM_SIZE_XYZ[2] / 2.0
