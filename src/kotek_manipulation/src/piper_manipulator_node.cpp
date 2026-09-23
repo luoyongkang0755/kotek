@@ -9,6 +9,7 @@
 #include <algorithm>
 
 #include "geometry_msgs/msg/pose.hpp"
+#include "trajectory_msgs/msg/joint_trajectory_point.hpp"
 #include "shape_msgs/msg/solid_primitive.hpp"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
 #include "tf2/LinearMath/Matrix3x3.h"
@@ -112,6 +113,10 @@ PiperManipulator::Params PiperManipulator::loadParams()
     "held_box_max_tilt_deg", p.held_box_max_tilt_deg);
   p.grasp_kick_max_tilt_deg = declare_parameter<double>(
     "grasp_kick_max_tilt_deg", p.grasp_kick_max_tilt_deg);
+  p.grasp_close_duration = declare_parameter<double>(
+    "grasp_close_duration", p.grasp_close_duration);
+  p.grasp_close_steps = declare_parameter<int>(
+    "grasp_close_steps", p.grasp_close_steps);
   p.arm_mount_height = declare_parameter<double>(
     "arm_mount_height", p.arm_mount_height);
   p.attach_carried_box = declare_parameter<bool>(
@@ -231,6 +236,9 @@ void PiperManipulator::init(const std::shared_ptr<PiperManipulator> & self)
     self, "execute_trajectory");
   raw_cartesian_path_client_ =
     self->create_client<moveit_msgs::srv::GetCartesianPath>("compute_cartesian_path");
+  raw_gripper_traj_client_ =
+    rclcpp_action::create_client<control_msgs::action::FollowJointTrajectory>(
+    self, "gripper_controller/follow_joint_trajectory");
 
   // Task 2b: TF listener for the stage-published sensor_cam_N box frames
   // (see Params::held_box_max_distance). Like the raw clients above this is
@@ -586,6 +594,14 @@ bool PiperManipulator::moveGripperToWidth(
     return false;
   }
 
+  // Read back the ACTUAL achieved joint7 position -- see
+  // gripperContactReadback()'s calibrated kContactTolerance rationale.
+  return gripperContactReadback(target_joint7, contact_detected_out);
+}
+
+bool PiperManipulator::gripperContactReadback(
+  double target_joint7, bool & contact_detected_out)
+{
   // Read back the ACTUAL achieved joint7 position -- a plain
   // CurrentStateMonitor read via getCurrentState(), confirmed in section
   // 4.15 to be unaffected by the action/service dispatch bug the raw_*
@@ -628,6 +644,76 @@ bool PiperManipulator::moveGripperToWidth(
     get_logger(), "gripper contact check: target_joint7=%.5f actual_joint7=%.5f contact=%s",
     target_joint7, actual_joint7, contact_detected_out ? "true" : "false");
   return true;
+}
+
+bool PiperManipulator::moveGripperToWidthTimed(
+  double width, double duration, int steps, std::string & error_out, bool & contact_detected_out)
+{
+  const double target_joint7 = width / 2.0;
+
+  // Start from the CURRENT joint positions (not the last commanded) -- the
+  // arm may still be settling after MOVE_ARM_TO_GRASP, and a start point
+  // behind the real position would make the bridge's interpolation lurch.
+  double start_joint7 = target_joint7;
+  double start_joint8 = -target_joint7;
+  const auto current_state = move_group_gripper_->getCurrentState(1.0);
+  if (current_state) {
+    const double * p7 = current_state->getJointPositions("joint7");
+    const double * p8 = current_state->getJointPositions("joint8");
+    if (p7 != nullptr && p8 != nullptr) {
+      start_joint7 = *p7;
+      start_joint8 = *p8;
+    }
+  } else {
+    RCLCPP_WARN(get_logger(), "timed gripper close: getCurrentState() timed out -- "
+      "commanding from the target as start (legacy behavior)");
+  }
+
+  control_msgs::action::FollowJointTrajectory::Goal goal;
+  goal.trajectory.joint_names = {"joint7", "joint8"};
+  goal.trajectory.points.resize(static_cast<size_t>(steps));
+  for (int k = 1; k <= steps; ++k) {
+    const double frac = static_cast<double>(k) / static_cast<double>(steps);
+    trajectory_msgs::msg::JointTrajectoryPoint point;
+    point.positions = {
+      start_joint7 + (target_joint7 - start_joint7) * frac,
+      start_joint8 + (-target_joint7 - start_joint8) * frac};
+    point.time_from_start = rclcpp::Duration::from_seconds(duration * frac);
+    goal.trajectory.points[static_cast<size_t>(k - 1)] = point;
+  }
+
+  using Client = rclcpp_action::Client<control_msgs::action::FollowJointTrajectory>;
+  if (!raw_gripper_traj_client_->wait_for_action_server(std::chrono::seconds(5))) {
+    error_out = "gripper follow_joint_trajectory server not ready";
+    return false;
+  }
+  auto goal_handle_future = raw_gripper_traj_client_->async_send_goal(goal);
+  if (goal_handle_future.wait_for(std::chrono::seconds(5)) != std::future_status::ready) {
+    error_out = "gripper follow_joint_trajectory goal send timed out";
+    return false;
+  }
+  const auto goal_handle = goal_handle_future.get();
+  if (!goal_handle) {
+    error_out = "gripper follow_joint_trajectory goal rejected";
+    return false;
+  }
+  // Duration + the bridge's settle window (goal_time_tolerance) + margin.
+  const auto result_timeout = std::chrono::seconds(
+    static_cast<int>(std::ceil(duration)) + 15);
+  const auto result_future = raw_gripper_traj_client_->async_get_result(goal_handle);
+  if (result_future.wait_for(result_timeout) != std::future_status::ready) {
+    raw_gripper_traj_client_->async_cancel_goal(goal_handle);
+    error_out = "timed gripper close result timeout";
+    return false;
+  }
+  const auto wrapped = result_future.get();
+  if (wrapped.code != rclcpp_action::ResultCode::SUCCEEDED) {
+    error_out = "timed gripper close did not succeed (result code " +
+      std::to_string(static_cast<int>(wrapped.code)) + ")";
+    return false;
+  }
+
+  return gripperContactReadback(target_joint7, contact_detected_out);
 }
 
 bool PiperManipulator::stillHoldingObject()
@@ -1010,7 +1096,13 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
 
   publishStageFeedback(goal_handle, "CLOSE_GRIPPER", 0.0);
   bool contact_detected = false;
-  if (!moveGripperToWidth(params_.grasp_width, error, contact_detected)) {
+  const bool closed =
+    params_.grasp_close_duration > 0.0 ?
+    moveGripperToWidthTimed(
+    params_.grasp_width, params_.grasp_close_duration, params_.grasp_close_steps, error,
+    contact_detected) :
+    moveGripperToWidth(params_.grasp_width, error, contact_detected);
+  if (!closed) {
     RCLCPP_ERROR(get_logger(), "CLOSE_GRIPPER failed: %s", error.c_str());
     retreatToSafe();
     result->success = false;

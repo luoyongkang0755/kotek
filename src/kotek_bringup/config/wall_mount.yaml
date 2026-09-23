@@ -193,6 +193,20 @@
     # stall is commanded, so there is no crush-force risk.
     grasp_width: 0.018
     gripper_open: 0.04
+    # Anti-kick slow close (2026-09-23 A/B, e2e10_holddown_final vs
+    # e2e10_holddown_slowclose): CLOSE_GRIPPER as a hand-timed joint ramp
+    # sent DIRECTLY to isaac_joint_bridge (moveGripperToWidthTimed) -- PhysX
+    # point contacts have no torsional friction and the full-speed close
+    # kicks the box ~90 deg 30-50% of attempts. Velocity-scaling the
+    # move_group request was tried first and measured DEAD (trajectory
+    # stayed 0.6s at any scaling, param confirmed loaded), so the ramp
+    # bypasses move_group. The fingers only travel ~1.2mm/finger from open
+    # (0.04) to box contact (stall ~0.0376) -- a "preclose to box+gap" stage
+    # was evaluated and dropped (open width already leaves only 2.5mm/side,
+    # preclose changes the pre-contact travel by <1mm). 4s = quasi-static
+    # ~0.3mm/s finger approach. 0 = legacy move_group close.
+    grasp_close_duration: 4.0
+    grasp_close_steps: 1
     # Split gripper_pitch (see piper_manipulator.hpp's Params comment): the
     # pedestal-tuned 0.4 rad works for NEITHER leg of this task once the
     # riser cube / wall are modeled as real collision geometry, not just

@@ -5,6 +5,7 @@
 #include <string>
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
+#include "control_msgs/action/follow_joint_trajectory.hpp"
 #include "kotek_manipulation/pregrasp_geometry.hpp"
 #include "kotek_msgs/action/grasp_object.hpp"
 #include "kotek_msgs/action/place_object.hpp"
@@ -258,6 +259,22 @@ private:
     // created a 30-35 deg deadband where boxes passed here but failed at
     // release (e2e10_task2_retry runs 7/10) -- reject early, re-grasp.
     double grasp_kick_max_tilt_deg = 30.0;
+    // Anti-kick slow close (2026-09-23, e2e10_holddown A/B): seconds for the
+    // CLOSE_GRIPPER finger ramp. PhysX point contacts have no torsional
+    // friction, so the close-kick rotates the box in the fingers 30-50% of
+    // attempts; the hypothesis is that a quasi-static close lets sliding
+    // friction self-center the box instead of kicking it. Velocity-scaling
+    // the move_group request was tried FIRST and measured DEAD: the planned
+    // trajectory stayed 0.6s regardless of max_velocity_scaling_factor
+    // (e2e10_holddown_slowclose, param confirmed loaded), so this sends the
+    // close trajectory DIRECTLY to isaac_joint_bridge's FollowJointTrajectory
+    // action with hand-set timestamps (moveGripperToWidthTimed). 0 = legacy
+    // move_group close. See docs/wall_mount_contact_placement.md.
+    double grasp_close_duration = 0.0;
+    // Split the ramp into this many ramp-and-hold cycles (creep close):
+    // between segments the box's residual motion dies before the next push.
+    // 1 = one smooth ramp.
+    int grasp_close_steps = 1;
     // TF frame correction (2026-09-20, measured -- CRITICAL): the stage's
     // sensor_cam TF tree publishes box transforms relative to the SCOUT
     // base_link, whose name COLLIDES with the arm planning frame's
@@ -385,6 +402,21 @@ private:
   /// closing on empty air. Sets `contact_detected_out` only when the
   /// motion itself succeeded; leave its input value untouched otherwise.
   bool moveGripperToWidth(double width, std::string & error_out, bool & contact_detected_out);
+
+  /// Hand-timed variant of moveGripperToWidth (see Params::grasp_close_duration):
+  /// sends a `steps`-segment linear joint7/joint8 ramp directly to
+  /// isaac_joint_bridge's FollowJointTrajectory action, total wall duration
+  /// `duration` seconds, bypassing move_group entirely -- the bridge
+  /// interpolates the trajectory points 1:1 and its stall detection reports
+  /// contact-stall as SUCCESS, so the semantics match the move_group path.
+  /// Same post-motion joint7 readback contact check as moveGripperToWidth().
+  bool moveGripperToWidthTimed(
+    double width, double duration, int steps, std::string & error_out, bool & contact_detected_out);
+
+  /// Post-close joint7 readback contact test, shared by moveGripperToWidth()
+  /// and moveGripperToWidthTimed() -- see kContactTolerance's calibrated
+  /// rationale at moveGripperToWidth().
+  bool gripperContactReadback(double target_joint7, bool & contact_detected_out);
 
   /// Re-reads joint7 against the SAME commanded-width/contact-tolerance
   /// logic as moveGripperToWidth()'s post-motion check, WITHOUT commanding
@@ -520,6 +552,14 @@ private:
   rclcpp_action::Client<moveit_msgs::action::MoveGroup>::SharedPtr raw_move_client_;
   rclcpp_action::Client<moveit_msgs::action::ExecuteTrajectory>::SharedPtr raw_execute_client_;
   rclcpp::Client<moveit_msgs::srv::GetCartesianPath>::SharedPtr raw_cartesian_path_client_;
+  // Direct FollowJointTrajectory client to isaac_joint_bridge's gripper
+  // server (same bare-client rationale as raw_move_client_ above) --
+  // moveGripperToWidthTimed() sends the hand-timed anti-kick close ramp
+  // through this, bypassing move_group's time parameterization entirely
+  // (the scaling-factor path never reached the executed trajectory,
+  // measured 2026-09-23, see Params::grasp_close_duration).
+  rclcpp_action::Client<control_msgs::action::FollowJointTrajectory>::SharedPtr
+    raw_gripper_traj_client_;
 
   rclcpp_action::Server<GraspObject>::SharedPtr action_server_;
   rclcpp_action::Server<PlaceObject>::SharedPtr place_action_server_;
