@@ -191,6 +191,14 @@
     # squeeze) that held a 43N pull, and the finger drive's maxForce cap
     # (shared, ~20N) bounds the real squeeze force regardless of how deep a
     # stall is commanded, so there is no crush-force risk.
+    # Anti-kick light squeeze REVERTED (2026-09-23 A/B3, e2e10_holddown_grip026
+    # vs slowclose2): 0.026 (roughly half the squeeze) measured WORSE -- kick
+    # rate 44% vs 35%, grasp success 46% vs 54%, COMPLETE 3/10 vs 4/10. The
+    # firmer 0.018 squeeze clamps the box earlier in the close and limits yaw
+    # before the diagonal-pinch self-lock; a light squeeze leaves it free to
+    # rotate longer. (0.026 had also been tried before and abandoned chasing
+    # a LIFT slip that was actually the riser-hold joint bug -- no lift slip
+    # reproduced at 0.026 this time either.)
     grasp_width: 0.018
     gripper_open: 0.04
     # Anti-kick slow close (2026-09-23 A/B, e2e10_holddown_final vs
