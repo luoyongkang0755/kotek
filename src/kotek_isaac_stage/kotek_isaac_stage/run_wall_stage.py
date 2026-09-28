@@ -18,6 +18,18 @@ Prints "### physics playing" once the stack's clock/joint topics are live --
 that is the moment to start the container-side 45s warm-up countdown.
 The GUI app (README 7.2) is the interactive alternative; this script is the
 reliable, no-clicks-needed one.
+
+Recording (--record-dir, --gui): captures the app viewport to PNG frames
+for assembling into a demo video. This exists because the host migrated to a
+Wayland GNOME session (2026-09-25): x11grab reads the X root window, which
+under Xwayland-on-Wayland never carries composited pixels (recordings from
+09-28 are all black), and ANY new replicator render product (isaacsim
+Camera() / rep.create.render_product) shuts the app down on first render,
+headless EGL AND windowed alike (measured, no traceback). The GUI app's own
+viewport renders through the working path, and
+omni.kit.viewport.utility.capture_viewport_to_file renders on demand --
+so recording must run with --gui (a window still presents black to x11grab,
+but the captured frames carry real pixels).
 """
 import argparse
 import sys
@@ -35,9 +47,23 @@ def main():
     parser.add_argument(
         '--duration', type=float, default=3000.0,
         help='wall-clock seconds to keep the sim playing (default 3000)')
+    parser.add_argument(
+        '--record-dir', default=None,
+        help='if set, capture the app viewport to this dir as PNG frames '
+             '(--record-fps) for assembling into a demo video. Requires '
+             '--gui on this host (see module docstring).')
+    parser.add_argument(
+        '--record-fps', type=float, default=15.0,
+        help='capture rate in frames per rendering second (default 15)')
+    parser.add_argument(
+        '--gui', action='store_true',
+        help='run windowed (needs DISPLAY) instead of headless')
     args = parser.parse_args()
+    print(f'### args: duration={args.duration} record_dir={args.record_dir} '
+          f'record_fps={args.record_fps} gui={args.gui}', flush=True)
 
-    simulation_app = SimulationApp({'renderer': 'RayTracedLighting', 'headless': True})
+    simulation_app = SimulationApp(
+        {'renderer': 'RayTracedLighting', 'headless': not args.gui})
     try:
         import time
 
@@ -77,14 +103,40 @@ def main():
         print('### physics playing -- /clock and /isaac_joint_states are live; '
               'start the 45s warm-up now', flush=True)
 
+        capture_vp = None
+        capture_every = 1
+        if args.record_dir:
+            import os
+
+            import omni.kit.viewport.utility as vp_util
+
+            os.makedirs(args.record_dir, exist_ok=True)
+            capture_vp = vp_util.get_active_viewport()
+            if capture_vp is None:
+                raise RuntimeError(
+                    'no active viewport to capture from (did you forget --gui?)')
+            capture_every = max(1, int(round(60.0 / args.record_fps)))
+            print(f'### recording viewport to {args.record_dir} every '
+                  f'{capture_every} ticks ({args.record_fps} fps)', flush=True)
+
         deadline = time.time() + args.duration
         last_print = 0.0
+        tick = 0
         while time.time() < deadline:
             simulation_app.update()
+            tick += 1
+            if capture_vp is not None and tick % capture_every == 0:
+                vp_util.capture_viewport_to_file(
+                    capture_vp, os.path.join(
+                        args.record_dir, f'frame_{tick:06d}.png'))
             now = time.time()
             if now - last_print > 30.0:
                 print(f'### still playing, {deadline - now:.0f}s left', flush=True)
                 last_print = now
+        if capture_vp is not None:
+            # capture requests flush one rendered frame later
+            for _ in range(5):
+                simulation_app.update()
         print('### duration elapsed, exiting', flush=True)
     finally:
         simulation_app.close()
