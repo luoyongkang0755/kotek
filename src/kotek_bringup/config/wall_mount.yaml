@@ -251,7 +251,27 @@
     #     the 4cm max gripper opening and cannot be straddled). See
     #     piper_manipulator.hpp's grasp_yaw_snap_step for the measured
     #     tumble evidence.
+    # Still loaded, but now the FALLBACK (see grasp_align_object_yaw below):
+    # used only when the box TF is unavailable or the box is not lying flat.
     grasp_yaw_snap_step: 3.1415927
+    # Task 2c (2026-09-28, E group): derive the grasp approach yaw from the
+    # box's LIVE TF yaw instead of the axis-aligned snap -- the jaws close
+    # parallel to the box's ACTUAL edges at any heading. Motivation
+    # (measured): the snap assumes the box still sits at its authored yaw,
+    # true for first attempts; a kick-rejected re-grasp lands on a ROTATED
+    # box, and axis-aligned jaws then pinch diagonally across a corner and
+    # re-kick it -- e2e10_holddown_rubber run 7 chained three kicked
+    # re-grasps and ABORTED (the batch's only failure; runs 1-6/8-10 all
+    # COMPLETE). The flatness gate (roll/pitch < 0.35 rad, inside
+    # piper_manipulator_node.cpp) falls back to the snap for tilted boxes.
+    # place_reorient needs NO change: a yaw-aligned close leaves the
+    # box-to-link6 relative orientation identical to the axis-aligned case
+    # (jaw and box frames rotate together about world Z), and its FIXED
+    # absolute TCP frame maps that relative orientation to the wall the
+    # same way for every grasp yaw (verified analytically 2026-09-28;
+    # column check in executePlace's own comment covers the {0, pi} cases,
+    # which remain the only headings this param ever produced before).
+    grasp_align_object_yaw: true
     place_reorient: true
     min_cartesian_fraction: 0.98
     velocity_scaling: 0.2

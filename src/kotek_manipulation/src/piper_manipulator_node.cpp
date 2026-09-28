@@ -75,6 +75,8 @@ PiperManipulator::Params PiperManipulator::loadParams()
   p.place_pitch = declare_parameter<double>("place_pitch", p.place_pitch);
   p.grasp_yaw_snap_step =
     declare_parameter<double>("grasp_yaw_snap_step", p.grasp_yaw_snap_step);
+  p.grasp_align_object_yaw =
+    declare_parameter<bool>("grasp_align_object_yaw", p.grasp_align_object_yaw);
   p.place_reorient = declare_parameter<bool>("place_reorient", p.place_reorient);
   p.min_cartesian_fraction =
     declare_parameter<double>("min_cartesian_fraction", p.min_cartesian_fraction);
@@ -968,6 +970,12 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
   Point3 object_arm{
     goal->object_pose.pose.position.x, goal->object_pose.pose.position.y,
     goal->object_pose.pose.position.z};
+  // Task 2c (2026-09-28): heading of the box's footprint, filled from the
+  // same live TF lookup below (the wall-mount stage publishes the
+  // sensor_cam_N frames from Isaac ground truth, so this is perception-
+  // grade data in sim and a drop-in slot for a real estimator later).
+  double object_yaw = 0.0;
+  bool object_yaw_ok = false;
   if (!goal->object_frame.empty()) {
     // Grasp where the box ACTUALLY is, not where it was authored: a
     // kick-reject releases a rotated box that lands displaced from its
@@ -979,6 +987,20 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
     try {
       const auto t = tf_buffer_->lookupTransform(
         move_group_arm_->getPlanningFrame(), goal->object_frame, tf2::TimePointZero);
+      // Task 2c: the box's heading comes along for free with the same
+      // transform. It is planning_frame -> object_frame; the stage hangs
+      // the box frames under the scout's base_link (name-collides with the
+      // arm planning frame), but the scout never rotates in this task
+      // (parked at its spawn pose), so this yaw IS the box's world heading.
+      double roll = 0.0, pitch = 0.0;
+      quaternionToRPY(
+        Quaternion{t.transform.rotation.x, t.transform.rotation.y,
+          t.transform.rotation.z, t.transform.rotation.w},
+        roll, pitch, object_yaw);
+      // Only trust the heading while the box lies flat: for a rolled or
+      // tumbling box the ZYX yaw is not the footprint heading, and the
+      // axis-aligned snap fallback is the safer guess.
+      object_yaw_ok = std::abs(roll) < 0.35 && std::abs(pitch) < 0.35;
       // Scout frame -> arm frame: x/y share the origin, z differs by the
       // arm mount height (see Params::arm_mount_height -- the TF name
       // collision makes raw lookups come back in the scout frame).
@@ -996,7 +1018,7 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
       // box is ungraspable anyway: keep the authored corner and let the
       // contact check report the miss.
       const bool sane =
-        shift < 0.15 && actual.z > -0.05 && actual.z < 0.45;
+        shift<0.15 && actual.z>-0.05 && actual.z < 0.45;
       if (sane) {
         if (shift > 0.005) {
           RCLCPP_INFO(
@@ -1013,6 +1035,9 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
           "grasp window (lateral %.3f m, z band [-0.05,0.45]); keeping the "
           "authored corner (box likely fell off the riser)",
           goal->object_frame.c_str(), actual.x, actual.y, actual.z, shift);
+        // Position fell back to the authored corner -- the far-away box's
+        // heading must not steer the jaws either.
+        object_yaw_ok = false;
       }
     } catch (const tf2::TransformException &) {
       RCLCPP_WARN(
@@ -1022,7 +1047,22 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
     }
   }
   double approach_yaw_local = std::atan2(object_arm.y, object_arm.x);
-  if (params_.grasp_yaw_snap_step > 0.0) {
+  if (params_.grasp_align_object_yaw && object_yaw_ok) {
+    // Task 2c: close the jaws parallel to the box's ACTUAL edges, not to
+    // the authored axis. A kick-rejected re-grasp lands on a rotated box;
+    // the axis-aligned snap then pinches diagonally across a corner and
+    // re-kicks it (run7-style chains, e2e10_holddown_rubber run 7). The
+    // branch nearest the radial default is chosen so the arm keeps a
+    // natural configuration; place_reorient's fixed TCP frame is
+    // unaffected (see Params::grasp_align_object_yaw).
+    const double aligned = computeBoxAlignedApproachYaw(object_yaw, approach_yaw_local);
+    RCLCPP_INFO(
+      get_logger(),
+      "grasp approach yaw aligned to %s actual yaw %.3f rad: %.3f (radial "
+      "default %.3f, axis snap suppressed)",
+      goal->object_frame.c_str(), object_yaw, aligned, approach_yaw_local);
+    approach_yaw_local = aligned;
+  } else if (params_.grasp_yaw_snap_step > 0.0) {
     // Anti-V-grip snap (see Params::grasp_yaw_snap_step): round the
     // approach yaw to a multiple of the step so the jaws close parallel to
     // the object's edges instead of diagonally across a corner. The result

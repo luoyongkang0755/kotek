@@ -9,11 +9,13 @@ using kotek_manipulation::ApproachMode;
 using kotek_manipulation::computeApproachBearing;
 using kotek_manipulation::computeApproachPose;
 using kotek_manipulation::computeBaseGoal;
+using kotek_manipulation::computeBoxAlignedApproachYaw;
 using kotek_manipulation::computeGraspPose;
 using kotek_manipulation::computeLiftPose;
 using kotek_manipulation::isReachable;
 using kotek_manipulation::Point3;
 using kotek_manipulation::quaternionFromRPY;
+using kotek_manipulation::quaternionToRPY;
 using kotek_manipulation::rotateVectorByQuaternion;
 using kotek_manipulation::ReachabilityLimits;
 using kotek_manipulation::transformPointOdomToArmFrame;
@@ -240,6 +242,53 @@ TEST(QuaternionFromRPY, YawNinetyDegreesMatchesKnownQuaternion)
   EXPECT_NEAR(q.w, std::cos(M_PI / 4.0), 1e-9);
   // Must be a unit quaternion.
   EXPECT_NEAR(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w, 1.0, 1e-9);
+}
+
+TEST(QuaternionToRPY, RoundTripsQuaternionFromRPY)
+{
+  const double cases[][3] = {
+    {0.0, 0.0, 0.0},
+    {0.3, -0.5, 1.2},
+    {-0.2, 0.4, -2.9},
+    {0.0, 0.0, M_PI},
+    {0.1, 0.0, -0.1},
+  };
+  for (const auto & c : cases) {
+    const auto q = quaternionFromRPY(c[0], c[1], c[2]);
+    double roll = 0.0, pitch = 0.0, yaw = 0.0;
+    quaternionToRPY(q, roll, pitch, yaw);
+    EXPECT_NEAR(roll, c[0], 1e-9) << "case r=" << c[0] << " p=" << c[1] << " y=" << c[2];
+    EXPECT_NEAR(pitch, c[1], 1e-9) << "case r=" << c[0] << " p=" << c[1] << " y=" << c[2];
+    EXPECT_NEAR(yaw, c[2], 1e-9) << "case r=" << c[0] << " p=" << c[1] << " y=" << c[2];
+  }
+}
+
+TEST(BoxAlignedApproachYaw, ReturnsObjectYawWhenReferenceClose)
+{
+  // Undisturbed box (yaw ~ 0) at a corner whose radial default is also
+  // near 0: alignment must agree with the axis-aligned snap.
+  EXPECT_NEAR(computeBoxAlignedApproachYaw(0.05, 0.1), 0.05, 1e-9);
+  EXPECT_NEAR(computeBoxAlignedApproachYaw(-0.03, -0.1), -0.03, 1e-9);
+}
+
+TEST(BoxAlignedApproachYaw, PicksPiFlippedBranchNearestReference)
+{
+  // Box kicked to ~109 deg at the (-x, -y) corner (radial default -135 deg):
+  // the -71 deg branch (object_yaw - pi) is angularly nearer than +109 deg.
+  const double aligned = computeBoxAlignedApproachYaw(1.9, -2.356);
+  EXPECT_NEAR(aligned, normalizeAngle(1.9 - M_PI), 1e-9);
+  // Sanity: the returned value must be equivalent to the object yaw mod pi
+  // (jaws on the box width axis regardless of which branch won).
+  EXPECT_NEAR(std::sin(aligned - 1.9), 0.0, 1e-9);
+}
+
+TEST(BoxAlignedApproachYaw, RespectsTwoPiPeriodicity)
+{
+  // 2*pi + 0.4 is the same heading as 0.4; the branch nearest the reference
+  // wins regardless of how the input was wrapped.
+  EXPECT_NEAR(computeBoxAlignedApproachYaw(2.0 * M_PI + 0.4, 0.5), 0.4, 1e-9);
+  EXPECT_NEAR(computeBoxAlignedApproachYaw(0.4 - 2.0 * M_PI, -2.5), normalizeAngle(0.4 - M_PI),
+    1e-9);
 }
 
 int main(int argc, char ** argv)

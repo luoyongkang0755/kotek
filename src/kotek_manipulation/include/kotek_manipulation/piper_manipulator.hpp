@@ -104,6 +104,23 @@ private:
     // along +-X (opening axis along Y). pi/2 (approach along +-Y) would
     // demand an impossible 8cm straddle.
     double grasp_yaw_snap_step = 0.0;
+    // Task 2c (2026-09-28): derive the grasp approach yaw from the named
+    // object_frame's LIVE TF yaw (computeBoxAlignedApproachYaw) instead of
+    // snapping the radial atan2(y, x) to grasp_yaw_snap_step's axis-aligned
+    // set. The snap bakes in the assumption that the box still sits at its
+    // authored yaw (~0), which is true for a first attempt but NOT after a
+    // kick-rejected grasp: the released box lands back on the riser rotated
+    // and displaced (measured 2026-09-20), and jaws closing at the authored
+    // axis against a rotated box pinch diagonally across a corner -- the
+    // run7-style re-kick chains (e2e10_holddown_rubber run 7: three
+    // consecutive kicked re-grasps, task ABORT). Jaw-in-hand geometry is
+    // unaffected: a yaw-aligned close carries the box with the same
+    // box-to-link6 relative orientation as the axis-aligned case (both
+    // frames rotate together about world Z), so place_reorient's FIXED
+    // absolute TCP frame needs no change. grasp_yaw_snap_step stays as the
+    // fallback when the TF is unavailable or the box is not lying flat
+    // (roll/pitch gate, 0.35 rad). False = pedestal demo unchanged.
+    bool grasp_align_object_yaw = false;
     // Wall-mount place reorientation (2026-09-13, measured): the wall
     // target accepts the box only with its magnet face (local -Z) toward
     // the wall and its 8cm edge vertical, but the box is carried FLAT from

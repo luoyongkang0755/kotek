@@ -63,6 +63,20 @@ inline Quaternion quaternionFromRPY(double roll, double pitch, double yaw)
   return q;
 }
 
+/// Inverse of quaternionFromRPY: ZYX Euler angles (roll, pitch, yaw) from a
+/// unit quaternion. `pitch` is asin-clamped so the gimbal neighborhood stays
+/// finite. Round-trip against quaternionFromRPY is gtest-covered
+/// (test_pregrasp_geometry.cpp).
+inline void quaternionToRPY(const Quaternion & q, double & roll, double & pitch, double & yaw)
+{
+  roll = std::atan2(
+    2.0 * (q.w * q.x + q.y * q.z), 1.0 - 2.0 * (q.x * q.x + q.y * q.y));
+  pitch = std::asin(
+    std::clamp(2.0 * (q.w * q.y - q.z * q.x), -1.0, 1.0));
+  yaw = std::atan2(
+    2.0 * (q.w * q.z + q.x * q.y), 1.0 - 2.0 * (q.y * q.y + q.z * q.z));
+}
+
 /// Hamilton product q1 * q2 (apply q2's rotation first, then q1's).
 inline Quaternion quaternionMultiply(const Quaternion & q1, const Quaternion & q2)
 {
@@ -242,6 +256,29 @@ inline bool isReachable(const Point3 & point_arm_frame, const ReachabilityLimits
 // ---------------------------------------------------------------------
 // Arm-frame grasp/approach/lift poses (3D, plan section 9).
 // ---------------------------------------------------------------------
+
+/// Approach yaw that puts computeGraspPose's jaws parallel to a box lying
+/// at `object_yaw` (heading of its 8cm-long axis, radians): the grasp frame
+/// built there has its opening axis perpendicular to the approach direction
+/// in the horizontal plane, so choosing approach_yaw == object_yaw puts the
+/// opening axis along the box's own 3.5cm width axis for ANY box heading --
+/// including a kick-rejected box that landed back on the riser rotated,
+/// which the axis-aligned {0, +-pi} snap (grasp_yaw_snap_step) then pinches
+/// diagonally across a corner.
+/// The box footprint is a rectangle (invariant under a 180-deg rotation)
+/// and a pi-flipped approach only swaps the two fingers, so object_yaw and
+/// object_yaw + pi are equivalent grasps; the representative NEAREST
+/// `reference_yaw` (usually the radial atan2(y, x) default, which keeps the
+/// arm in its most natural configuration) is returned.
+inline double computeBoxAlignedApproachYaw(double object_yaw, double reference_yaw)
+{
+  constexpr double kPi = 3.14159265358979323846;
+  const double a = kotek_base_control::normalizeAngle(object_yaw);
+  const double b = kotek_base_control::normalizeAngle(object_yaw + kPi);
+  const double da = std::abs(kotek_base_control::normalizeAngle(a - reference_yaw));
+  const double db = std::abs(kotek_base_control::normalizeAngle(b - reference_yaw));
+  return da <= db ? a : b;
+}
 
 /// The gripper's target pose at the object itself: positioned at the
 /// object, oriented to approach along `approach_yaw` with a downward tilt
