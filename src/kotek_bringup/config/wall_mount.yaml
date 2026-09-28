@@ -256,22 +256,23 @@
     grasp_yaw_snap_step: 3.1415927
     # Task 2c (2026-09-28, E group): derive the grasp approach yaw from the
     # box's LIVE TF yaw instead of the axis-aligned snap -- the jaws close
-    # parallel to the box's ACTUAL edges at any heading. Motivation
-    # (measured): the snap assumes the box still sits at its authored yaw,
-    # true for first attempts; a kick-rejected re-grasp lands on a ROTATED
-    # box, and axis-aligned jaws then pinch diagonally across a corner and
-    # re-kick it -- e2e10_holddown_rubber run 7 chained three kicked
-    # re-grasps and ABORTED (the batch's only failure; runs 1-6/8-10 all
-    # COMPLETE). The flatness gate (roll/pitch < 0.35 rad, inside
-    # piper_manipulator_node.cpp) falls back to the snap for tilted boxes.
-    # place_reorient needs NO change: a yaw-aligned close leaves the
-    # box-to-link6 relative orientation identical to the axis-aligned case
-    # (jaw and box frames rotate together about world Z), and its FIXED
-    # absolute TCP frame maps that relative orientation to the wall the
-    # same way for every grasp yaw (verified analytically 2026-09-28;
-    # column check in executePlace's own comment covers the {0, pi} cases,
-    # which remain the only headings this param ever produced before).
-    grasp_align_object_yaw: true
+    # parallel to the box's ACTUAL edges at any heading.
+    # REJECTED 2026-09-28 (e2e10_align_yaw, 2/10 COMPLETE vs D-group 9/10):
+    # the boxes are AUTHORED yaw-rotated by their corner's radial atan2(y,x)
+    # (build_wall_stage.py's add_sensor_cam_objects -- each box's short face
+    # points tangentially), so box TF yaw == radial bearing, NOT ~0, and
+    # "align to the box yaw" silently became "approach along +-45/135 deg" --
+    # arm configurations the riser-corner pregrasp was never verified for
+    # (systematic MOVE_ARM_TO_PREGRASP status=6 controller timeouts at
+    # corners 3/4, contact misses; both COMPLETE runs still lost the
+    # corner-3 box mid-carry). Meanwhile the axis-aligned snap + slow close
+    # + rubber self-centers the 45-deg-authored box during the close
+    # (post-grasp skew median 3.0 deg, D-group) -- the yaw re-alignment is a
+    # FEATURE of the D config, and the axis snap is what the live IK sweep
+    # actually verified. The failure mode E was aimed at (kick-rotated
+    # re-grasp chains, D run 7) is real but rare (1/10 runs); the code stays
+    # available behind this flag, default OFF.
+    grasp_align_object_yaw: false
     place_reorient: true
     min_cartesian_fraction: 0.98
     velocity_scaling: 0.2

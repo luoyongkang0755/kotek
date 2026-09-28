@@ -95,6 +95,22 @@ holddown3 run4、holddown_final runs 2/3（x=0.39、有附着）——**与 _WAL
   接触未中 0 次。机制确认：慢闭合窗口期内，盒底-riser 大接触面对偏航/滑移的
   约束是被低估的主导项——**增强既有接触约束 ≫ 改变抓取侧几何**。终态配置 =
   慢闭合 4s + grasp_width 0.018 + riser 橡胶 1.6/1.4（盒材质不动）。
+- **A/B E 组负面结果**（2026-09-28 晚，e2e10_align_yaw，10 遍，晚低负载）：
+  "识别盒子实际位姿后以正确姿态抓取"——把 approach 偏航对齐到盒子 TF 实际
+  偏航（`grasp_align_object_yaw`，commit `e6ea88d` 实现，默认 false 保留）。
+  结果 **2/10 COMPLETE**（vs D 组 9/10），8 遍 ABORT 几乎全是
+  MOVE_ARM_TO_PREGRASP/PREPLACE status=6 控制器结算超时 + 接触未中；仅 2 遍
+  COMPLETE 也全在角落 3 丢盒（partial_weld+slip[s3]）。根因（实测日志）：
+  盒子是 **authored 按各角落径向 atan2(y,x) 偏航旋转的**（build_wall_stage.py
+  `add_sensor_cam_objects` 的设计本意：短面切向对准开口轴），所以抓取时刻
+  盒 TF 偏航 = ±45°/±135° 而非 ~0°，"对齐盒偏航"实际等于"沿 ±45/135° 径向
+  接近"——这些臂配置从未在 riser 角落的 live IK sweep 里验证过（D 组 snap
+  只产生 {0,±π}，sweep 也只验证了这一族），角落 3/4 的 ±135° 系统性死在
+  pregrasp 结算。更深一层：D 组 snap+慢闭合+橡胶其实**依赖**闭合过程中把
+  45° 放置的盒自居中回轴对齐（D 组抓后偏斜中位 3.0° 就是证据）——轴对齐
+  snap 不是对"正确姿态"的近似，而是已验证可规划 + 自居中特性的载体。E 组
+  要打的失效模式（D run 7 踢转链重抓）真实但罕见（1/10），代价是毁掉规划
+  稳定性——**判定为负面，回退**；flag 与实现保留，注释含完整证据链。
 
 ## 1. 目标与设计
 
