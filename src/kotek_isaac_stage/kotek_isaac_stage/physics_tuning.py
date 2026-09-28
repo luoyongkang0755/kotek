@@ -337,8 +337,19 @@ SENSOR_CAM_SIZE_XYZ = (0.08, 0.035, 0.04)   # m
 # physics. Adjust via probe_magnet_tuning.py if the grasp/weld numbers
 # below don't hold up under a real run.
 SENSOR_CAM_MASS = 0.05                      # kg
-SENSOR_CAM_STATIC_FRICTION = 1.0
-SENSOR_CAM_DYNAMIC_FRICTION = 0.9
+# Rubber-rubber upgrade (2026-09-28, anti-kick D-group): 1.0/0.9 was
+# ALREADY the pair-effective value everywhere (combine=max wins), so the
+# only remaining friction lever was above-1.0 rubber levels. Hypothesis:
+# stronger box-riser yaw resistance + stronger finger slip resistance
+# during the slow-close self-centering window (see
+# author_riser_friction.py and docs/wall_mount_contact_placement.md).
+SENSOR_CAM_STATIC_FRICTION = 1.6
+SENSOR_CAM_DYNAMIC_FRICTION = 1.4
+# Same story for the riser top face (physics-purpose binding authored by
+# author_riser_friction.py; the scout import only gave the Cube a VISUAL
+# material, so the physics binding is new, not an override).
+RISER_RUBBER_STATIC_FRICTION = 1.6
+RISER_RUBBER_DYNAMIC_FRICTION = 1.4
 SENSOR_CAM_RESTITUTION = 0.0
 # Same reasoning as SENSOR_CONTACT_OFFSET: a fraction of the object's own
 # smallest dimension (4 cm here), not PhysX's 0.02 m default (half the
