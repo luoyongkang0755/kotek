@@ -39,8 +39,8 @@ WALL_DEMO_STAGE = (
     'kotek_scout_piper_wall_demo.usd')
 BACKUP = '/home/trs/e2e_runs/kotek_scout_piper_wall_demo.before_rubber.usd'
 
-BOX_STATIC = 1.6
-BOX_DYNAMIC = 1.4
+BOX_STATIC = 1.0
+BOX_DYNAMIC = 0.9
 RISER_STATIC = 1.6
 RISER_DYNAMIC = 1.4
 BOX_MATERIAL_PATH = '/World/sensor_cam_material'
