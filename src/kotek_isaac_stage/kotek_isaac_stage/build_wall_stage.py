@@ -163,22 +163,28 @@ def add_sensor_cam_objects(stage: Usd.Stage):
     convention normally guards against -- these objects really are that
     shape, not a cube being stretched to fake one).
 
-    Each box is yaw-rotated (about its own center, via AddOrientOp between
+    Each box is authored AXIS-ALIGNED (yaw = 0, identity orient op between
     the translate and scale ops -- same op ordering probe_magnet_tuning.py
-    already uses to teleport a sensor-cam with position+orientation+size) by
-    exactly that corner's own approach_yaw = atan2(y, x). A live E2E run
-    without this rotation reached CLOSE_GRIPPER successfully (contact
-    detected) but the object slipped free during LIFT_OBJECT every time:
-    computeGraspPose()'s opening_axis is at a fixed +90deg offset from
-    approach_yaw, and an UNROTATED box's edges sit at 0/90deg -- so at every
-    one of these 4 corners (approach_yaw = +/-45deg, +/-135deg, from the
-    riser's symmetric corner layout) the gripper's opening axis lands ~45deg
-    off the box's own edges. A parallel-jaw gripper closing 45deg off a
-    rectangular box's faces pinches near two adjacent corners/edges instead
-    of clamping two parallel faces -- registers contact fine, has no stable
-    equilibrium under lift acceleration. Rotating the box by approach_yaw
-    aligns its short (0.035m) face flat against the opening axis at that
-    specific corner, restoring a normal flat-face parallel-jaw grasp."""
+    already uses to teleport a sensor-cam with position+orientation+size).
+    HISTORY: the boxes used to be yaw-rotated by each corner's radial
+    atan2(y, x), which was correct for the original RADIAL grasp approach
+    (an unrotated box's edges sit at 0/90deg while computeGraspPose's
+    opening_axis is at a fixed +90deg offset from approach_yaw, so at every
+    one of these 4 corners -- approach_yaw = +/-45deg, +/-135deg -- the
+    jaws landed ~45deg off the box's faces and the object slipped free
+    during LIFT_OBJECT every time, measured 2026-08). The grasp later
+    switched to the axis-aligned {0, +-pi} snap (grasp_yaw_snap_step), but
+    the radial box rotation was never revisited -- leaving every grasp 45
+    deg misaligned and dependent on the slow close self-centering the box
+    DURING the close. The E group (2026-09-28, e2e10_align_yaw, 2/10
+    COMPLETE) proved the complement wrong too: making the ARM follow the
+    authored radial yaw uses arm configurations never IK-verified at these
+    corners. F group removes the mismatch at the source instead: with
+    axis-aligned boxes the snapped jaws close parallel to the box's large
+    faces from FIRST contact, eliminating the mid-close re-orientation
+    window and its first-contact asymmetry (the residual-kick mechanism
+    per docs/wall_mount_contact_placement.md section 0). Validated (or
+    rejected) by the e2e10_boxyaw0 batch."""
     material = physics_tuning.define_physics_material(
         stage, '/World/sensor_cam_material',
         physics_tuning.SENSOR_CAM_STATIC_FRICTION,
@@ -190,9 +196,9 @@ def add_sensor_cam_objects(stage: Usd.Stage):
     for i, (path, (x, y, z)) in enumerate(zip(SENSOR_CAM_PATHS, SENSOR_CAM_CORNERS_LOCAL)):
         cube = UsdGeom.Cube.Define(stage, path)
         cube.CreateSizeAttr(1.0)
-        yaw = math.atan2(y, x)
-        half = yaw / 2.0
-        quat = Gf.Quatf(math.cos(half), Gf.Vec3f(0.0, 0.0, math.sin(half)))
+        # F group (2026-09-29): axis-aligned (see docstring) -- identity
+        # orient, op ORDER unchanged.
+        quat = Gf.Quatf(1.0, Gf.Vec3f(0.0, 0.0, 0.0))
         cube.AddTranslateOp().Set(Gf.Vec3d(x, y, z))
         cube.AddOrientOp().Set(quat)
         cube.AddScaleOp().Set(Gf.Vec3f(sx, sy, sz))
