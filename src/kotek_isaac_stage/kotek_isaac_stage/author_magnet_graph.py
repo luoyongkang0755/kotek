@@ -294,10 +294,15 @@ def compute(db):
     linear_vel = np.asarray(linear_vel)
     angular_vel = np.asarray(angular_vel)
 
-    dipole_forces = np.zeros((n, 3))    # physical F, applied at the COM
+    dipole_forces = np.zeros((n, 3))    # physical F -- applied at the
+                                        # magnet FACE, not the COM (see the
+                                        # apply call below, 2026-10-04)
     dipole_torques = np.zeros((n, 3))   # physical tau = m_s x B_w (pure torque)
-    stabilizer_forces = np.zeros((n, 3))    # damping + gravity ff, at the COM
+    stabilizer_forces = np.zeros((n, 3))    # linear drag, at the COM
     stabilizer_torques = np.zeros((n, 3))   # angular damping (pure torque)
+    force_points = np.array(positions, dtype=float)  # per-sensor application
+                                        # point; default COM, set to the
+                                        # magnet face when pressed
     any_active = False
 
     stage = omni.usd.get_context().get_stage()
@@ -313,12 +318,15 @@ def compute(db):
         current_normal = _rotate_vec_by_quat_wxyz(
             quat, np.array([0.0, 0.0, -1.0]))
         bottom_world = pos + _rotate_vec_by_quat_wxyz(quat, bottom_local)
+        force_points[i] = bottom_world   # the holddown F acts at the magnet
+                                         # face, not the COM (apply call
+                                         # below, 2026-10-04)
         target = np.array(targets[i], dtype=float)
         r_vec = bottom_world - target   # wall dipole -> sensor dipole
         d = float(np.linalg.norm(r_vec))   # used for the range gate, the
-                                           # taper and the weld gate -- the
+                                           # taper and the weld gate; the
                                            # force itself is APPLIED at the
-                                           # COM (see the docstring)
+                                           # magnet face (see the apply call)
         f_mag = 0.0     # actual applied |F| after taper+clamp -- read by the
         tau_mag = 0.0   # heartbeat below; same for |tau|.
         cos_mis = float(np.dot(current_normal, inward))
@@ -468,16 +476,28 @@ def compute(db):
                   f'pos={pos}', flush=True)
 
     if any_active:
-        # ONE call, everything at the COM: the physical dipole F, the
-        # stabilizers (linear drag, gravity feedforward), and all pure
-        # torques (physical tau = m_s x B_w, angular damping). The dipole
-        # force is NOT applied at the bottom-face dipole point even though
-        # continuum mechanics would put it there -- see the docstring's
-        # measured r x F pumping note (physics_tuning.py Bug 6's lesson:
-        # in this integrator only the COM is a safe application point).
+        # TWO calls, split by application point (2026-10-04):
+        #   1. holddown F + aligning tau at the MAGNET FACE. A real magnet
+        #      pulls at its pole face; the old COM application point loaded
+        #      the rigid wall contact eccentrically (COM force + face
+        #      reaction = a rocking couple), and the first weld-free batch
+        #      measured the artifact: after the task ended, long-idle held
+        #      boxes (always the outermost, most-stretched target) snapped
+        #      12-18 mm along the wall in a single 1 s heartbeat -- speed
+        #      0.0001 m/s, d pinned 0.0000, i.e. a contact-manifold re-
+        #      resolution pop, not sliding. With the force at the face the
+        #      loading is concentric (a purely normal face force has zero
+        #      lever arm while the face is parallel), removing the couple
+        #      that drove the penetration asymmetry. Bug 6's "COM-only"
+        #      lesson does NOT apply here: that was a force whose DIRECTION
+        #      swung with the body (dipole r x F pumping at 120 Hz); this
+        #      force is world-fixed +X, torque-free by construction.
+        #   2. stabilizers (linear drag) at the COM.
         state.rigid_prims.apply_forces_and_torques_at_pos(
-            forces=dipole_forces + stabilizer_forces,
-            torques=dipole_torques + stabilizer_torques,
+            forces=dipole_forces, torques=dipole_torques,
+            positions=force_points, local_frame=False)
+        state.rigid_prims.apply_forces_and_torques_at_pos(
+            forces=stabilizer_forces, torques=stabilizer_torques,
             positions=positions, local_frame=False)
     return True
 '''
