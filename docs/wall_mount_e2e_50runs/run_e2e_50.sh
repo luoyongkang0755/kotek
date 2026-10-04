@@ -95,8 +95,8 @@ for i in $(seq 1 "$RUNS"); do
   rc=$?
 
   # --- analyze ---
-  welds=$(grep -c 'welded sensor' "$SLOG" 2>/dev/null || echo 0)
-  mis=$(grep 'welded sensor' "$SLOG" 2>/dev/null | grep -oE 'misalign_deg=[0-9.]+' | cut -d= -f2 | paste -sd'|' -)
+  welds=$(grep -c 'held sensor' "$SLOG" 2>/dev/null || echo 0)
+  mis=$(grep 'held sensor' "$SLOG" 2>/dev/null | grep -oE 'misalign_deg=[0-9.]+' | cut -d= -f2 | paste -sd'|' -)
   [ -z "$mis" ] && mis=-
   if grep -q 'wall-mount task COMPLETE' "$TLOG"; then result=COMPLETE
   elif grep -q 'wall-mount task ABORTED' "$TLOG"; then result=ABORTED
@@ -113,7 +113,7 @@ for i in $(seq 1 "$RUNS"); do
     cls=partial_weld
     # distinguish weld-gate reject (box parked at wall, in_range, never welded)
     # from mid-carry slip (box fell away from the wall)
-    missing=$(for s in 1 2 3 4; do grep -q "welded sensor $s " "$SLOG" || echo $s; done)
+    missing=$(for s in 1 2 3 4; do grep -q "held sensor $s " "$SLOG" || echo $s; done)
     for s in $missing; do
       last=$(grep "sensor$s:" "$SLOG" | tail -1)
       if echo "$last" | grep -q 'in_range=True'; then

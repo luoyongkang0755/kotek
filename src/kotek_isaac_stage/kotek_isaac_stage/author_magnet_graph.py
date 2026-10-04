@@ -12,21 +12,28 @@ attract" system.
 Every other OmniGraph in this codebase (author_robot_graphs.py,
 author_camera_graphs.py) uses only built-in node types wired with
 omni.graph.core.Controller.edit(). This is the first departure from that:
-"attract, align, then weld with a breakable joint" needs genuine per-tick
-Python (a magnetic dipole-dipole force AND torque pair, a one-shot
-dynamically-authored UsdPhysics.FixedJoint) that no built-in node provides,
+the magnet law needs genuine per-tick Python (a magnetic dipole-dipole
+force AND torque pair in the original design; the contact-holddown force
+law + aligning torque of the current one) that no built-in node provides,
 so it is implemented as a single omni.graph.scriptnode.ScriptNode node
-instead. The physics is the exact dipole-dipole interaction -- force and
-alignment torque both fall out of B = mu0/4pi * [3(m.r̂)r̂ - m]/r^3 and
-F/tau formulas, no hand-tuned alignment gain -- see MAGNET_SCRIPT_SOURCE
-below and physics_tuning.py's "simulated magnetism" section for the model,
-its calibration and the measured bug history of the stabilizing terms it
-still uses. The tunable physics constants (dipole moment, attract range,
-force/torque caps, weld thresholds, break force/torque) are set as ordinary
-node input attributes sourced from physics_tuning.py -- the script reads
-them each tick rather than having them baked into its own source string,
-so re-authoring after a physics_tuning.py change does not require editing
-this file.
+instead.
+
+USER DECISION 2026-10-04 -- NO WELD: the weld (a one-shot dynamically
+authored UsdPhysics.FixedJoint) was the last non-physical element. A real
+weak magnet on a metal wall has no weld: the box stays up purely by
+contact friction under the magnet's normal holddown force (3N x mu 0.9 =
+2.7N vs the 0.49N shear weight). The joint authoring is REMOVED; the old
+weld gates (distance/speed/ang_speed/misalign + gripper-open) are kept
+verbatim but now DECLARE a friction hold, with one physically necessary
+addition -- d < attract_range, because a box declared held must be inside
+the magnet's active range (the weld era masked the [attract_range,
+weld_distance) band: the joint held even where the magnet force is zero).
+After declaration the magnet force simply keeps acting every tick -- that
+IS the hold -- and a slip watchdog reports any drift. The
+gravity-feedforward stabilizer is retired with the same decision: a real
+magnet does not actively cancel weight; friction does the job. The node
+inputs (weld*, gravityFeedforwardZ, break*) stay for graph-interface
+stability and are ignored or re-interpreted in compute().
 
 Runs INSIDE Isaac Sim, same headless invocation as author_camera_graphs.py:
     KOTEK_WITH_ROS=1 ./run_isaac.sh \\
@@ -141,11 +148,16 @@ physics_tuning.py's bug history -- measured, not guessed):
     wildcard. The physical content of the dipole model (orientation-
     dependent force direction + tau = m_s x B_w) is fully retained; only
     the application point moves to the COM.
-  * Weld logic: a one-shot breakable UsdPhysics.FixedJoint once d <
-    weldDistance, speed < weldMaxSpeed, ang_speed < weldMaxAngSpeed AND
-    misalign_deg < weldMaxMisalign -- the 2026-09-13 addition of the last
+  * Weld logic: REMOVED 2026-10-04 (user decision, see the module
+    docstring) -- no more FixedJoint. The old gate conditions are kept as
+    the FRICTION-HOLD DECLARATION (plus d < attract_range), after which the
+    magnet force keeps acting every tick; a slip watchdog (10mm drift from
+    the declared position, or lost wall contact) reports any failure of
+    the friction hold loudly.
     gate (physics_tuning.py's WELD_MAX_MISALIGN_DEG) stops a still-toppling
-    or wall-jammed box from being frozen crooked by construction.
+    or wall-jammed box from being declared held while crooked -- a
+    declaration on a crooked box would just be the friction hold failing
+    loudly a moment later instead of being frozen permanently.
 
 Reads the fixed (sensor, target) pairs and every tunable constant from
 this node's own input attributes -- see author_magnet_graph.py for where
@@ -170,6 +182,10 @@ def setup(db):
     state.rigid_prims = None       # lazily constructed on first compute() --
                                     # RigidPrim needs physics playing already
     state.welded = None            # bool per sensor, set once rigid_prims exists
+    state.held_pos = None          # world pos at friction-hold declaration
+                                   # (watchdog anchor), same lazy init
+    state.slip_reported = None     # bool per sensor, latches the one-shot
+                                   # SLIPPED report so it prints once
     state.tick_count = 0           # diagnostic heartbeat -- see compute() below
 
 
@@ -177,6 +193,8 @@ def cleanup(db):
     state = db.per_instance_state
     state.rigid_prims = None
     state.welded = None
+    state.held_pos = None
+    state.slip_reported = None
 
 
 def compute(db):
@@ -201,6 +219,8 @@ def compute(db):
         try:
             state.rigid_prims = RigidPrim(sensor_paths)
             state.welded = [False] * n
+            state.held_pos = [None] * n
+            state.slip_reported = [False] * n
         except Exception as exc:  # noqa: BLE001 -- physics not playing yet
             # Plain print(), not db.log_warning() -- a live probe run showed
             # NEITHER this message nor the weld-success one below ever
@@ -226,6 +246,13 @@ def compute(db):
     max_torque = float(db.inputs.maxTorque)
     damping_coeff = float(db.inputs.dampingCoeff)
     gravity_feedforward_z = float(db.inputs.gravityFeedforwardZ)
+    # RETIRED 2026-10-04 (user decision, weld-free friction hold): the
+    # feedforward actively cancelled the box's weight while pressed -- a
+    # real wall magnet does no such thing; the 0.49N shear is carried by
+    # contact friction (mu 0.9 x the 3N normal = 2.7N). Zeroed here; the
+    # input stays only for graph-interface stability (re-authoring the
+    # node to drop it would churn the stage for no behavioral gain).
+    gravity_feedforward_z = 0.0
     angular_damping_coeff = float(db.inputs.angularDampingCoeff)
     weld_distance = float(db.inputs.weldDistance)
     taper_distance = float(db.inputs.taperDistance)
@@ -276,8 +303,6 @@ def compute(db):
     stage = omni.usd.get_context().get_stage()
 
     for i in range(n):
-        if state.welded[i]:
-            continue
         pos = positions[i]
         quat = orientations[i]   # (w, x, y, z)
         bottom_local = np.array([0.0, 0.0, bottom_local_z])
@@ -344,14 +369,42 @@ def compute(db):
                 dipole_torques[i] = (align_axis / axis_n) * min(
                     max_torque, max_torque * axis_n / 0.5)
                 tau_mag = float(np.linalg.norm(dipole_torques[i]))
-            # Stabilizers while held: linear drag (Bug 2/4 semantics) plus
-            # the gravity feedforward -- on the WALL the magnet+friction
-            # carry the box, not the fingers, so its weight is cancelled
-            # here exactly as the old in-range gate did.
+            # Stabilizer while pressed: linear drag (Bug 2/4 semantics).
+            # The gravity feedforward was retired with the weld (see the
+            # input read above): on the wall the box's weight is carried
+            # by contact friction, not by an explicit upward force.
             stabilizer_forces[i] = (
                 -damping_coeff * linear_vel[i]
                 + np.array([0.0, 0.0, gravity_feedforward_z]))
             any_active = True
+
+        # Friction-hold watchdog (2026-10-04, weld removal): once a sensor
+        # is declared held there is no joint to trust -- the magnet force
+        # above IS the hold, and these lines are its honest verifier. Drift
+        # beyond SLIP_DRIFT_M from the declared position, or losing wall
+        # contact entirely, prints a one-shot (latched) SLIPPED report.
+        # The 10mm threshold sits far above normal seat noise (post-hold
+        # drift measured at sub-mm across the F-group batches) and far
+        # below a box visibly sagging on the wall.
+        SLIP_DRIFT_M = 0.01
+        if state.welded[i]:
+            if state.tick_count % 60 == 0:
+                drift = float(np.linalg.norm(pos - state.held_pos[i]))
+                lost_contact = not pressed and d > attract_range * 1.5
+                if (drift > SLIP_DRIFT_M or lost_contact) \
+                        and not state.slip_reported[i]:
+                    state.slip_reported[i] = True
+                    print(f'### kotek_magnet[tick={state.tick_count}]: '
+                          f'SLIPPED sensor {i + 1}: drift={drift:.4f}m '
+                          f'd={d:.4f}m pos={pos} (friction hold failed)',
+                          flush=True)
+                else:
+                    print(f'### kotek_magnet[tick={state.tick_count}] '
+                          f'sensor{i + 1} HELD: d={d:.4f}m '
+                          f'drift={drift:.4f}m '
+                          f'speed={float(np.linalg.norm(linear_vel[i])):.4f}',
+                          flush=True)
+            continue
 
         # Diagnostic heartbeat for every not-yet-welded sensor, every 60
         # ticks (~2/sec at 120Hz) -- see the print()-vs-log_warning() note
@@ -391,33 +444,28 @@ def compute(db):
         # A crooked weld is permanent, so the gate refuses it and lets the
         # torque keep working; a box that NEVER aligns is a delivery bug
         # to fix at the source, not to mask with a permissive weld gate.
-        if (weld_enable and d < weld_distance and speed < weld_max_speed
+        # FRICTION-HOLD DECLARATION (was: FixedJoint weld -- REMOVED
+        # 2026-10-04 per user decision, see the module docstring). The old
+        # gates are kept verbatim, plus one physically necessary addition:
+        # d < attract_range. A declared-held box must be INSIDE the
+        # magnet's active range, otherwise the holddown force is zero and
+        # the declaration is a lie -- the weld era masked the
+        # [attract_range, weld_distance) band by holding the box where the
+        # magnet force is off. (E2E data shows boxes seat at d=0.0000, so
+        # the stricter bound rejects nothing in practice; it closes a real
+        # physical hole.) After declaration the magnet force above simply
+        # keeps acting every tick -- that IS the hold -- and state.held_pos
+        # anchors the slip watchdog.
+        if (not state.welded[i] and weld_enable and d < attract_range
+                and d < weld_distance and speed < weld_max_speed
                 and ang_speed_weld < weld_max_ang_speed
                 and misalign_deg < weld_max_misalign):
-            joint_path = f'/World/wall/_magnet_weld_{i + 1}'
-            if not stage.GetPrimAtPath(joint_path).IsValid():
-                wall_prim = stage.GetPrimAtPath(wall_prim_path)
-                wall_pos = wall_prim.GetAttribute('xformOp:translate').Get()
-                wall_pos = np.array([wall_pos[0], wall_pos[1], wall_pos[2]])
-                joint = UsdPhysics.FixedJoint.Define(stage, joint_path)
-                joint.CreateBody0Rel().SetTargets([Sdf.Path(sensor_paths[i])])
-                joint.CreateBody1Rel().SetTargets([Sdf.Path(wall_prim_path)])
-                joint.CreateLocalPos0Attr().Set(Gf.Vec3f(0.0, 0.0, 0.0))
-                joint.CreateLocalRot0Attr().Set(Gf.Quatf(1.0, 0.0, 0.0, 0.0))
-                local_pos1 = pos - wall_pos   # wall carries no rotation, so this
-                                              # is already in its local frame
-                joint.CreateLocalPos1Attr().Set(
-                    Gf.Vec3f(float(local_pos1[0]), float(local_pos1[1]), float(local_pos1[2])))
-                joint.CreateLocalRot1Attr().Set(
-                    Gf.Quatf(float(quat[0]), float(quat[1]), float(quat[2]), float(quat[3])))
-                joint.CreateBreakForceAttr().Set(break_force)
-                joint.CreateBreakTorqueAttr().Set(break_torque)
-                state.welded[i] = True
-                print(f'### kotek_magnet[tick={state.tick_count}]: '
-                      f'welded sensor {i + 1} at d={d:.4f}m '
-                      f'misalign_deg={misalign_deg:.1f} '
-                      f'pos={pos} wall_pos={wall_pos} local_pos1={local_pos1} '
-                      f'quat={quat}', flush=True)
+            state.welded[i] = True
+            state.held_pos[i] = pos.copy()
+            print(f'### kotek_magnet[tick={state.tick_count}]: '
+                  f'held sensor {i + 1} by friction (weld removed) at '
+                  f'd={d:.4f}m misalign_deg={misalign_deg:.1f} '
+                  f'pos={pos}', flush=True)
 
     if any_active:
         # ONE call, everything at the COM: the physical dipole F, the

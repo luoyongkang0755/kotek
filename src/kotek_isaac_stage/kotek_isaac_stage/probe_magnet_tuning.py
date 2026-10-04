@@ -194,22 +194,29 @@ def _run(args, simulation_app) -> int:
     end_world_pos = np.array(end_world_pos[0])
     end_world_quat = np.asarray(end_world_quat[0])
     displacement = float(np.linalg.norm(end_world_pos - start_world_pos))
-    welded = stage.GetPrimAtPath(args.weld_joint_path).IsValid()
+    # Weld-free era (2026-10-04, user decision): the magnet no longer
+    # authors a FixedJoint -- holding is pure contact friction under the 3N
+    # normal. There is no joint prim to check; the friction hold is verified
+    # directly from the end pose: still at the wall, not fallen. (A failed
+    # hold means the box drops ~0.4m to the ground -- unambiguous.)
+    held = (displacement < 0.05
+            and end_world_pos[2] > start_world_pos[2] - 0.05)
 
     print(f'### start pos: {start_world_pos}', flush=True)
     print(f'### end pos:   {end_world_pos}', flush=True)
     print(f'### displacement: {displacement:.4f} m', flush=True)
-    print(f'### weld joint present ({args.weld_joint_path}): {welded}', flush=True)
+    print(f'### friction hold intact (weld-free era): {held}', flush=True)
 
     ok = True
     if args.mode in ('in-range', 'misaligned'):
         # Holddown era (2026-09-23): the box spawns AT the wall (embedded,
         # contact-resolved) and the magnet's job is HOLDING, not capture --
-        # it barely moves. The meaningful checks are the weld and the final
+        # it barely moves. The meaningful checks are the hold and the final
         # pose, so the old "moved toward the target" displacement check is
         # retired (it tested the dipole capture era's radial pull).
-        ok = ok and _check(welded, 'weld joint was authored (magnet engaged on contact and held)')
-        if welded:
+        ok = ok and _check(held, 'friction hold kept the box at the wall '
+                           '(no weld: 3N normal x mu 0.9 = 2.7N vs 0.49N weight)')
+        if held:
             target = np.array([ws.WALL_FACE_X, ws.WALL_TARGET_Y[args.sensor_index - 1], ws.WALL_TARGET_Z])
             half_h = pt.SENSOR_CAM_SIZE_XYZ[2] / 2.0
             # Bottom-face point computed from the FINAL orientation with
@@ -247,8 +254,8 @@ def _run(args, simulation_app) -> int:
             print(f'### final bottom-normal misalignment vs wall: '
                   f'{final_misalign_deg:.1f} deg', flush=True)
             ok = ok and _check(
-                welded and final_misalign_deg < 10.0,
-                'dipole alignment torque flattened the box (misalignment '
+                held and final_misalign_deg < 10.0,
+                'alignment torque flattened the box (misalignment '
                 f'{final_misalign_deg:.1f} deg < 10 deg)')
     else:
         # NOT a bare "didn't move" check: this asset's chassis (base_link)
@@ -267,7 +274,12 @@ def _run(args, simulation_app) -> int:
             f'sensor did NOT move toward the wall (magnet correctly inactive '
             f'out of range; dx={toward_wall:.4f} m, total displacement '
             f'{displacement:.4f} m is chassis-settling, not magnetism)')
-        ok = ok and _check(not welded, 'no weld joint was authored (correctly inactive)')
+        # A false friction-hold DECLARATION out of range is structurally
+        # impossible (the gate requires d < attract_range -- a box on the
+        # riser is ~0.27 m from the wall plane), and any false holding
+        # force shows up as the toward_wall motion checked above or as a
+        # SLIPPED report in the E2E logs. The weld era's "no joint prim
+        # was authored" check has no direct successor here.
 
     print()
     print('PASS' if ok else 'FAIL', flush=True)
