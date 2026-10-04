@@ -1,14 +1,17 @@
 # Wall-mount demo recordings (2026-09-23 ~ 10-04)
 
 E2E recordings of the contact-holddown wall-mount demo. Current final
-config (F group, 2026-09-29): axis-aligned sensor boxes + 4 s hand-timed
-slow close + grasp_width 0.018 + riser rubber 1.6/1.4 + OMPL place
-fallback -- validated 60/60 COMPLETE, 240 grasps 0 kicks, 240 welds all
-0.0 deg (10-run + 50-run batches, docs/wall_mount_progress_report.md).
+config (weld-free hold, 2026-10-04): axis-aligned sensor boxes + 4 s
+hand-timed slow close + grasp_width 0.018 + riser rubber 1.6/1.4 + OMPL
+place fallback + contact-triggered 3 N normal force at the magnet face
+(= 2.7 N friction) with NO FixedJoint weld -- validated 81/81 COMPLETE
+(F-group 60/60 + no-weld batches, docs/wall_mount_progress_report.md).
 
 | File | Content | Result |
 |---|---|---|
-| `wall_mount_final_boxyaw0_4of4.mp4` | **Primary (current final config, F group).** Viewport capture: full run on the axis-aligned-box config. All four boxes grasped first-try (no kick, no re-grasp), pressed, welded | COMPLETE, 4 welds all d=0.0000 m / 0.0 deg (~343 s) |
+| `wall_mount_noweld_4of4.mp4` | **Primary (current final config, weld-free hold).** Viewport capture: full run on the no-weld config. All four boxes grasped first-try, placed, and held purely by the 3 N contact force x mu 0.9 friction | COMPLETE, 4/4 held (all HELD: d=0.0000 m / drift 0.0), 0 slip reports (337 s) |
+| `wall_mount_still_noweld.png` | Frame from the no-weld primary run | poster frame |
+| `wall_mount_final_boxyaw0_4of4.mp4` | Previous primary (F group, with weld). Viewport capture: full run on the axis-aligned-box config. All four boxes grasped first-try (no kick, no re-grasp), pressed, welded | COMPLETE, 4 welds all d=0.0000 m / 0.0 deg (~343 s) |
 | `wall_mount_still_boxyaw0.png` | Frame from the primary run (arm mounting a box; axis-aligned riser boxes visible) | poster frame |
 | `wall_mount_final_rubber_4of4.mp4` | Previous primary (D group): full run on 4s slow close + riser rubber, radially-rotated boxes era. One run of the 9/10-COMPLETE config | COMPLETE, 4 welds all d=0.0000 m / 0.0 deg (331 s) |
 | `wall_mount_complete_4of4_cropped.mp4` | Earlier complete run, x11grab whole-desktop era, cropped to the sim window (1920x1080) | COMPLETE, 4 welds all d=0.0000 m / 0.0 deg (261 s). First ~2.5 min have a centered ScriptNode warning dialog (self-dismisses); the remaining ~3 min are clean close-ups |
