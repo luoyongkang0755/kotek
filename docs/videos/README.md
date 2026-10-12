@@ -1,4 +1,4 @@
-# Wall-mount demo recordings (2026-09-23 ~ 10-04)
+# Wall-mount demo recordings (2026-09-23 ~ 10-12)
 
 E2E recordings of the contact-holddown wall-mount demo. Current final
 config (weld-free hold, 2026-10-04): axis-aligned sensor boxes + 4 s
@@ -9,6 +9,8 @@ place fallback + contact-triggered 3 N normal force at the magnet face
 
 | File | Content | Result |
 |---|---|---|
+| `wall_mount_noweld_20261012_4of4.mp4` | Repeat take of the current-final (no-weld) config, one week later -- re-verification before starting real-robot work. Viewport capture | COMPLETE, 4/4 held (all HELD: d=0.0000 m / drift 0.0), 0 slip reports (322 s) |
+| `wall_mount_still_noweld_20261012.png` | Frame from the 2026-10-12 re-verification run | poster frame |
 | `wall_mount_noweld_4of4.mp4` | **Primary (current final config, weld-free hold).** Viewport capture: full run on the no-weld config. All four boxes grasped first-try, placed, and held purely by the 3 N contact force x mu 0.9 friction | COMPLETE, 4/4 held (all HELD: d=0.0000 m / drift 0.0), 0 slip reports (337 s) |
 | `wall_mount_still_noweld.png` | Frame from the no-weld primary run | poster frame |
 | `wall_mount_final_boxyaw0_4of4.mp4` | Previous primary (F group, with weld). Viewport capture: full run on the axis-aligned-box config. All four boxes grasped first-try (no kick, no re-grasp), pressed, welded | COMPLETE, 4 welds all d=0.0000 m / 0.0 deg (~343 s) |
