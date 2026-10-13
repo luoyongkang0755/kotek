@@ -32,19 +32,25 @@ from kotek_msgs.action import GraspObject, PlaceObject
 from rclpy.action import ActionClient
 from rclpy.node import Node
 
-# Riser-corner pickup positions (arm frame) -- corners of
-# /World/scout_mini/Geometry/base_link/Cube's top face, inset so the
-# 8x3.5x4cm sensor box never overhangs (build_wall_stage.py's CORNER_XY),
-# converted into the arm's own base_link frame by subtracting
-# coordinator.yaml's arm_mount_xyz=[0,0,0.29101] (translation only, scout
-# base_link and the arm's own base_link share x/y origin and orientation).
-_CORNER_XY = 0.109
-_GRASP_Z = 0.3103 - 0.29101  # SENSOR_CAM_LOCAL_Z - arm_mount_xyz.z
+# Riser-corner pickup positions (arm frame) -- corners of the real-robot
+# platform layout (build_wall_stage.py, 2026-10-13): platform 25cm(x) x
+# 35cm(y) centered on scout base_link, boxes axis-aligned at
+# (x=+-0.084, y=+-0.109) scout-frame, arm mounted FORWARD at scout x=+0.11
+# (mounting plate rear 19.5cm from the platform rear, plate 8cm deep).
+# Arm frame = scout frame - arm mount: both grasp x's land BEHIND/aft of
+# the arm column (the near pair only 2.6cm aft of it) -- reachability of
+# all 4 was re-verified with a live /piper/compute_ik sweep after this
+# change (see docs/wall_mount_contact_placement.md). z is unchanged: the
+# platform top sits at the same height as the old riser top.
+_GRASP_X_NEAR = 0.084 - 0.11   # -0.026
+_GRASP_X_FAR = -0.084 - 0.11   # -0.194
+_CORNER_Y = 0.109
+_GRASP_Z = 0.3103 - 0.29101  # SENSOR_CAM_LOCAL_Z - arm_mount_xyz.z (z unchanged)
 GRASP_POSITIONS = [
-    (+_CORNER_XY, +_CORNER_XY, _GRASP_Z),
-    (+_CORNER_XY, -_CORNER_XY, _GRASP_Z),
-    (-_CORNER_XY, -_CORNER_XY, _GRASP_Z),
-    (-_CORNER_XY, +_CORNER_XY, _GRASP_Z),
+    (_GRASP_X_NEAR, +_CORNER_Y, _GRASP_Z),
+    (_GRASP_X_NEAR, -_CORNER_Y, _GRASP_Z),
+    (_GRASP_X_FAR, -_CORNER_Y, _GRASP_Z),
+    (_GRASP_X_FAR, +_CORNER_Y, _GRASP_Z),
 ]
 
 # Wall mount target positions (arm frame) -- build_wall_stage.py's
@@ -74,13 +80,23 @@ GRASP_POSITIONS = [
 # box's own magnet target stays at the authored 0.35m; the released box is
 # pulled down onto it during release_settle_time, 5cm is well inside the
 # magnet's capture range.
-_WALL_X = 0.39     # face ~20mm off the wall at PLACE (arm less stretched at the trajectory end -- the 10mm pose left joints 0.03rad off and the controller timed out settling, holddown2 runs 2/3/6)
+# 2026-10-13 real-robot platform layout: the arm moved forward to scout
+# x=+0.11 while the wall stayed at world x=0.40 -- so the arm-frame wall
+# face is 0.29 and the release point shifts by the same -0.11 (old 0.39
+# was face - 0.01; the 1cm offset and all the corner-reach reasoning above
+# are unchanged). Recalibrate against the real wall position before the
+# wall-mount phase on the real robot (same measure-don't-assume rule as
+# _WALL_Z).
+_WALL_X = 0.28     # = 0.39 - 0.11 arm-forward shift; face 10mm off at PLACE
 _WALL_Z = 0.3734 - 0.18 - 0.29101
+# Target y derives from build_wall_stage.py's WALL_TARGET_Y (2026-10-13:
+# |y| 0.05 -> 0.09/0.19 after the arm-forward move put the inner release
+# poses inside a hard IK dead zone -- see that file's comment).
 PLACE_POSITIONS = [
-    (_WALL_X, -0.15, _WALL_Z),
-    (_WALL_X, -0.05, _WALL_Z),
-    (_WALL_X, 0.05, _WALL_Z),
-    (_WALL_X, 0.15, _WALL_Z),
+    (_WALL_X, -0.19, _WALL_Z),
+    (_WALL_X, -0.09, _WALL_Z),
+    (_WALL_X, 0.09, _WALL_Z),
+    (_WALL_X, 0.19, _WALL_Z),
 ]
 
 ARM_FRAME = 'base_link'

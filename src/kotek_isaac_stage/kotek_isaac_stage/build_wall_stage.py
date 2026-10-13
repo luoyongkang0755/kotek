@@ -67,24 +67,37 @@ RISER_CUBE_PATH = f'{SCOUT_BASE_LINK}/Cube'
 # verified with a live /piper/compute_ik sweep before being treated as
 # final.
 RISER_TOP_LOCAL_Z = 0.2903
-RISER_HALF_EXTENT_XY = 0.15
+
+# --- real-robot platform layout (2026-10-13, user's bench, measured) ------
+# The riser now models the user's real mounting PLATFORM: 25cm front-back
+# (x) x 35cm left-right (y), centered on scout base_link; the top face
+# height is unchanged (the real boxes sit at the same height as before).
+# The arm is mounted FORWARD on this platform: the square mounting plate's
+# rear edge sits 19.5cm from the platform's rear edge, the plate is
+# 8cm (x) x 9.5cm (y) and laterally centered -- so the arm base center is
+# at scout x = (-0.125 + 0.195 + 0.08/2) = +0.11. See
+# apply_platform_layout() for the actual stage overrides.
+ARM_MOUNT_PLATFORM_OFFSET_X = 0.11
+RISER_HALF_EXTENT_X = 0.125
+RISER_HALF_EXTENT_Y = 0.175
 
 # --- the 4 sensor-cam pickup poses (base_link-local frame) ---------------
-# Corners of the riser's top face, inset so an AXIS-ALIGNED (unrotated)
-# sensor box never overhangs the cube's edge regardless of which corner:
-# inset = half the box's LONGER footprint dimension (8cm -> 0.04) plus a
-# 1mm clearance, applied symmetrically to both x and y (conservative on the
-# y side, where the box's actual half-extent is only 0.0175m, but this
-# keeps the placement independent of any future in-plane rotation choice).
+# x pitch shrinks vs the old centered-arm layout: a 25cm-deep platform fits
+# the 8cm box only at +-8.4cm (inset = half the box's longer footprint
+# dimension + 1mm clearance, same convention as before). y pitch stays at
+# the validated +-10.9cm (the 35cm width leaves ample margin). Boxes remain
+# AXIS-ALIGNED (yaw = 0) -- the F-group finding that made the slow close
+# self-centering unnecessary.
 _SENSOR_LONG_HALF = physics_tuning.SENSOR_CAM_SIZE_XYZ[0] / 2.0
 _CORNER_INSET = _SENSOR_LONG_HALF + 0.001
-CORNER_XY = RISER_HALF_EXTENT_XY - _CORNER_INSET   # ~0.109 m
+CORNER_X = RISER_HALF_EXTENT_X - _CORNER_INSET   # 0.084 m
+CORNER_Y = 0.109                                  # unchanged from the F-group layout
 SENSOR_CAM_LOCAL_Z = RISER_TOP_LOCAL_Z + physics_tuning.SENSOR_CAM_SIZE_XYZ[2] / 2.0
 SENSOR_CAM_CORNERS_LOCAL = [
-    (+CORNER_XY, +CORNER_XY, SENSOR_CAM_LOCAL_Z),
-    (+CORNER_XY, -CORNER_XY, SENSOR_CAM_LOCAL_Z),
-    (-CORNER_XY, -CORNER_XY, SENSOR_CAM_LOCAL_Z),
-    (-CORNER_XY, +CORNER_XY, SENSOR_CAM_LOCAL_Z),
+    (+CORNER_X, +CORNER_Y, SENSOR_CAM_LOCAL_Z),
+    (+CORNER_X, -CORNER_Y, SENSOR_CAM_LOCAL_Z),
+    (-CORNER_X, -CORNER_Y, SENSOR_CAM_LOCAL_Z),
+    (-CORNER_X, +CORNER_Y, SENSOR_CAM_LOCAL_Z),
 ]
 SENSOR_CAM_PATHS = [f'{SCOUT_BASE_LINK}/sensor_cam_{i + 1}' for i in range(4)]
 
@@ -113,7 +126,17 @@ SENSOR_CAM_PATHS = [f'{SCOUT_BASE_LINK}/sensor_cam_{i + 1}' for i in range(4)]
 # 0.4 rad -- see wall_mount.yaml and piper_manipulator.hpp's Params comment.
 WALL_FACE_X = 0.40           # m, world x of the wall's front (near) face == robot standoff (robot spawns at x=0)
 WALL_TARGET_Z = 0.35         # m, world z of every mount target
-WALL_TARGET_Y = [-0.15, -0.05, 0.05, 0.15]   # m, world y of each target
+WALL_TARGET_Y = [-0.19, -0.09, 0.09, 0.19]   # m, world y of each target
+# 2026-10-13 real-robot platform layout (live /piper/compute_ik sweep,
+# ik_probe7/8): the arm moved forward to scout x=+0.11, so the old inner
+# targets (|y|=0.05) put the release TCP at arm-frame radial 0.191 / z
+# -0.002 -- inside a hard IK dead zone (no solution even with collision
+# checking off; smoke10 place[2] failed in BOTH pose-goal and joint-goal
+# modes). |y|>=0.09 is reachable (probed: 0.05 FAIL, 0.09+ OK). Spacing
+# stays 0.10 m (same 2cm clearance over the 0.08m box width), outermost
+# 0.19+0.0175 well inside the wall's +-0.5 m half-width. The magnet
+# graph's wallTargets and wall_mount_task.py's PLACE_POSITIONS derive
+# from this constant -- keep them in sync.
 WALL_THICKNESS = 0.05
 WALL_WIDTH = 1.0             # m, along y
 WALL_HEIGHT = 1.0            # m, along z (from the ground up)
@@ -154,6 +177,43 @@ def add_parking_brake(stage: Usd.Stage):
     joint.CreateLocalRot0Attr().Set(Gf.Quatf(1.0, 0.0, 0.0, 0.0))
     joint.CreateLocalPos1Attr().Set(Gf.Vec3f(0.0, 0.0, SCOUT_PARK_BASE_Z))
     joint.CreateLocalRot1Attr().Set(Gf.Quatf(1.0, 0.0, 0.0, 0.0))
+
+
+def apply_platform_layout(stage: Usd.Stage):
+    """Override the shared robot sublayer with the real-robot platform
+    layout (2026-10-13, user's bench measurements):
+
+    - /World/piper xform + /World/piper_mount_joint localPos0: arm moved
+      forward to scout x=+0.11 (mounting plate rear 19.5cm from the
+      platform's rear edge; plate 8cm deep, laterally centered).
+    - riser Cube scale: 0.3x0.3 -> 0.25(x) x 0.35(y), same top face height
+      -- the riser now models the real 25x35cm platform.
+
+    These prims live in the robot sublayer (kotek_scout_piper_robot.usd,
+    authored by import_robots.py / hand-added), which is SHARED with the
+    pick-and-delivery demo stage -- editing it in place would move the arm
+    there too. Setting the values through this stage's own root layer
+    authors sparser overriding opinions here only; the robot stage and the
+    demo stage keep their original geometry.
+    """
+    # Arm rest pose (pre-physics xform) -- must agree with the joint below.
+    piper = stage.GetPrimAtPath('/World/piper')
+    if piper:
+        piper.GetAttribute('xformOp:translate').Set(
+            Gf.Vec3d(ARM_MOUNT_PLATFORM_OFFSET_X, 0.0, 0.29101))
+
+    # The fixed joint that actually anchors the arm under physics.
+    mount = UsdPhysics.FixedJoint(stage.GetPrimAtPath('/World/piper_mount_joint'))
+    if mount:
+        mount.GetLocalPos0Attr().Set(
+            Gf.Vec3f(ARM_MOUNT_PLATFORM_OFFSET_X, 0.0, 0.29101))
+
+    # Platform footprint (scale on the unit cube; translate/top unchanged).
+    cube = stage.GetPrimAtPath(RISER_CUBE_PATH)
+    if cube:
+        cube.GetAttribute('xformOp:scale').Set(
+            Gf.Vec3f(2 * RISER_HALF_EXTENT_X, 2 * RISER_HALF_EXTENT_Y, 0.22))
+    return piper, mount, cube
 
 
 def add_sensor_cam_objects(stage: Usd.Stage):
@@ -377,6 +437,7 @@ def build(source: str, output: str):
     stage.GetRootLayer().subLayerPaths.append(rel_source)
     stage.SetDefaultPrim(stage.DefinePrim('/World', 'Xform'))
 
+    apply_platform_layout(stage)
     add_sensor_cam_objects(stage)
     add_wall(stage)
     add_parking_brake(stage)
@@ -386,7 +447,8 @@ def build(source: str, output: str):
     stage.GetRootLayer().Save()
     print(f'Wrote {output}')
     print(f'  sublayer: {rel_source}')
-    print(f'  4 sensor-cams at riser corners (local xy +/-{CORNER_XY:.4f}, z={SENSOR_CAM_LOCAL_Z:.4f})')
+    print(f'  arm mount: scout x=+{ARM_MOUNT_PLATFORM_OFFSET_X} (real-robot platform layout)')
+    print(f'  4 sensor-cams at (x +/-{CORNER_X:.4f}, y +/-{CORNER_Y:.4f}, z={SENSOR_CAM_LOCAL_Z:.4f})')
     print(f'  wall face at x={WALL_FACE_X}, targets at y={WALL_TARGET_Y}, z={WALL_TARGET_Z}')
 
 

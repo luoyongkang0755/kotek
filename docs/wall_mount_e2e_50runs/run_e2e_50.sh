@@ -89,10 +89,23 @@ for i in $(seq 1 "$RUNS"); do
   sleep 45  # warm-up, per README 7.2
 
   # --- task ---
+  # Gripper-width telemetry (2026-10-13): joint7/8 from /piper/joint_states.
+  # A compact 10 Hz subscriber (single CSV line per sample) -- the original
+  # `ros2 topic echo` recorder filled its buffer and stalled after ~55 s,
+  # missing the entire grasp/place window (smoke13). The width trajectory
+  # is decisive for box-loss forensics: weak pinch from the grasp (width
+  # near target from the start) vs pried out by wall drag (width holding at
+  # the box width, then collapsing).
+  docker cp /home/trs/kotek_ws/docs/wall_mount_e2e_50runs/gripper_width_recorder.py "$CNAME":/tmp/gripper_width_recorder.py 2>/dev/null
+  timeout 920 docker exec "$CNAME" bash -lc \
+    'source /opt/ros/jazzy/setup.bash && python3 /tmp/gripper_width_recorder.py' \
+    > "$OUT/run_$(pad $i)_joints.log" 2>&1 &
+  JREC_PID=$!
   timeout 900 docker exec "$CNAME" bash -lc \
     'source /opt/ros/jazzy/setup.bash && cd /workspace && source install/setup.bash && ros2 run kotek_wall_mount_task wall_mount_task' \
     > "$TLOG" 2>&1
   rc=$?
+  kill $JREC_PID 2>/dev/null
 
   # --- analyze ---
   welds=$(grep -c 'held sensor' "$SLOG" 2>/dev/null || echo 0)

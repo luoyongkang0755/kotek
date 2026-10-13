@@ -66,7 +66,23 @@ PiperManipulator::Params PiperManipulator::loadParams()
   p.approach_height = declare_parameter<double>("approach_height", p.approach_height);
   p.place_approach_distance =
     declare_parameter<double>("place_approach_distance", p.place_approach_distance);
+  p.place_approach_height =
+    declare_parameter<double>("place_approach_height", p.place_approach_height);
   p.default_lift_height = declare_parameter<double>("lift_height", p.default_lift_height);
+  p.lift_lateral_clearance =
+    declare_parameter<double>("lift_lateral_clearance", p.lift_lateral_clearance);
+  p.lift_lateral_column_band =
+    declare_parameter<double>("lift_lateral_column_band", p.lift_lateral_column_band);
+  p.lift_height_near_column_max =
+    declare_parameter<double>("lift_height_near_column_max", p.lift_height_near_column_max);
+  p.preplace_waypoint_height =
+    declare_parameter<double>("preplace_waypoint_height", p.preplace_waypoint_height);
+  p.grasp_width_near_column =
+    declare_parameter<double>("grasp_width_near_column", p.grasp_width_near_column);
+  p.grasp_eject_opening_max =
+    declare_parameter<double>("grasp_eject_opening_max", p.grasp_eject_opening_max);
+  p.gripper_open_near_column =
+    declare_parameter<double>("gripper_open_near_column", p.gripper_open_near_column);
   p.default_retreat_height =
     declare_parameter<double>("retreat_height", p.default_retreat_height);
   p.grasp_width = declare_parameter<double>("grasp_width", p.grasp_width);
@@ -121,6 +137,10 @@ PiperManipulator::Params PiperManipulator::loadParams()
     "grasp_close_steps", p.grasp_close_steps);
   p.arm_mount_height = declare_parameter<double>(
     "arm_mount_height", p.arm_mount_height);
+  p.arm_mount_x = declare_parameter<double>(
+    "arm_mount_x", p.arm_mount_x);
+  p.arm_mount_y = declare_parameter<double>(
+    "arm_mount_y", p.arm_mount_y);
   p.attach_carried_box = declare_parameter<bool>(
     "attach_carried_box", p.attach_carried_box);
   p.carried_box_size_x = declare_parameter<double>(
@@ -258,6 +278,14 @@ void PiperManipulator::init(const std::shared_ptr<PiperManipulator> & self)
     get_logger(), "piper_manipulator ready: arm_group=%s gripper_group=%s planning_frame=%s",
     params_.arm_group.c_str(), params_.gripper_group.c_str(),
     move_group_arm_->getPlanningFrame().c_str());
+  // Scout->arm mount offset actually in effect for every TF lookup below
+  // (2026-10-13 guard: a silent 0 here with the wall stage's arm at scout
+  // x=+0.11 made grasp[1] unplannable 12/12 -- platform_layout_smoke run 1).
+  // Non-zero values must match build_wall_stage.py's
+  // ARM_MOUNT_PLATFORM_OFFSET_X/Y; pick-and-delivery stages log 0.0/0.0.
+  RCLCPP_INFO(
+    get_logger(), "piper_manipulator arm-mount TF correction: x=%.3f y=%.3f z=%.3f",
+    params_.arm_mount_x, params_.arm_mount_y, params_.arm_mount_height);
 }
 
 rclcpp_action::GoalResponse PiperManipulator::handleGoal(
@@ -514,7 +542,44 @@ bool PiperManipulator::moveArmToPose(
   move_group_arm_->constructMotionPlanRequest(request);
   move_group_arm_->setMaxVelocityScalingFactor(params_.velocity_scaling);
   move_group_arm_->setMaxAccelerationScalingFactor(params_.acceleration_scaling);
-  return sendMoveGroupRequest(request, error_out);
+  if (sendMoveGroupRequest(request, error_out)) {
+    return true;
+  }
+  const std::string pose_error = error_out;
+
+  // 2026-10-13 joint-goal fallback: OMPL samples a pose goal's IK with
+  // RANDOM seeds, and near the arm column the reachable set can be a thin
+  // island that random sampling never finds -- place[2] preplace failed
+  // 12/12 with "unable to sample any valid states for goal tree"
+  // (platform_layout_smoke7) while a current-state-seeded IK solve finds a
+  // solution for the very same pose instantly (ik_probe6: 36/36 cells,
+  // with the carried box attached and collision checking on). Convert the
+  // seeded IK solution into a JOINT-space goal and re-plan: OMPL then
+  // plans to a known-reachable configuration, no goal-side IK sampling.
+  moveit::core::RobotStatePtr seeded = move_group_arm_->getCurrentState();
+  bool replanned = false;
+  const moveit::core::JointModelGroup * jmg =
+    seeded ? seeded->getJointModelGroup(params_.arm_group) : nullptr;
+  if (seeded && jmg && seeded->setFromIK(
+      jmg, target.pose, move_group_arm_->getEndEffectorLink(), 5.0))
+  {
+    move_group_arm_->setJointValueTarget(*seeded);
+    move_group_arm_->setMaxVelocityScalingFactor(velocity_scaling);
+    move_group_arm_->setMaxAccelerationScalingFactor(acceleration_scaling);
+    moveit_msgs::msg::MotionPlanRequest joint_request;
+    move_group_arm_->constructMotionPlanRequest(joint_request);
+    move_group_arm_->setMaxVelocityScalingFactor(params_.velocity_scaling);
+    move_group_arm_->setMaxAccelerationScalingFactor(params_.acceleration_scaling);
+    replanned = sendMoveGroupRequest(joint_request, error_out);
+  }
+  if (!replanned) {
+    error_out = pose_error + " (joint-goal fallback also failed: " + error_out + ")";
+    return false;
+  }
+  RCLCPP_WARN(
+    get_logger(), "moveArmToPose: pose-goal OMPL sampling failed; succeeded via "
+    "seeded joint-goal fallback");
+  return true;
 }
 
 bool PiperManipulator::cartesianMoveTo(
@@ -787,8 +852,8 @@ bool PiperManipulator::heldBoxNearTcp(
     return true;
   }
 
-  const double dx = t.transform.translation.x - tcp.position.x;
-  const double dy = t.transform.translation.y - tcp.position.y;
+  const double dx = t.transform.translation.x - params_.arm_mount_x - tcp.position.x;
+  const double dy = t.transform.translation.y - params_.arm_mount_y - tcp.position.y;
   const double dz =
     (t.transform.translation.z - params_.arm_mount_height) - tcp.position.z;
   const double d = std::sqrt(dx * dx + dy * dy + dz * dz);
@@ -798,7 +863,8 @@ bool PiperManipulator::heldBoxNearTcp(
       get_logger(),
       "held-box check (latch): frame=%s tcp=(%.3f,%.3f,%.3f) box=(%.3f,%.3f,%.3f) d0=%.3f m (sanity limit %.3f)",
       frame.c_str(), tcp.position.x, tcp.position.y, tcp.position.z,
-      t.transform.translation.x, t.transform.translation.y,
+      t.transform.translation.x - params_.arm_mount_x,
+      t.transform.translation.y - params_.arm_mount_y,
       t.transform.translation.z - params_.arm_mount_height,
       d, params_.held_box_max_distance);
     if (d > params_.held_box_max_distance) {
@@ -967,6 +1033,14 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
   const auto goal = goal_handle->get_goal();
   auto result = std::make_shared<GraspObject::Result>();
 
+  // Defensive: drop any attachment leaked by a previously aborted grasp/place
+  // (the failure paths only began detaching in the 2026-10-13 fix; a stale
+  // carried_box makes the start state colliding and poisons every plan --
+  // platform_layout_smoke3 run 1 attempts 2/3). removeCarriedBox() is a no-op
+  // when nothing is attached, and after a successful place the box was
+  // already removed at release, so this cannot double-detach.
+  removeCarriedBox();
+
   Point3 object_arm{
     goal->object_pose.pose.position.x, goal->object_pose.pose.position.y,
     goal->object_pose.pose.position.z};
@@ -1001,11 +1075,15 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
       // tumbling box the ZYX yaw is not the footprint heading, and the
       // axis-aligned snap fallback is the safer guess.
       object_yaw_ok = std::abs(roll) < 0.35 && std::abs(pitch) < 0.35;
-      // Scout frame -> arm frame: x/y share the origin, z differs by the
-      // arm mount height (see Params::arm_mount_height -- the TF name
+      // Scout frame -> arm frame: x/y share the origin ONLY while the arm is
+      // mounted at scout x=0 (true for the pick-and-delivery stage, false
+      // since the 2026-10-13 platform layout moved the wall-stage arm
+      // forward to scout x=+0.11 -- see Params::arm_mount_x/y); z differs by
+      // the arm mount height (see Params::arm_mount_height -- the TF name
       // collision makes raw lookups come back in the scout frame).
       const Point3 actual{
-        t.transform.translation.x, t.transform.translation.y,
+        t.transform.translation.x - params_.arm_mount_x,
+        t.transform.translation.y - params_.arm_mount_y,
         t.transform.translation.z - params_.arm_mount_height};
       const double shift = std::sqrt(
         std::pow(actual.x - object_arm.x, 2) + std::pow(actual.y - object_arm.y, 2));
@@ -1077,12 +1155,53 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
     approach_yaw_local =
       std::clamp(approach_yaw_local, -params_.grasp_yaw_snap_step, params_.grasp_yaw_snap_step);
   }
-  const Pose3 grasp_pose = computeGraspPose(object_arm, approach_yaw_local, params_.grasp_pitch);
+  // 2026-10-13 real-robot platform layout: never reach across the arm column
+  // (arm-frame x=0 plane). The near riser pair now sits BEHIND the column
+  // (x=-0.026) while the snap above still maps its 103.5 deg radial to pi --
+  // putting the wrist (TCP) on the opposite side of the column from the box
+  // (the column ends up between wrist and box). Grasping works, but the
+  // straight-up cartesian lift then sweeps the attached box into link3
+  // ("carried_box - link3", cartesian fraction 0.154, platform_layout_smoke3
+  // run 1). Flipping the yaw by pi puts wrist and box on the same side; the
+  // live IK probe verified both yaws' TCP and h=0.04 pregrasp reachable
+  // (ik_probe2, 2026-10-13). For every previously validated corner both yaw
+  // families land on the box's side of the column, so this flip only changes
+  // the new near-pair geometry.
+  Pose3 grasp_pose = computeGraspPose(object_arm, approach_yaw_local, params_.grasp_pitch);
+  if (grasp_pose.position.x * object_arm.x < -1e-9) {
+    RCLCPP_INFO(
+      get_logger(),
+      "grasp approach yaw flipped %.3f -> %.3f to keep the wrist on the box's "
+      "side of the arm column (box x=%.3f, tcp x=%.3f)",
+      approach_yaw_local, approach_yaw_local + M_PI, object_arm.x, grasp_pose.position.x);
+    approach_yaw_local += M_PI;
+    grasp_pose = computeGraspPose(object_arm, approach_yaw_local, params_.grasp_pitch);
+  }
   const Pose3 approach_pose = computeApproachPose(
     grasp_pose, params_.approach_distance, params_.approach_height, approach_yaw_local);
   const double lift_height =
     goal->lift_height > 0.0 ? goal->lift_height : params_.default_lift_height;
-  const Pose3 lift_pose = computeLiftPose(grasp_pose, lift_height);
+  Pose3 lift_pose = computeLiftPose(grasp_pose, lift_height);
+  if (std::abs(object_arm.x) < params_.lift_lateral_column_band) {
+    // Near-column box (real-robot platform layout): the grasp wrist
+    // orientation has no IK above z~0.18 near the arm column (measured,
+    // see Params::lift_height_near_column_max), so the legacy 0.12m lift
+    // truncates at ~30% and fails. Cap the lift just enough to clear the
+    // riser top; the following MOVE_ARM_TO_PREPLACE is a free OMPL plan.
+    const double capped = std::min(lift_height, params_.lift_height_near_column_max);
+    if (capped < lift_height) {
+      lift_pose = computeLiftPose(grasp_pose, capped);
+      RCLCPP_INFO(
+        get_logger(), "lift height capped %.3f -> %.3f near the arm column (box x=%.3f)",
+        lift_height, capped, object_arm.x);
+    }
+    if (params_.lift_lateral_clearance > 0.0) {
+      // Retained for the smoke3-6 diagnostic trail; measured to have no
+      // effect on the IK-ceiling truncation (see the hpp comment).
+      lift_pose.position.x += std::copysign(
+        params_.lift_lateral_clearance, object_arm.x == 0.0 ? 1.0 : object_arm.x);
+    }
+  }
 
   RCLCPP_INFO(
     get_logger(),
@@ -1103,7 +1222,23 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
     goal_handle->abort(result);
     return;
   }
-  if (!moveGripperNamed("open", error)) {
+  // Near-column band: open WIDER than the regular gripper_open before the
+  // close (2026-10-13, smoke14/15 telemetry). The regular 0.04 rad open
+  // leaves only ~1.4mm per side of clearance to the 35mm box, and the
+  // timed close then kicks the fingers wide open past the box (measured
+  // 0.037 -> 0.049/0.059 excursions) and ejects it. The extra clearance
+  // lets the finger controller settle before first contact.
+  const bool near_column_grasp = params_.gripper_open_near_column > 0.0 &&
+    std::abs(object_arm.x) < params_.lift_lateral_column_band;
+  bool gripper_opened = false;
+  if (near_column_grasp) {
+    bool dummy_contact = false;
+    gripper_opened = moveGripperToWidth(
+      params_.gripper_open_near_column, error, dummy_contact);
+  } else {
+    gripper_opened = moveGripperNamed("open", error);
+  }
+  if (!gripper_opened) {
     RCLCPP_ERROR(get_logger(), "opening gripper failed: %s", error.c_str());
     retreatToSafe();
     result->success = false;
@@ -1135,13 +1270,30 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
   }
 
   publishStageFeedback(goal_handle, "CLOSE_GRIPPER", 0.0);
+  // Near-column band (2026-10-13 real-robot platform layout): close to a
+  // width that stops AT the box instead of through it. Measured on the
+  // near pair (gripper telemetry, smoke14): the regular 0.018 close first
+  // kicked the fingers OPEN past the box (0.037 -> 0.048 over 3s) and then
+  // closed THROUGH the box's space to the target -- a rigid 35mm box cannot
+  // survive a close to 18mm, so it was ejected and the task carried an
+  // empty gripper until the held-box check fired at the wall. Far-pair /
+  // pedestal behavior is untouched (0 = use grasp_width).
+  double close_width = params_.grasp_width;
+  if (params_.grasp_width_near_column > 0.0 &&
+    std::abs(object_arm.x) < params_.lift_lateral_column_band)
+  {
+    close_width = params_.grasp_width_near_column;
+    RCLCPP_INFO(
+      get_logger(), "near-column grasp: closing to %.3f instead of %.3f (box x=%.3f)",
+      close_width, params_.grasp_width, object_arm.x);
+  }
   bool contact_detected = false;
   const bool closed =
     params_.grasp_close_duration > 0.0 ?
     moveGripperToWidthTimed(
-    params_.grasp_width, params_.grasp_close_duration, params_.grasp_close_steps, error,
+    close_width, params_.grasp_close_duration, params_.grasp_close_steps, error,
     contact_detected) :
-    moveGripperToWidth(params_.grasp_width, error, contact_detected);
+    moveGripperToWidth(close_width, error, contact_detected);
   if (!closed) {
     RCLCPP_ERROR(get_logger(), "CLOSE_GRIPPER failed: %s", error.c_str());
     retreatToSafe();
@@ -1150,7 +1302,9 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
     goal_handle->abort(result);
     return;
   }
-  if (!contact_detected) {
+  const bool near_column_band = params_.grasp_width_near_column > 0.0 &&
+    std::abs(object_arm.x) < params_.lift_lateral_column_band;
+  if (!contact_detected && !(near_column_band && params_.grasp_eject_opening_max > 0.0)) {
     // Motion succeeded (the fingers reached the fully-closed commanded
     // width) but the readback in moveGripperToWidth() found nothing
     // stopped them short -- the object isn't between the fingers. This is
@@ -1166,6 +1320,17 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
     goal_handle->abort(result);
     return;
   }
+  if (!contact_detected) {
+    // Near-column at-box-width close (2026-10-13): the stall semantics
+    // invert here -- the fingers are SUPPOSED to stall at the box width,
+    // which is at/below the commanded target, so the old check's
+    // "actual > target + tol" test false-negatives (smoke20: actual 0.0186
+    // vs target 0.0185). The ejection guard below owns the contact
+    // decision for this band (min-opening floor + settled-vs-target cap).
+    RCLCPP_WARN(
+      get_logger(), "CLOSE_GRIPPER: stall check false-negative at box-width close "
+      "(near column) -- deferring to the ejection guard");
+  }
   publishStageFeedback(goal_handle, "CLOSE_GRIPPER", 1.0);
 
   if (params_.post_grasp_settle_time > 0.0) {
@@ -1174,6 +1339,60 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
     // still physically developing when the lift starts pulling on it.
     std::this_thread::sleep_for(std::chrono::duration_cast<std::chrono::nanoseconds>(
         std::chrono::duration<double>(params_.post_grasp_settle_time)));
+  }
+
+  // Ejection guard (2026-10-13, smoke14-19 telemetry): the stall-based
+  // contact check reads the fingers BEFORE the close completes. Two
+  // distinct ejection mechanisms were measured since: (a) the close kicks
+  // the fingers open past the box then through-closes within ~2s
+  // (smoke14/15), and (b) with a close target BELOW the box width the
+  // controller never stops pushing and slowly creeps through over 4-6s
+  // AFTER the close action returns (smoke19: guard window saw min 0.0368,
+  // then the opening crept 0.0368 -> 0.030 over the next ~4s). So this
+  // guard polls for 8 s and takes the MINIMUM opening: a held 35mm box
+  // keeps the opening at the box width for the whole window; any
+  // through-close must pass down through the threshold on its way to the
+  // target and is caught. Requires grasp_width_near_column >= box width
+  // (the controller then stops pushing at first contact, so no creep).
+  if (params_.grasp_eject_opening_max > 0.0) {
+    double min_opening = std::numeric_limits<double>::max();
+    double settled_opening = 0.0;
+    for (int k = 0; k < 80; ++k) {
+      const auto post_state = move_group_gripper_->getCurrentState(1.0);
+      if (post_state) {
+        const double * p7 = post_state->getJointPositions("joint7");
+        const double * p8 = post_state->getJointPositions("joint8");
+        if (p7 != nullptr && p8 != nullptr) {
+          settled_opening = *p7 - *p8;
+          min_opening = std::min(min_opening, settled_opening);
+        }
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    // Reached-command trip, both directions (smoke23/24 anatomy): a held
+    // box stalls the fingers AWAY from the command (pad stops at the box
+    // surface); if the settled opening reached the command -- from above
+    // (command below box width) or below (command at/above it, smoke23's
+    // zero-motion case) -- nothing stopped the fingers. |settled - cmd|
+    // covers both with one test.
+    const bool dipped_below = min_opening < params_.grasp_eject_opening_max;
+    const bool reached_command = std::abs(settled_opening - close_width) <= 0.0012;
+    if (dipped_below || reached_command) {
+      RCLCPP_ERROR(
+        get_logger(),
+        "CLOSE_GRIPPER ejection guard: min %.4f / settled %.4f vs command %.4f "
+        "-- %s, aborting grasp for retry",
+        min_opening, settled_opening, close_width,
+        dipped_below ? "through-close dip (box ejected)" : "reached command (no stall)");
+      retreatToSafe();
+      result->success = false;
+      result->message = "box ejected during gripper close (through-close)";
+      goal_handle->abort(result);
+      return;
+    }
+    RCLCPP_INFO(
+      get_logger(), "ejection guard: min %.4f, settled %.4f clearly off command %.4f (box held)",
+      min_opening, settled_opening, close_width);
   }
 
   // Grasp-kick orientation check (2026-09-20, measured -- see
@@ -1236,6 +1455,13 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
       params_.min_lift_fraction))
   {
     RCLCPP_ERROR(get_logger(), "LIFT_OBJECT failed: %s", error.c_str());
+    // Detach BEFORE retreating: the attached box makes the current state
+    // colliding (carried_box - link3), so every plan from here -- including
+    // this retreat and any retry of this grasp -- fails in
+    // CheckStartStateCollision until the attachment is removed (measured:
+    // platform_layout_smoke3 run 1, attempts 2/3 poisoned by attempt 1's
+    // stale carried_box).
+    removeCarriedBox();
     retreatToSafe();
     result->success = false;
     result->message = "LIFT_OBJECT failed: " + error;
@@ -1250,6 +1476,7 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
     // miss, so task_coordinator's existing retry (TaskFsm) picks it up
     // unchanged -- see stillHoldingObject()'s doc comment.
     RCLCPP_WARN(get_logger(), "LIFT_OBJECT: object slipped out of the gripper during the lift");
+    removeCarriedBox();  // same stale-attachment poisoning as the LIFT failure above
     retreatToSafe();
     result->success = false;
     result->message = "object slipped out of the gripper during the lift";
@@ -1283,6 +1510,7 @@ void PiperManipulator::execute(const std::shared_ptr<GoalHandle> goal_handle)
   if (params_.stow_after_lift) {
     if (!retreatToSafe()) {
       RCLCPP_ERROR(get_logger(), "STOW_OBJECT failed: could not retract to 'zero'");
+      removeCarriedBox();  // grasp failed -- do not leak the attachment into the next goal
       result->success = false;
       result->message = "STOW_OBJECT failed: could not retract to 'zero'";
       goal_handle->abort(result);
@@ -1402,7 +1630,7 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
       approach_dir.x, approach_dir.y, approach_dir.z);
   }
   const Pose3 preplace_pose = computeApproachPose(
-    place_pose, params_.place_approach_distance, params_.approach_height,
+    place_pose, params_.place_approach_distance, params_.place_approach_height,
     approach_yaw_local);
   const double retreat_height =
     goal->retreat_height > 0.0 ? goal->retreat_height : params_.default_retreat_height;
@@ -1474,10 +1702,42 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
   }
 
   publishPlaceStageFeedback(goal_handle, "MOVE_ARM_TO_PREPLACE", 0.0);
-  if (!moveArmToPose(
+  if (params_.preplace_waypoint_height > 0.0) {
+    // Waypoint carry (see Params::preplace_waypoint_height): level high
+    // OMPL swing to above the preplace, then a straight cartesian descent.
+    Pose3 waypoint = preplace_pose;
+    waypoint.position.z += params_.preplace_waypoint_height;
+    RCLCPP_INFO(
+      get_logger(), "preplace waypoint carry: swing to (%.3f,%.3f,%.3f) then descend %.3f m",
+      waypoint.position.x, waypoint.position.y, waypoint.position.z,
+      params_.preplace_waypoint_height);
+    if (!moveArmToPose(toMsg(waypoint), error, preplace_v, preplace_a)) {
+      RCLCPP_ERROR(get_logger(), "MOVE_ARM_TO_PREPLACE (waypoint) failed: %s", error.c_str());
+      removeCarriedBox();
+      retreatToSafe();
+      result->success = false;
+      result->message = "MOVE_ARM_TO_PREPLACE failed: " + error;
+      goal_handle->abort(result);
+      return;
+    }
+    publishPlaceStageFeedback(goal_handle, "MOVE_ARM_TO_PREPLACE", 0.5);
+    if (!cartesianMoveTo(
+        toMsg(preplace_pose), error, params_.carry_velocity_scaling,
+        params_.carry_acceleration_scaling, 0.85))
+    {
+      RCLCPP_ERROR(get_logger(), "MOVE_ARM_TO_PREPLACE (descent) failed: %s", error.c_str());
+      removeCarriedBox();
+      retreatToSafe();
+      result->success = false;
+      result->message = "MOVE_ARM_TO_PREPLACE failed: " + error;
+      goal_handle->abort(result);
+      return;
+    }
+  } else if (!moveArmToPose(
       toMsg(preplace_pose), error, preplace_v, preplace_a))
   {
     RCLCPP_ERROR(get_logger(), "MOVE_ARM_TO_PREPLACE failed: %s", error.c_str());
+    removeCarriedBox();
     retreatToSafe();
     result->success = false;
     result->message = "MOVE_ARM_TO_PREPLACE failed: " + error;
@@ -1494,29 +1754,47 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
   // to: the magnet closes the final millimeters once the face is pressed
   // (contact-triggered force law), and the post-release confirmation
   // guards the outcome. 0.85 floor measured in contact-place batch 4.
-  if (!cartesianMoveTo(
-      toMsg(place_pose), error, params_.carry_velocity_scaling,
-      params_.carry_acceleration_scaling, 0.85))
+  // 2026-10-13 vertical-then-horizontal split (smoke17): the single
+  // diagonal line (3cm toward the wall + 10cm down) dead-ended at 9% from
+  // the waypoint-descended state, and the old fallback then planned a
+  // FULL-SPEED OMPL move that shook the held box loose (measured: held-box
+  // growth +0.35m during the fallback). Each split leg is short and
+  // branch-stable: a pure vertical descent 3cm clear of the wall, then a
+  // pure horizontal approach at the bottom where wall contact is brief.
   {
-    // The straight-line interpolation can dead-end one step short of the
-    // target (measured 0.833333 = the last 1/6 of the line, deterministically,
-    // on stretched positive-y targets: e2e10_contact_place4 run 9 at
-    // x=0.398, e2e10_holddown3 run 4 and e2e10_holddown_final runs 2/3 at
-    // x=0.39 -- with and without the carried-box attachment, so it is the
-    // raw IK/collision boundary, not the attachment). The line is a
-    // convenience, not a requirement: the wall-side outcome is guarded by
-    // the held-box check, the press and the post-release confirmation, so
-    // route the last leg in joint space instead of aborting the cycle.
-    RCLCPP_WARN(
-      get_logger(), "MOVE_ARM_TO_PLACE cartesian incomplete (%s) -- falling "
-      "back to OMPL joint-space plan", error.c_str());
-    if (!moveArmToPose(toMsg(place_pose), error)) {
+    Pose3 descend_pose = preplace_pose;
+    descend_pose.position.z = place_pose.position.z;
+    // The descent is planned in JOINT space (OMPL + seeded joint-goal
+    // fallback), not cartesian: smoke17/18 measured the cartesian
+    // dead-ending at 9-10% from the waypoint-descended state regardless of
+    // path shape (vertical or diagonal) -- the current branch dies one step
+    // below and computeCartesianPath cannot switch branches. OMPL plans
+    // between the two close poses at carry scalings; the 3cm clearance to
+    // the wall means no contact can occur on this leg.
+    if (!moveArmToPose(
+        toMsg(descend_pose), error, params_.carry_velocity_scaling,
+        params_.carry_acceleration_scaling))
+    {
       RCLCPP_ERROR(get_logger(), "MOVE_ARM_TO_PLACE failed: %s", error.c_str());
+      removeCarriedBox();
       retreatToSafe();
       result->success = false;
       result->message = "MOVE_ARM_TO_PLACE failed: " + error;
       goal_handle->abort(result);
       return;
+    }
+    publishPlaceStageFeedback(goal_handle, "MOVE_ARM_TO_PLACE", 0.5);
+    // Final approach: pure horizontal, brief wall contact. Cartesion
+    // preferred for its straight-line press behavior; on a dead-end the
+    // PRESS_TO_WALL stage below closes the last millimeters anyway, so a
+    // failure here is a warning, not an abort.
+    if (!cartesianMoveTo(
+        toMsg(place_pose), error, params_.carry_velocity_scaling,
+        params_.carry_acceleration_scaling, 0.85))
+    {
+      RCLCPP_WARN(
+        get_logger(), "MOVE_ARM_TO_PLACE horizontal approach incomplete (%s) -- "
+        "continuing to press (wall-side outcome is guarded downstream)", error.c_str());
     }
   }
   publishPlaceStageFeedback(goal_handle, "MOVE_ARM_TO_PLACE", 1.0);
@@ -1605,10 +1883,10 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
     try {
       const auto t = tf_buffer_->lookupTransform(
         move_group_arm_->getPlanningFrame(), carried_box_frame_, tf2::TimePointZero);
-      const double bx = t.transform.translation.x;
-      const double by = t.transform.translation.y;
+      const double bx = t.transform.translation.x - params_.arm_mount_x;
+      const double by = t.transform.translation.y - params_.arm_mount_y;
       const double bz = t.transform.translation.z - params_.arm_mount_height;
-      const double patch_x = 0.40;                          // wall face, arm frame
+      const double patch_x = 0.40 - params_.arm_mount_x;  // wall face, arm frame (world 0.40)
       const double patch_y = place_arm.y;
       const double patch_z = 0.35 - 0.18 - params_.arm_mount_height;  // 0.35 world patch
       const bool held =

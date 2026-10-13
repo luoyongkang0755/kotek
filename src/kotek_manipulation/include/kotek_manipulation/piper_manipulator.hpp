@@ -71,7 +71,69 @@ private:
     // OMPL returned FAILURE. It also removes this stage's sensitivity to base
     // parking error, which is +/-0.07 m in practice.
     double place_approach_distance = 0.0;
+    // Vertical back-off for the PLACE approach, separate from the grasp's
+    // since 2026-10-13: the grasp pregrasp height was lowered 0.05 -> 0.04
+    // because the near riser pair (arm-frame x=-0.026, real-robot platform
+    // layout) has no IK above link6 z~0.19 near the arm column (live
+    // /piper/compute_ik sweep: z 0.185 OK / 0.195 FAIL at both approach
+    // yaws, ik probe 2026-10-13). Reusing that lower height here would push
+    // the wall preplace (place TCP z ~ -0.098 + this) under the measured
+    // link6 lower workspace boundary (~ -0.05), so the place keeps its own.
+    double place_approach_height = 0.05;
     double default_lift_height = 0.15;
+    // 2026-10-13 real-robot platform layout: for boxes sitting close to the
+    // arm column (|object x| < lift_lateral_column_band, the near riser pair
+    // at x=-0.026) a PURE vertical lift keeps the attached box inside the
+    // column/forearm shadow -- carried_box - link3 contact capped the
+    // cartesian lift fraction at 0.31 across BOTH approach yaws (live runs
+    // platform_layout_smoke3/4). The lift gains a lateral component away
+    // from the column so the box exits along the forearm direction. 0
+    // disables (pedestal task: object far from the column, and its validated
+    // behavior must not change).
+    double lift_lateral_clearance = 0.0;
+    double lift_lateral_column_band = 0.08;
+    // Cap on the lift height for the same near-column band. The near riser
+    // pair (x=-0.026) sits under a razor-thin IK feasible sliver: with the
+    // grasp wrist orientation the arm has NO IK solution above link6
+    // z~0.18-0.19 near the column (live-measured: samples at z<=0.179 IK OK
+    // and collision-free, z>=0.187 IK FAIL regardless of path direction --
+    // ik_probe3 2026-10-13; smoke3-6 cartesian lift truncated at 28-31% of
+    // a 0.12m lift for BOTH yaw families and BOTH lateral bias signs, so
+    // the earlier column-shadow collision theory is disproven). The box
+    // only needs to clear the riser top by a few cm -- the wall task's
+    // MOVE_ARM_TO_PREPLACE is a free OMPL plan from the lift end
+    // (stow_after_lift=false), so the legacy 0.12m lift is unnecessary
+    // here. Default 0.15 = no cap (pedestal task unchanged).
+    double lift_height_near_column_max = 0.15;
+    // 2026-10-13 waypoint carry for the preplace swing: when > 0, the swing
+    // is split into (1) an OMPL plan to a waypoint directly ABOVE the
+    // preplace (same x/y, z + this height) and (2) a straight cartesian
+    // descent to the preplace. Measured rationale: with the platform layout
+    // the free OMPL swing from the low capped-lift pose to the preplace
+    // planned WIDE arcs (box carried out to y +0.22 on a -0.19 target,
+    // 69-78s plans) and the marginally-pinched box was flung loose mid-swing
+    // in 2/3 runs (platform_layout_smoke8/11), while the one short smooth
+    // swing survived (smoke7). A level high swing + vertical descents has
+    // no wide arcs and no wrist reorientation mid-swing. Keep this height
+    // under the near-column IK ceiling (z~0.19): the inner waypoint lands
+    // at z 0.158 with 0.06. 0 = disabled (pedestal task unchanged).
+    double preplace_waypoint_height = 0.0;
+    // 2026-10-13 near-column grasp pair (see the CLOSE_GRIPPER block that
+    // uses them): grasp_width_near_column closes to a width that stops AT
+    // the 35mm box instead of through it (measured through-close ejection
+    // on the near pair, smoke14 telemetry). grasp_eject_opening_max is the
+    // post-close opening floor -- below it the fingers demonstrably closed
+    // around nothing (a held 35mm box stalls them at ~0.035) and the grasp
+    // aborts for a retry. Both 0 = disabled (pedestal task unchanged).
+    double grasp_width_near_column = 0.0;
+    double grasp_eject_opening_max = 0.0;
+    // Near-column pre-grasp open width (rad at joint7/8; see the
+    // MOVE_ARM_TO_PREGRASP block that uses it): the regular gripper_open
+    // leaves only ~1.4mm of side clearance to the 35mm box, and the timed
+    // close kicks the fingers open past the box before settling (measured
+    // in smoke14/15). The wider start lets the finger controller settle
+    // before first contact. 0 = use gripper_open (pedestal unchanged).
+    double gripper_open_near_column = 0.0;
     double default_retreat_height = 0.15;
     double grasp_width = 0.024;
     double gripper_open = 0.04;
@@ -306,6 +368,19 @@ private:
     // without this correction (constant z offset) -- it separated well
     // enough empirically, but corrected distances are exact.
     double arm_mount_height = 0.29101;   // m, coordinator.yaml arm_mount_xyz.z
+    // 2026-10-13 real-robot platform layout: the arm ALSO moved forward to
+    // scout x=+0.11 (build_wall_stage.py ARM_MOUNT_PLATFORM_OFFSET_X), so the
+    // "share x/y origin" assumption above broke the same way z once did: raw
+    // TF lookups now return scout-frame x/y that is 11cm off the arm frame.
+    // Measured on platform_layout_smoke run 1: the grasp actual-position
+    // override re-targeted box 1 to x=+0.084 instead of -0.026, TCP goal
+    // landed at radial 0.115m/z 0.145 (inside the arm's near dead zone) and
+    // OMPL failed with "unable to sample any valid states for goal tree"
+    // 12/12 (deterministic, not a kick). Same subtraction as the z case.
+    // wall_mount.yaml sets these; the pick-and-delivery demo (arm still at
+    // scout x=0 in build_demo_stage.py) keeps the 0.0 defaults.
+    double arm_mount_x = 0.0;   // m, arm mount forward offset in scout frame
+    double arm_mount_y = 0.0;   // m, arm mount lateral offset in scout frame
     // --- Realism pass (2026-09-21): model the carried box as an
     // ATTACHED collision object during the carry, so MoveIt plans
     // (preplace swing, place descent, retreat) account for the box and

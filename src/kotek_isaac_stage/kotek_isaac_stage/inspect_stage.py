@@ -299,6 +299,30 @@ def check_wall_demo(stage: Usd.Stage, c: 'Checker') -> None:
                 abs(scale[i] - expected[i]) < 1e-4 for i in range(3)),
             f'{path} scale == {expected} (true 8x3.5x4cm box, got {tuple(scale) if scale else None})')
 
+    print('  -- real-robot platform layout (2026-10-13, measured) --')
+    cube = stage.GetPrimAtPath(ws.RISER_CUBE_PATH)
+    if cube:
+        scale = cube.GetAttribute('xformOp:scale').Get()
+        c.check(
+            scale is not None and abs(scale[0] - 0.25) < 1e-4
+            and abs(scale[1] - 0.35) < 1e-4,
+            f'riser models the real 25x35cm platform (got '
+            f'{tuple(scale) if scale else None})')
+    mount_prim = stage.GetPrimAtPath('/World/piper_mount_joint')
+    if mount_prim:
+        pos0 = mount_prim.GetAttribute('physics:localPos0').Get()
+        c.check(
+            pos0 is not None and abs(pos0[0] - ws.ARM_MOUNT_PLATFORM_OFFSET_X) < 1e-4,
+            f'arm mounted forward at scout x=+{ws.ARM_MOUNT_PLATFORM_OFFSET_X} '
+            f'(got {tuple(pos0) if pos0 else None})')
+    for path, corner in zip(ws.SENSOR_CAM_PATHS, ws.SENSOR_CAM_CORNERS_LOCAL):
+        prim = stage.GetPrimAtPath(path)
+        t = prim.GetAttribute('xformOp:translate').Get() if prim else None
+        c.check(
+            t is not None and all(abs(t[i] - corner[i]) < 1e-4 for i in range(3)),
+            f'{path} at real-layout corner {tuple(round(v, 4) for v in corner)} '
+            f'(got {tuple(round(v, 4) for v in t) if t else None})')
+
     print('  -- NO riser-hold joints (removed subsystem, regression guard) --')
     # The riser-hold FixedJoints (settling-drift fix, removed 2026-08-25)
     # were anchored to the scout ARTICULATION link -- and PhysX joints
