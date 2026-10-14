@@ -181,8 +181,8 @@
     # contacts have no torsional friction; boxes were found fallen directly
     # under the swing path, landed upright on the riser). Same reasoning as
     # lift_velocity_scaling's own comment, extended to the whole carry.
-    carry_velocity_scaling: 0.08
-    carry_acceleration_scaling: 0.08
+    carry_velocity_scaling: 0.04
+    carry_acceleration_scaling: 0.04
     # Task 2a (2026-09-18, measured -- see piper_manipulator.hpp Params):
     # the 23-deg-gate 50-run batch left carry slips as the ONLY failure
     # class (32/32 unwelded), with per-tick traces showing the box pivoting
@@ -236,7 +236,14 @@
     # so the task's retry loop can re-grasp. Same 30 deg as the
     # pre-release gate: a looser gate created a deadband where boxes passed
     # here but failed at release (e2e10_task2_retry runs 7/10).
-    grasp_kick_max_tilt_deg: 30.0
+    # 30 -> 20 deg (2026-10-14, measured v13): the box twist measured at the
+    # wall (24-34 deg on the far-pair long swings, 0-14 deg on the short
+    # ones) SEEDS at the grasp close and accumulates with carry distance
+    # (PhysX point contacts have no torsional friction). The 23-deg weld
+    # gate rejects >23 deg anyway, so accepting 20-30 deg tilts into the
+    # carry only wastes a cycle -- reject at the seed and re-grasp while
+    # the box is still on the riser.
+    grasp_kick_max_tilt_deg: 20.0
     # Scout->arm TF z correction (2026-09-20, smoke9-measured): the stage's
     # sensor_cam TF hangs under a base_link that name-collides with the arm
     # planning frame, so raw lookups return SCOUT-frame z (riser box 0.310)
@@ -277,7 +284,19 @@
     # Contact-holddown engage press (2026-09-23): the magnet only exists
     # on wall contact, so after the position is confirmed the arm presses
     # this far into the wall to engage it (the "一按" of the place flow).
-    press_distance: 0.03
+    # 0.03 -> 0.06 (2026-10-14, measured on the corrected layout): the box
+    # hangs ~4.5cm behind the TCP along the tilted fingertip axis, so at
+    # the place pose its bottom sits ~5.5cm short of the wall face while
+    # MAGNET_ATTRACT_RANGE is a 6mm CONTACT threshold -- a 0.03 press left
+    # the bottom 3.1cm from the face (v9: 3 of 4 boxes never touched the
+    # wall and fell to its base; the weld engages only on contact). The
+    # press cartesian floors at 0.5 and a wall-blocked press is a tolerated
+    # warning (PRESS_TO_WALL), so the extra travel safely drives the box
+    # bottom into the face -- the magnet then takes the load before the
+    # fingers open. The residual wedge creep (box rides up the tilted
+    # fingers ~2.5cm during the press, observed v9) does not prevent the
+    # face contact and is bounded by the weld once engaged.
+    press_distance: 0.06
     retreat_height: 0.12
     # moveGripperToWidth()'s contact check (piper_manipulator_node.cpp) works
     # by commanding a target DELIBERATELY narrower than the real object, so a
@@ -338,6 +357,17 @@
     #     (riser cube modeled) for pitch in [1.0, 1.4] rad at all 4 corners
     #     (narrower, [1.1, 1.4], once the pregrasp approach backoff above is
     #     included) -- 1.2 sits centered in that band with margin both ways.
+    #     1.45 was TRIED and REVERTED (2026-10-14, v12): the near-vertical
+    #     grasp itself probed CLEAN (ik_probe20) and the close came out
+    #     flatter than ever (guard settled 0.0343 vs the 0.035 box width),
+    #     BUT the pitch-1.45 place descend (MOVE_ARM_TO_PLACE) failed in
+    #     BOTH pose-goal OMPL and the seeded joint-goal fallback -- the
+    #     branch-continuation IK of the new orientation is not sampler-
+    #     reachable from the preplace-descended state. The place-side
+    #     wedge (horizontal press coupling into an upward box creep along
+    #     the 69deg-tilted fingers, measured v10: +2.5cm) therefore stays
+    #     mitigated by press_distance 0.06 + MAGNET_ATTRACT_RANGE 0.012,
+    #     not eliminated.
     #   place_pitch: wall-target place poses (wall modeled as a real
     #     CollisionObject, fingertip offset correctly applied) are
     #     IK-reachable+collision-free at pitch=0.7, getting the object within

@@ -1918,6 +1918,15 @@ void PiperManipulator::executePlace(const std::shared_ptr<PlaceGoalHandle> goal_
         params_.carry_acceleration_scaling))
     {
       RCLCPP_ERROR(get_logger(), "MOVE_ARM_TO_PLACE failed: %s", error.c_str());
+      {
+        // Release-on-abort (2026-10-14, measured v12): without this the
+        // still-pinched box rides the retreat to stow, and the task's
+        // cycle retry then plans a grasp for a box held in the gripper at
+        // an ungraspable spot (v12: box TF at (0.144,0.002,0.199) arm-frame
+        // at the column, pregrasp OMPL failing 3/3 there).
+        std::string ignored;
+        moveGripperNamed("open", ignored);
+      }
       removeCarriedBox();
       retreatToSafe();
       result->success = false;

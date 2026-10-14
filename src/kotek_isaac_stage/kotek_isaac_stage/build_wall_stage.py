@@ -133,7 +133,17 @@ SENSOR_CAM_PATHS = [f'{SCOUT_BASE_LINK}/sensor_cam_{i + 1}' for i in range(4)]
 # pitch/clearance data): grasp_pitch~1.2 rad off the riser corners,
 # place_pitch~0.7 rad into the wall, both far from the pedestal demo's tuned
 # 0.4 rad -- see wall_mount.yaml and piper_manipulator.hpp's Params comment.
-WALL_FACE_X = 0.40           # m, world x of the wall's front (near) face == robot standoff (robot spawns at x=0)
+WALL_FACE_X = 0.385          # m, world x of the wall's front (near) face == robot standoff (robot spawns at x=0)
+# 0.40 -> 0.385 (2026-10-14, measured v13): with the arm at scout x=+0.06 the
+# place reach is 5cm longer than the tuned-a0.11 era, and the press leaves
+# the box bottom 0-15mm short of the face depending on the per-box finger
+# slip (v13 telemetry: the held box's bottom lands at 0.345-0.385). The
+# magnet's CONTACT band (MAGNET_ATTRACT_RANGE 0.012) only engages within
+# 12mm, so the standoff is recalibrated 15mm closer -- the preplace legs
+# stay >=8cm clear (descend at x~0.30, carried bottom ~0.285), and the
+# press (0.06, floor 0.5, blocked-press tolerated) stalls on the face as
+# before. Same measure-don't-assume recalibration the task script's
+# _WALL_X comment already prescribes for the real robot.
 WALL_TARGET_Z = 0.35         # m, world z of every mount target
 WALL_TARGET_Y = [-0.19, -0.09, 0.09, 0.19]   # m, world y of each target
 # 2026-10-13 real-robot platform layout (live /piper/compute_ik sweep,

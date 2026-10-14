@@ -818,14 +818,36 @@ WELD_MAX_MISALIGN_DEG = 23.0                 # deg, bottom-normal vs wall
 # after the fingers open. 12mm covers the press-and-seat window (real
 # small-magnet reach is millimetric; industrial magnetic mounting is always
 # contact placement). Remote capture is gone by design.
-MAGNET_ATTRACT_RANGE = 0.006                  # m -- CONTACT THRESHOLD in the
+MAGNET_ATTRACT_RANGE = 0.012                  # m -- CONTACT THRESHOLD in the
                                               # 2026-09-23 contact-holddown
                                               # model (was the capture range
                                               # of the retired dipole law):
                                               # the magnet is ON only while
                                               # the box magnet-face center is
-                                              # within 6mm of the wall
-                                              # plane
+                                              # within 12mm of the wall
+                                              # plane. 0.006 -> 0.012
+                                              # (2026-10-14, measured v10):
+                                              # a box seated at the measured
+                                              # residual grasp tilt (~12 deg,
+                                              # under WELD_MAX_MISALIGN_DEG)
+                                              # rests on its long bottom EDGE
+                                              # -- physically touching the
+                                              # wall -- while its face CENTER
+                                              # sits 7.5mm off the plane
+                                              # (half of the 8cm face x
+                                              # sin(12deg)); the 6mm gate
+                                              # then pins f_mag=0 and the
+                                              # box slides down at d=7.5mm
+                                              # (v10 sensor2 telemetry:
+                                              # in_range=False through the
+                                              # entire fall). 12mm is the
+                                              # edge-contact band of this
+                                              # box, NOT remote capture --
+                                              # and the force tapers from ~0
+                                              # at the band edge
+                                              # (MAGNET_TAPER_DISTANCE below),
+                                              # so the pull grows only as the
+                                              # box actually seats flatter.
 MAGNET_TAPER_DISTANCE = MAGNET_ATTRACT_RANGE   # interaction ramps down over
                                                 # the WHOLE attract range,
                                                 # not just the last few mm --
