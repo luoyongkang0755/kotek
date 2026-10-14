@@ -85,11 +85,13 @@ GRASP_POSITIONS = [
 # magnet's capture range.
 # 2026-10-13 real-robot platform layout (arm at scout x=+0.11), reworked
 # 2026-10-14 for the corrected orientation (arm at scout x=+0.06, wall
-# still at world x=0.40) -- the arm-frame wall face is 0.34 and the
-# release point shifts by the same -0.06 (old 0.39 was face - 0.01; the
-# 1cm offset and all the corner-reach reasoning above are unchanged).
-# Recalibrate against the real wall position before the wall-mount phase
-# on the real robot (same measure-don't-assume rule as _WALL_Z).
+# stays at world x=0.40 -- USER-CORRECTED: the real bench's arm-wall
+# distance is genuinely 0.34 and the pipeline is tuned to work at it, not
+# retreated from it). The release point keeps the era's 1cm
+# short-of-face offset (0.39 = face 0.40 - 0.01; all the corner-reach
+# reasoning above is unchanged). Recalibrate against the real wall
+# position before the wall-mount phase on the real robot (same
+# measure-don't-assume rule as _WALL_Z).
 # TARGET PAIRING (2026-10-14, measured): the near-column pair (grasped
 # first, weak 2-5mm squeeze) takes the NEAR targets (+-0.09 -- a ~2cm
 # swing from their +-0.1065 pickup corners), and the firmly-held far pair

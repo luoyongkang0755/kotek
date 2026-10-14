@@ -181,8 +181,8 @@
     # contacts have no torsional friction; boxes were found fallen directly
     # under the swing path, landed upright on the riser). Same reasoning as
     # lift_velocity_scaling's own comment, extended to the whole carry.
-    carry_velocity_scaling: 0.04
-    carry_acceleration_scaling: 0.04
+    carry_velocity_scaling: 0.08
+    carry_acceleration_scaling: 0.08
     # Task 2a (2026-09-18, measured -- see piper_manipulator.hpp Params):
     # the 23-deg-gate 50-run batch left carry slips as the ONLY failure
     # class (32/32 unwelded), with per-tick traces showing the box pivoting

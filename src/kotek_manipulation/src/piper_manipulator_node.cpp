@@ -949,16 +949,21 @@ void PiperManipulator::attachCarriedBox(const std::string & object_frame)
 
   moveit_msgs::msg::AttachedCollisionObject aco;
   aco.link_name = link;
-  // Touch links = every arm link (2026-10-14): the box is clamped rigidly
-  // -- arm planning holds joints 7/8 fixed, so no box-vs-arm relative
-  // motion is physically possible -- while the measured attach pose carries
-  // the close-kick's tilt error (up to grasp_kick_max_tilt_deg), making
-  // model-space box-vs-forearm contacts false positives (measured:
-  // "carried_box - link3" aborting MOVE_ARM_TO_PREPLACE via
-  // CheckStartStateCollision on the first channel-retrace run). The box
-  // still collides normally against world/scene objects (the wall), which
-  // is the reason it is attached at all. Was {link6, link7, link8}.
-  aco.touch_links = {"link1", "link2", "link3", "link4", "link5", link, "link7", "link8"};
+  // Touch links = the robot's ENTIRE kinematic chain (2026-10-14): the box
+  // is clamped rigidly -- arm planning holds joints 7/8 fixed, so no
+  // box-vs-arm relative motion is physically possible -- while the measured
+  // attach pose carries the close-kick's tilt error (up to
+  // grasp_kick_max_tilt_deg), making model-space box-vs-arm contacts false
+  // positives. First pass listed link1-8 only and MISSED base_link: at the
+  // closer near-target place poses (wall 0.35, _WALL_X 0.28, v15) the
+  // tilt-attached box's corner dips into the arm column's collision
+  // geometry and OMPL rejects EVERY goal sample ("unable to sample any
+  // valid states for goal tree" -- place[1] descend, pose-goal AND seeded
+  // joint-goal fallback). The box still collides normally against
+  // world/scene objects (the wall), which is the reason it is attached at
+  // all.
+  aco.touch_links = {"base_link", "link1", "link2", "link3", "link4", "link5",
+    link, "link7", "link8"};
   aco.object.id = carried_box_name_;
   aco.object.header.frame_id = link;
   aco.object.pose.position.x = t.transform.translation.x;
