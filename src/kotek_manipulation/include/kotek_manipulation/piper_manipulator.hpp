@@ -105,6 +105,22 @@ private:
     // (stow_after_lift=false), so the legacy 0.12m lift is unnecessary
     // here. Default 0.15 = no cap (pedestal task unchanged).
     double lift_height_near_column_max = 0.15;
+    // Near-column pregrasp height override (2026-10-14 corrected platform
+    // layout, live probe ik_probe15/16): the near riser pair sits 7.4cm IN
+    // FRONT of the arm column (arm-frame x=+0.074). There the axis-snapped
+    // yaw=0 folds the wrist over the column (self-collision all along the
+    // descent, collision on or off) and yaw=pi's pregrasp is unreachable at
+    // the global approach_height=0.04 (z 0.185, no IK) but fully clean at
+    // 0.02-0.03 (z 0.165-0.175, ~1cm fingertip clearance over the box top).
+    // So the near band grasps with the wrist BEYOND the box (yaw flipped to
+    // pi, mirror of the validated pre-correction near grasp) at this lower
+    // height. The radial-yaw family also probes clean but was REJECTED: the
+    // diagonal caliper width is 8.6cm vs the gripper's 4cm max opening, so
+    // the jaws cannot straddle the box. The far pair keeps the global
+    // height with the wrist between column and box (ik_probe17, CLEAN --
+    // wrist position relative to the box is a near-band constraint only).
+    // 0 = use approach_height everywhere (pedestal demo unchanged).
+    double grasp_approach_height_near_column = 0.0;
     // 2026-10-13 waypoint carry for the preplace swing: when > 0, the swing
     // is split into (1) an OMPL plan to a waypoint directly ABOVE the
     // preplace (same x/y, z + this height) and (2) a straight cartesian
@@ -149,8 +165,9 @@ private:
     // wall_mount.yaml -- see that file's cross-reference comment.
     double grasp_pitch = 0.4;
     double place_pitch = 0.4;
-    // Wall-mount grasp anti-V-grip fix (2026-09-13, measured): the riser
-    // corners sit at approach_yaw = atan2(+-0.109, +-0.109) = +-45 deg, so
+    // Wall-mount grasp anti-V-grip fix (2026-09-13, measured): at the then
+    // 0.3m-square riser layout the corners sat at approach_yaw =
+    // atan2(+-0.109, +-0.109) = +-45 deg, so
     // the gripper's opening axis (computeGraspPose's
     // cross(world_up, approach_dir), always horizontal and perpendicular to
     // the approach) also lands at 45 deg to the box's edges -- the jaws close
@@ -294,9 +311,11 @@ private:
     // to the TCP is recorded at place start and re-checked right BEFORE
     // OPEN_GRIPPER -- a growing distance means the box is slipping out,
     // which the joint7 check cannot see.
-    // TF positions come back in the planning frame directly (measured:
-    // base_link->sensor_cam_1 == riser corner (0.109,0.109,0.01929) to 3
-    // decimals). Failures abort the place loudly -- a lost box must not
+    // TF positions come back in the planning frame directly (measured at
+    // the old square riser layout: base_link->sensor_cam_1 == riser corner
+    // (0.109,0.109,0.01929) to 3 decimals; with the 2026-10-14 corrected
+    // platform it is (0.074,0.084,0.01929) arm-frame). Failures abort the
+    // place loudly -- a lost box must not
     // "place air" and report success.
     //
     // Identity: the PlaceObject goal carries the object frame explicitly
@@ -368,17 +387,19 @@ private:
     // without this correction (constant z offset) -- it separated well
     // enough empirically, but corrected distances are exact.
     double arm_mount_height = 0.29101;   // m, coordinator.yaml arm_mount_xyz.z
-    // 2026-10-13 real-robot platform layout: the arm ALSO moved forward to
-    // scout x=+0.11 (build_wall_stage.py ARM_MOUNT_PLATFORM_OFFSET_X), so the
-    // "share x/y origin" assumption above broke the same way z once did: raw
-    // TF lookups now return scout-frame x/y that is 11cm off the arm frame.
-    // Measured on platform_layout_smoke run 1: the grasp actual-position
-    // override re-targeted box 1 to x=+0.084 instead of -0.026, TCP goal
-    // landed at radial 0.115m/z 0.145 (inside the arm's near dead zone) and
-    // OMPL failed with "unable to sample any valid states for goal tree"
-    // 12/12 (deterministic, not a kick). Same subtraction as the z case.
-    // wall_mount.yaml sets these; the pick-and-delivery demo (arm still at
-    // scout x=0 in build_demo_stage.py) keeps the 0.0 defaults.
+    // 2026-10-13 real-robot platform layout (orientation corrected
+    // 2026-10-14): the arm ALSO moved forward to scout x=+0.06
+    // (build_wall_stage.py ARM_MOUNT_PLATFORM_OFFSET_X), so the "share x/y
+    // origin" assumption above broke the same way z once did: raw TF lookups
+    // now return scout-frame x/y that is 6cm off the arm frame (11cm at the
+    // pre-correction +0.11 layout). Measured on platform_layout_smoke run 1:
+    // the grasp actual-position override re-targeted the near box to its
+    // scout x instead of its arm-frame value, the TCP goal landed inside
+    // the arm's near dead zone and OMPL failed with "unable to sample any
+    // valid states for goal tree" 12/12 (deterministic, not a kick). Same
+    // subtraction as the z case. wall_mount.yaml sets these; the
+    // pick-and-delivery demo (arm still at scout x=0 in
+    // build_demo_stage.py) keeps the 0.0 defaults.
     double arm_mount_x = 0.0;   // m, arm mount forward offset in scout frame
     double arm_mount_y = 0.0;   // m, arm mount lateral offset in scout frame
     // --- Realism pass (2026-09-21): model the carried box as an

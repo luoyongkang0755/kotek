@@ -299,14 +299,16 @@ def check_wall_demo(stage: Usd.Stage, c: 'Checker') -> None:
                 abs(scale[i] - expected[i]) < 1e-4 for i in range(3)),
             f'{path} scale == {expected} (true 8x3.5x4cm box, got {tuple(scale) if scale else None})')
 
-    print('  -- real-robot platform layout (2026-10-13, measured) --')
+    print('  -- real-robot platform layout (2026-10-13, measured; 2026-10-14: '
+          '35cm side is front-back) --')
     cube = stage.GetPrimAtPath(ws.RISER_CUBE_PATH)
     if cube:
         scale = cube.GetAttribute('xformOp:scale').Get()
         c.check(
-            scale is not None and abs(scale[0] - 0.25) < 1e-4
-            and abs(scale[1] - 0.35) < 1e-4,
-            f'riser models the real 25x35cm platform (got '
+            scale is not None
+            and abs(scale[0] - 2 * ws.RISER_HALF_EXTENT_X) < 1e-4
+            and abs(scale[1] - 2 * ws.RISER_HALF_EXTENT_Y) < 1e-4,
+            f'riser models the real 35(x)x25(y)cm platform (got '
             f'{tuple(scale) if scale else None})')
     mount_prim = stage.GetPrimAtPath('/World/piper_mount_joint')
     if mount_prim:

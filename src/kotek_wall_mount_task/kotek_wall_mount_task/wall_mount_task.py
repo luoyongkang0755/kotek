@@ -33,18 +33,21 @@ from rclpy.action import ActionClient
 from rclpy.node import Node
 
 # Riser-corner pickup positions (arm frame) -- corners of the real-robot
-# platform layout (build_wall_stage.py, 2026-10-13): platform 25cm(x) x
-# 35cm(y) centered on scout base_link, boxes axis-aligned at
-# (x=+-0.084, y=+-0.109) scout-frame, arm mounted FORWARD at scout x=+0.11
-# (mounting plate rear 19.5cm from the platform rear, plate 8cm deep).
-# Arm frame = scout frame - arm mount: both grasp x's land BEHIND/aft of
-# the arm column (the near pair only 2.6cm aft of it) -- reachability of
-# all 4 was re-verified with a live /piper/compute_ik sweep after this
-# change (see docs/wall_mount_contact_placement.md). z is unchanged: the
-# platform top sits at the same height as the old riser top.
-_GRASP_X_NEAR = 0.084 - 0.11   # -0.026
-_GRASP_X_FAR = -0.084 - 0.11   # -0.194
-_CORNER_Y = 0.109
+# platform layout (build_wall_stage.py, 2026-10-13, orientation corrected
+# 2026-10-14): platform 35cm(x, front-back) x 25cm(y, left-right) centered
+# on scout base_link, boxes axis-aligned at (x=+-0.134, y=+-0.1065)
+# scout-frame, arm mounted FORWARD at scout x=+0.06 (mounting plate rear
+# 19.5cm from the platform rear, plate 8cm deep: -0.175 + 0.195 + 0.04).
+# y=0.1065 uses the per-axis 1mm-edge inset (the 2026-10-14 pre-fix 0.084
+# pushed the near pair deeper into the arm column's ungraspable crescent --
+# see build_wall_stage.py's inset comment and ik_probe15-17).
+# Arm frame = scout frame - arm mount: the near pair (cycles 1/2) lands
+# IN FRONT of the arm column (arm-frame x=+0.074), the far pair 19.4cm
+# BEHIND it (x=-0.194). z is unchanged: the platform top sits at the same
+# height as the old riser top.
+_GRASP_X_NEAR = 0.134 - 0.06   # +0.074
+_GRASP_X_FAR = -0.134 - 0.06   # -0.194
+_CORNER_Y = 0.1065
 _GRASP_Z = 0.3103 - 0.29101  # SENSOR_CAM_LOCAL_Z - arm_mount_xyz.z (z unchanged)
 GRASP_POSITIONS = [
     (_GRASP_X_NEAR, +_CORNER_Y, _GRASP_Z),
@@ -80,23 +83,29 @@ GRASP_POSITIONS = [
 # box's own magnet target stays at the authored 0.35m; the released box is
 # pulled down onto it during release_settle_time, 5cm is well inside the
 # magnet's capture range.
-# 2026-10-13 real-robot platform layout: the arm moved forward to scout
-# x=+0.11 while the wall stayed at world x=0.40 -- so the arm-frame wall
-# face is 0.29 and the release point shifts by the same -0.11 (old 0.39
-# was face - 0.01; the 1cm offset and all the corner-reach reasoning above
-# are unchanged). Recalibrate against the real wall position before the
-# wall-mount phase on the real robot (same measure-don't-assume rule as
-# _WALL_Z).
-_WALL_X = 0.28     # = 0.39 - 0.11 arm-forward shift; face 10mm off at PLACE
+# 2026-10-13 real-robot platform layout (arm at scout x=+0.11), reworked
+# 2026-10-14 for the corrected orientation (arm at scout x=+0.06, wall
+# still at world x=0.40) -- the arm-frame wall face is 0.34 and the
+# release point shifts by the same -0.06 (old 0.39 was face - 0.01; the
+# 1cm offset and all the corner-reach reasoning above are unchanged).
+# Recalibrate against the real wall position before the wall-mount phase
+# on the real robot (same measure-don't-assume rule as _WALL_Z).
+# TARGET PAIRING (2026-10-14, measured): the near-column pair (grasped
+# first, weak 2-5mm squeeze) takes the NEAR targets (+-0.09 -- a ~2cm
+# swing from their +-0.1065 pickup corners), and the firmly-held far pair
+# takes the FAR targets (+-0.19). The old pairing sent the weak-carry
+# near boxes on the longest possible swing (across the whole arm) and the
+# slip rate showed it (v6: box back on the riser after the swing).
+_WALL_X = 0.33     # = 0.39 - 0.06 arm-forward shift; face 10mm off at PLACE
 _WALL_Z = 0.3734 - 0.18 - 0.29101
 # Target y derives from build_wall_stage.py's WALL_TARGET_Y (2026-10-13:
 # |y| 0.05 -> 0.09/0.19 after the arm-forward move put the inner release
 # poses inside a hard IK dead zone -- see that file's comment).
 PLACE_POSITIONS = [
-    (_WALL_X, -0.19, _WALL_Z),
-    (_WALL_X, -0.09, _WALL_Z),
-    (_WALL_X, 0.09, _WALL_Z),
-    (_WALL_X, 0.19, _WALL_Z),
+    (_WALL_X, +0.09, _WALL_Z),   # grasp[1] near pair, y=+0.1065 -> near target
+    (_WALL_X, -0.09, _WALL_Z),   # grasp[2] near pair, y=-0.1065 -> near target
+    (_WALL_X, -0.19, _WALL_Z),   # grasp[3] far pair, y=-0.1065 -> far target
+    (_WALL_X, +0.19, _WALL_Z),   # grasp[4] far pair, y=+0.1065 -> far target
 ]
 
 ARM_FRAME = 'base_link'
@@ -180,17 +189,32 @@ def main():
         # dynamics, measured across the e2e10 batches); piper now rejects a
         # kicked grasp before the lift (box still on the riser), so retrying
         # the SAME grasp is cheap and usually seats the box on attempt 2.
-        grasp_ok = False
-        for attempt in (1, 2, 3):
-            if node.run_grasp(index, GRASP_POSITIONS[i]):
-                grasp_ok = True
+        #
+        # Cycle retry (2026-10-14, measured): the near-column weak squeeze
+        # (2-5mm, see wall_mount.yaml's grasp_width_near_column) can slip
+        # during the preplace swing -- the box falls back onto the riser
+        # near its corner (v6: held-box check fired at place with the box
+        # found back at its pickup corner). A failed place no longer aborts
+        # the whole task: the cycle (re-grasp via live TF + place) repeats
+        # once, which turns the stochastic slip into a recoverable event
+        # instead of a demo-killer.
+        cycle_ok = False
+        for cycle in (1, 2):
+            grasp_ok = False
+            for attempt in (1, 2, 3):
+                if node.run_grasp(index, GRASP_POSITIONS[i]):
+                    grasp_ok = True
+                    break
+                node.get_logger().warn(
+                    f'grasp[{index}] attempt {attempt}/3 failed (kick?) -- re-grasping')
+            if not grasp_ok:
+                break
+            if node.run_place(index, PLACE_POSITIONS[i]):
+                cycle_ok = True
                 break
             node.get_logger().warn(
-                f'grasp[{index}] attempt {attempt}/3 failed (kick?) -- re-grasping')
-        if not grasp_ok:
-            ok = False
-            break
-        if not node.run_place(index, PLACE_POSITIONS[i]):
+                f'place[{index}] cycle {cycle}/2 failed (slip?) -- re-grasping')
+        if not cycle_ok:
             ok = False
             break
     node.get_logger().info('wall-mount task ' + ('COMPLETE' if ok else 'ABORTED (see errors above)'))

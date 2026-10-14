@@ -68,30 +68,39 @@ RISER_CUBE_PATH = f'{SCOUT_BASE_LINK}/Cube'
 # final.
 RISER_TOP_LOCAL_Z = 0.2903
 
-# --- real-robot platform layout (2026-10-13, user's bench, measured) ------
-# The riser now models the user's real mounting PLATFORM: 25cm front-back
-# (x) x 35cm left-right (y), centered on scout base_link; the top face
+# --- real-robot platform layout (2026-10-13, user's bench, measured;
+#     orientation corrected 2026-10-14: the 35cm side is FRONT-BACK) ------
+# The riser now models the user's real mounting PLATFORM: 35cm front-back
+# (x) x 25cm left-right (y), centered on scout base_link; the top face
 # height is unchanged (the real boxes sit at the same height as before).
 # The arm is mounted FORWARD on this platform: the square mounting plate's
 # rear edge sits 19.5cm from the platform's rear edge, the plate is
 # 8cm (x) x 9.5cm (y) and laterally centered -- so the arm base center is
-# at scout x = (-0.125 + 0.195 + 0.08/2) = +0.11. See
+# at scout x = (-0.175 + 0.195 + 0.08/2) = +0.06. See
 # apply_platform_layout() for the actual stage overrides.
-ARM_MOUNT_PLATFORM_OFFSET_X = 0.11
-RISER_HALF_EXTENT_X = 0.125
-RISER_HALF_EXTENT_Y = 0.175
+ARM_MOUNT_PLATFORM_OFFSET_X = 0.06
+RISER_HALF_EXTENT_X = 0.175
+RISER_HALF_EXTENT_Y = 0.125
 
 # --- the 4 sensor-cam pickup poses (base_link-local frame) ---------------
-# x pitch shrinks vs the old centered-arm layout: a 25cm-deep platform fits
-# the 8cm box only at +-8.4cm (inset = half the box's longer footprint
-# dimension + 1mm clearance, same convention as before). y pitch stays at
-# the validated +-10.9cm (the 35cm width leaves ample margin). Boxes remain
+# Inset convention: each box edge sits 1mm in from the platform edge, i.e.
+# the corner offset uses the box's OWN half-extent along that axis (x:
+# 8cm-box long half, y: 3.5cm-box short half) -- NOT the long half in both
+# directions (the 2026-10-14 pre-fix code used the long half for y too,
+# corner y=0.084, which pushed the near pair deeper into the arm column's
+# ungraspable crescent). Grasp feasibility of the resulting corners was
+# verified with live /piper/compute_ik probes in ARM-frame coordinates
+# (ik_probe15-17, collision ON): far pair clean at the global grasp
+# settings; near pair clean with the wrist flipped beyond the box at a
+# capped pregrasp height (see wall_mount.yaml grasp_approach_height_near_
+# column). NOTE ik_probe14's "12/12 CLEAN" rows are superseded -- it
+# probed scout-frame x=0.134 as if it were arm-frame. Boxes remain
 # AXIS-ALIGNED (yaw = 0) -- the F-group finding that made the slow close
 # self-centering unnecessary.
 _SENSOR_LONG_HALF = physics_tuning.SENSOR_CAM_SIZE_XYZ[0] / 2.0
-_CORNER_INSET = _SENSOR_LONG_HALF + 0.001
-CORNER_X = RISER_HALF_EXTENT_X - _CORNER_INSET   # 0.084 m
-CORNER_Y = 0.109                                  # unchanged from the F-group layout
+_SENSOR_SHORT_HALF = physics_tuning.SENSOR_CAM_SIZE_XYZ[1] / 2.0
+CORNER_X = RISER_HALF_EXTENT_X - (_SENSOR_LONG_HALF + 0.001)    # 0.134 m
+CORNER_Y = RISER_HALF_EXTENT_Y - (_SENSOR_SHORT_HALF + 0.001)   # 0.1065 m
 SENSOR_CAM_LOCAL_Z = RISER_TOP_LOCAL_Z + physics_tuning.SENSOR_CAM_SIZE_XYZ[2] / 2.0
 SENSOR_CAM_CORNERS_LOCAL = [
     (+CORNER_X, +CORNER_Y, SENSOR_CAM_LOCAL_Z),
@@ -128,11 +137,12 @@ WALL_FACE_X = 0.40           # m, world x of the wall's front (near) face == rob
 WALL_TARGET_Z = 0.35         # m, world z of every mount target
 WALL_TARGET_Y = [-0.19, -0.09, 0.09, 0.19]   # m, world y of each target
 # 2026-10-13 real-robot platform layout (live /piper/compute_ik sweep,
-# ik_probe7/8): the arm moved forward to scout x=+0.11, so the old inner
-# targets (|y|=0.05) put the release TCP at arm-frame radial 0.191 / z
-# -0.002 -- inside a hard IK dead zone (no solution even with collision
-# checking off; smoke10 place[2] failed in BOTH pose-goal and joint-goal
-# modes). |y|>=0.09 is reachable (probed: 0.05 FAIL, 0.09+ OK). Spacing
+# ik_probe7/8), values re-validated 2026-10-14 after the orientation fix
+# (arm at scout x=+0.06): with the arm forward, the old inner targets
+# (|y|=0.05) put the release TCP inside a hard IK dead zone (no solution
+# even with collision checking off; smoke10 place[2] failed in BOTH
+# pose-goal and joint-goal modes at the +0.11 layout). |y|>=0.09 is
+# reachable (probed: 0.05 FAIL, 0.09+ OK). Spacing
 # stays 0.10 m (same 2cm clearance over the 0.08m box width), outermost
 # 0.19+0.0175 well inside the wall's +-0.5 m half-width. The magnet
 # graph's wallTargets and wall_mount_task.py's PLACE_POSITIONS derive
@@ -184,10 +194,10 @@ def apply_platform_layout(stage: Usd.Stage):
     layout (2026-10-13, user's bench measurements):
 
     - /World/piper xform + /World/piper_mount_joint localPos0: arm moved
-      forward to scout x=+0.11 (mounting plate rear 19.5cm from the
+      forward to scout x=+0.06 (mounting plate rear 19.5cm from the
       platform's rear edge; plate 8cm deep, laterally centered).
-    - riser Cube scale: 0.3x0.3 -> 0.25(x) x 0.35(y), same top face height
-      -- the riser now models the real 25x35cm platform.
+    - riser Cube scale: 0.3x0.3 -> 0.35(x) x 0.25(y), same top face height
+      -- the riser now models the real 35x25cm platform (35cm front-back).
 
     These prims live in the robot sublayer (kotek_scout_piper_robot.usd,
     authored by import_robots.py / hand-added), which is SHARED with the

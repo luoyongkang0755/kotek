@@ -74,20 +74,32 @@
     # preplace, then straight cartesian down. 0.06 keeps the inner waypoint
     # (z 0.158) under the near-column IK ceiling (z~0.19).
     preplace_waypoint_height: 0.06
-    # 2026-10-13 near-pair grasp experiments (gripper telemetry, smoke14-24):
-    # DISABLED. The near-pair close exhibits a 2-4cm contact kick at every
-    # attempt and the fingers' settle point wobbles by ~±0.6mm around the
-    # 0.037 equilibrium, so every sub-mm width-discrimination scheme
-    # (0.030/0.037/0.0365 targets, one/two-sided guards) either false-accepts
-    # an ejected box or false-rejects a held one. With the special-casing
-    # off, the near pair uses the regular 0.018 slow close (the F-group
-    # config): its kick is stochastic, the kick-tilt check + the task's
-    # re-grasp retry absorb it, and the width guard is skipped. The wall
-    # contact remains guarded by the held-box checks. See
-    # docs/wall_mount_contact_placement.md for the full evidence chain and
-    # the real-robot recommendations.
-    grasp_width_near_column: 0.0
-    grasp_eject_opening_max: 0.0
+    # grasp_width_near_column: stop-at-contact close, RE-ENABLED 2026-10-14
+    # (corrected layout, near pair IN FRONT of the column). Rationale and
+    # measured history (corrected-layout runs):
+    #   v2  0.018 (17mm squeeze): through-close FLUNG the box 11cm off the
+    #       platform (unrecoverable);
+    #   v5/6 0.033 (2mm squeeze): clean close, ejection guard "box held",
+    #       channel-retrace lift verified held -- but 2mm of bite could not
+    #       survive the preplace swing (box found back on the riser at the
+    #       held-box check);
+    #   v7  0.026 (9mm squeeze): the close itself kicked the box into a
+    #       diagonal pinch (fingers settled 0.0494) -- false "held", fell
+    #       near the wall.
+    # 0.030 (5mm squeeze) is the measured middle: more bite than v6, less
+    # close energy than v7, and the kick-tilt + ejection guards plus the
+    # task's new cycle retry (re-grasp after a place slip) turn the
+    # residual stochastic failures into recoverable events. Stacks with the
+    # ALREADY-ENABLED 4s quasi-static close (grasp_close_duration -- active
+    # since d685669), which keeps the 5mm squeeze quasi-static.
+    # Guard bookkeeping: held box stalls ~0.035 (|stall-cmd| = 0.005 >
+    # the 0.0012 reached-command tolerance), a through-close dips below
+    # the 0.030 threshold ON its way to... -- NOTE the threshold equals the
+    # command now, so a no-stall close reaching the command trips
+    # reached_command (caught), and a true through-close passes below 0.030
+    # (caught); a held box never dips (min ~0.035). Consistent.
+    grasp_width_near_column: 0.030
+    grasp_eject_opening_max: 0.030
     gripper_open_near_column: 0.0
     # 0.10 (the pedestal default) left the held box's underside only ~2cm
     # above the riser top -- fine for the two wall-side corners, but the
@@ -119,18 +131,46 @@
     # envelope that already worked).
     lift_height: 0.12
     # 2026-10-13 real-robot platform layout (live-measured, see
-    # Params::lift_lateral_clearance / lift_height_near_column_max): the
-    # near riser pair sits 2.6cm aft of the arm column, where the grasp
-    # wrist orientation has NO IK above link6 z~0.18 (ik_probe3: collision-
+    # Params::lift_lateral_clearance / lift_height_near_column_max;
+    # orientation corrected 2026-10-14): the near riser pair now sits 7.4cm
+    # IN FRONT of the arm column (arm-frame x=+0.074; it was 2.6cm aft at
+    # the pre-correction layout), where the grasp wrist orientation has NO
+    # IK above link6 z~0.18 (ik_probe3: collision-
     # free but IK-fail, path-direction-independent -- smoke3-6 truncation
     # at 28-31% was this ceiling, NOT a collision; the lateral-bias theory
     # is disproven and the bias disabled). The box only needs to clear the
     # riser top -- MOVE_ARM_TO_PREPLACE is a free OMPL plan from the lift
     # end (stow_after_lift=false) -- so cap the near-column lift at 3cm
     # (end z 0.175, ~1cm margin under the measured 0.182 truncation).
+    # lift_lateral_clearance: superseded 2026-10-14 by the near-band
+    # approach-channel retrace (the lift targets the approach pose itself,
+    # arm-only, attach at the top -- see piper_manipulator_node.cpp's
+    # lift_pose block). The bias fixed the PLAN (model) but the executed
+    # lift still dragged the box bottom across the platform top and aborted
+    # mid-trajectory, and retreating kept the box pinched, poisoning the
+    # retries. Kept at 0.0 (disabled) as the diagnostic record.
     lift_lateral_clearance: 0.0
     lift_lateral_column_band: 0.08
     lift_height_near_column_max: 0.03
+    # 2026-10-14 corrected platform orientation (35cm side front-back, arm at
+    # scout x=+0.06): the near pair sits 7.4cm IN FRONT of the arm column
+    # (arm-frame x=+0.074) -- inside a narrow feasible tube (live
+    # /piper/compute_ik probes ik_probe9-16, collision ON, CORRECT arm-frame
+    # coordinates; probe14's CLEAN rows were an artifact of probing scout-
+    # frame x=0.134 as if it were arm-frame and are superseded):
+    #   * axis-snapped yaw=0 folds the wrist over the column (self-collision
+    #     along the whole descent); the radial-yaw fallback probes clean but
+    #     needs an 8.6cm diagonal straddle the 4cm gripper cannot open --
+    #     both rejected;
+    #   * yaw=pi with the wrist BEYOND the box (the node's near-band flip,
+    #     mirror of the validated pre-correction near grasp) is fully clean
+    #     ONLY at pregrasp height <=0.03: at the global approach_height=0.04
+    #     the pregrasp (z 0.185) has no IK; at 0.03 (z 0.175) the whole
+    #     descent is clean with ~1cm fingertip clearance.
+    # The far pair keeps the global height -- its wrist between column and
+    # box probes CLEAN (ik_probe17), so the band/flip/height overrides are
+    # near-column-only.
+    grasp_approach_height_near_column: 0.03
     # Kept from the 0.22-era design: no longer load-bearing (0.12 is
     # reachable, not ambitious) but harmless, and it preserves the
     # "at least half" guard if lift_height is ever raised again.
@@ -204,18 +244,20 @@
     # this). Planning with the raw TF z made pregrasp unplannable.
     arm_mount_height: 0.29101
     # Scout->arm TF x/y correction (2026-10-13, platform_layout_smoke run
-    # 1-measured): the real-robot platform layout moved the wall stage's arm
-    # FORWARD to scout x=+0.11 (build_wall_stage.py
+    # 1-measured; reworked 2026-10-14 for the corrected platform
+    # orientation): the real-robot platform layout moved the wall stage's
+    # arm FORWARD to scout x=+0.06 (build_wall_stage.py
     # ARM_MOUNT_PLATFORM_OFFSET_X; mounting plate rear edge 19.5cm from the
-    # platform rear edge, plate 8cm deep -> plate center +0.11). Raw TF
+    # platform rear edge, plate 8cm deep -> plate center +0.06). Raw TF
     # lookups then returned scout-frame x/y, and the grasp actual-position
-    # override re-targeted box 1 to x=+0.084 instead of its true arm-frame
-    # -0.026 -- TCP goal at radial 0.115m/z 0.145 sat inside the arm's near
-    # dead zone and OMPL failed 12/12 with "unable to sample any valid
-    # states for goal tree" (deterministic). Same name-collision mechanism
-    # as arm_mount_height above. Leave at 0.0 for stages with the arm at
-    # scout x=0 (pick-and-delivery's build_demo_stage.py).
-    arm_mount_x: 0.11
+    # override re-targeted the near box to its scout x instead of its true
+    # arm-frame value -- TCP goal inside the arm's near dead zone and OMPL
+    # failed 12/12 with "unable to sample any valid states for goal tree"
+    # (deterministic, measured at the +0.11 predecessor layout). Same
+    # name-collision mechanism as arm_mount_height above. Leave at 0.0 for
+    # stages with the arm at scout x=0 (pick-and-delivery's
+    # build_demo_stage.py).
+    arm_mount_x: 0.06
     arm_mount_y: 0.0
     # Realism pass (2026-09-21): model the carried box as an
     # AttachedCollisionObject (PlanningScene diff on /piper/planning_scene)
