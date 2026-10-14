@@ -146,8 +146,31 @@ WALL_FACE_X = 0.40           # m, world x of the wall's front (near) face == rob
 # MAGNET_ATTRACT_RANGE 0.012) -- see wall_mount.yaml. The magnet graph's
 # wallTargets and wall_mount_task.py's _WALL_X derive from this -- keep
 # them in sync.
-WALL_TARGET_Z = 0.35         # m, world z of every mount target
-WALL_TARGET_Y = [-0.19, -0.09, 0.09, 0.19]   # m, world y of each target
+WALL_TARGET_Z = 0.35         # m, world z of the LOWER mount-target row (upper row +0.10)
+# 2026-10-14 -- USER-REDESIGNED target layout (was a single row at
+# y=[-0.19,-0.09,0.09,0.19], z=0.35): a 2x2 grid at y=+-0.09, z={0.35,
+# 0.45}. The single-row layout forced the far-pair pickup corners
+# (y=+-0.1065) onto 8.4cm LATERAL swings to the +-0.19 targets, and the
+# carry twist measured at the wall scaled with swing distance (near/short
+# 0-14 deg, far/long 24-34 deg -- PhysX point contacts have no torsional
+# friction, so the box rotates freely about the finger-contact line under
+# lateral inertial loads). The 2x2 grid makes every swing ~2cm lateral +
+# a vertical carry (the arm's strong direction, minimal twist input); the
+# upper row also lifts link6 away from the measured lower workspace
+# boundary. Constraints kept: y stays at the validated +-0.09 (the |y|<=
+# ~0.07 band is an IK dead zone, and target spacing must stay >= 0.10 m
+# over the 0.08m box), z row spacing 0.10 > box height 0.04, both rows
+# well inside the 1m wall. WALL_TARGETS pairs each target's (y, z) --
+# consumers: add_wall's guide markers, author_magnet_graph.py's
+# wallTargets, wall_mount_task.py's PLACE_POSITIONS.
+WALL_TARGETS = [
+    (-0.09, WALL_TARGET_Z),          # row 1 (lower): near targets
+    (+0.09, WALL_TARGET_Z),
+    (-0.09, WALL_TARGET_Z + 0.10),   # row 2 (upper, +10cm per user)
+    (+0.09, WALL_TARGET_Z + 0.10),
+]
+WALL_TARGET_Y = [y for y, _ in WALL_TARGETS]   # back-compat shim for the
+                                               # probe script (uses row 1)
 # 2026-10-13 real-robot platform layout (live /piper/compute_ik sweep,
 # ik_probe7/8), values re-validated 2026-10-14 after the orientation fix
 # (arm at scout x=+0.06): with the arm forward, the old inner targets
@@ -364,10 +387,10 @@ def add_wall(stage: Usd.Stage):
     wall = wall_xf
 
     markers = []
-    for i, y in enumerate(WALL_TARGET_Y):
+    for i, (y, z) in enumerate(WALL_TARGETS):
         sphere = UsdGeom.Sphere.Define(stage, f'/World/wall_target_{i + 1}')
         sphere.CreateRadiusAttr(0.015)
-        sphere.AddTranslateOp().Set(Gf.Vec3d(WALL_FACE_X, y, WALL_TARGET_Z))
+        sphere.AddTranslateOp().Set(Gf.Vec3d(WALL_FACE_X, y, z))
         sphere.CreatePurposeAttr().Set(UsdGeom.Tokens.guide)
         markers.append(sphere.GetPrim())
     return wall.GetPrim(), markers
@@ -471,7 +494,7 @@ def build(source: str, output: str):
     print(f'  sublayer: {rel_source}')
     print(f'  arm mount: scout x=+{ARM_MOUNT_PLATFORM_OFFSET_X} (real-robot platform layout)')
     print(f'  4 sensor-cams at (x +/-{CORNER_X:.4f}, y +/-{CORNER_Y:.4f}, z={SENSOR_CAM_LOCAL_Z:.4f})')
-    print(f'  wall face at x={WALL_FACE_X}, targets at y={WALL_TARGET_Y}, z={WALL_TARGET_Z}')
+    print(f'  wall face at x={WALL_FACE_X}, targets (y,z)={WALL_TARGETS}')
 
 
 def main():

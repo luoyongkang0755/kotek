@@ -650,8 +650,8 @@ def main():
                 raise RuntimeError(
                     f'{p} not found -- run build_wall_stage.py against this stage first')
         wall_targets_flat = []
-        for y in ws.WALL_TARGET_Y:
-            wall_targets_flat += [ws.WALL_FACE_X, y, ws.WALL_TARGET_Z]
+        for y, z in ws.WALL_TARGETS:
+            wall_targets_flat += [ws.WALL_FACE_X, y, z]
 
         # Idempotent re-authoring: og.Controller.edit()'s CREATE_NODES step
         # fails outright ("A graph already exists at this path") if this

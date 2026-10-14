@@ -92,22 +92,23 @@ GRASP_POSITIONS = [
 # reasoning above is unchanged). Recalibrate against the real wall
 # position before the wall-mount phase on the real robot (same
 # measure-don't-assume rule as _WALL_Z).
-# TARGET PAIRING (2026-10-14, measured): the near-column pair (grasped
-# first, weak 2-5mm squeeze) takes the NEAR targets (+-0.09 -- a ~2cm
-# swing from their +-0.1065 pickup corners), and the firmly-held far pair
-# takes the FAR targets (+-0.19). The old pairing sent the weak-carry
-# near boxes on the longest possible swing (across the whole arm) and the
-# slip rate showed it (v6: box back on the riser after the swing).
 _WALL_X = 0.33     # = 0.39 - 0.06 arm-forward shift; face 10mm off at PLACE
-_WALL_Z = 0.3734 - 0.18 - 0.29101
-# Target y derives from build_wall_stage.py's WALL_TARGET_Y (2026-10-13:
-# |y| 0.05 -> 0.09/0.19 after the arm-forward move put the inner release
-# poses inside a hard IK dead zone -- see that file's comment).
+_WALL_Z = 0.3734 - 0.18 - 0.29101            # object z, lower row (target 0.35)
+_WALL_Z_UPPER = 0.4734 - 0.18 - 0.29101      # object z, upper row (target 0.45)
+# TARGET LAYOUT (2026-10-14, user-redesigned -- see build_wall_stage.py's
+# WALL_TARGETS): a 2x2 grid at y=+-0.09, z={0.35, 0.45}. Every pickup
+# corner (y=+-0.1065) now swings only ~2cm laterally to its target; the
+# far pair's old +-0.19 targets forced 8.4cm lateral swings whose carry
+# twist (24-34 deg measured, scaling with swing distance under PhysX's
+# torsional-friction-less point contacts) was the dominant wall-side
+# failure. The upper row adds a vertical carry (the arm's strong
+# direction). Pairing: weak-squeeze near pair -> lower row, firm far
+# pair -> upper row.
 PLACE_POSITIONS = [
-    (_WALL_X, +0.09, _WALL_Z),   # grasp[1] near pair, y=+0.1065 -> near target
-    (_WALL_X, -0.09, _WALL_Z),   # grasp[2] near pair, y=-0.1065 -> near target
-    (_WALL_X, -0.19, _WALL_Z),   # grasp[3] far pair, y=-0.1065 -> far target
-    (_WALL_X, +0.19, _WALL_Z),   # grasp[4] far pair, y=+0.1065 -> far target
+    (_WALL_X, +0.09, _WALL_Z),        # grasp[1] near pair -> lower row
+    (_WALL_X, -0.09, _WALL_Z),        # grasp[2] near pair -> lower row
+    (_WALL_X, -0.09, _WALL_Z_UPPER),  # grasp[3] far pair -> upper row
+    (_WALL_X, +0.09, _WALL_Z_UPPER),  # grasp[4] far pair -> upper row
 ]
 
 ARM_FRAME = 'base_link'
