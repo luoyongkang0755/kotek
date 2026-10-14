@@ -33,9 +33,12 @@ PIPER_ARM_CHAIN = (
     '/World/piper/Geometry/base_link/link1/link2/link3/link4/link5/link6')
 WRIST_CAMERA_PATH = f'{PIPER_ARM_CHAIN}/wrist_camera'
 EXTERNAL_CAMERA_PATH = '/World/external_camera'
-SENSOR_CAM_PATHS = [
-    f'/World/scout_mini/Geometry/base_link/sensor_cam_{i + 1}' for i in range(4)
-]
+# 2026-10-14: derive from build_wall_stage (2 sensor-cams since the
+# user-directed revert keeps only the rear pair; was hardcoded range(4)).
+# The import MUST stay lazy: build_wall_stage pulls in pxr/Usd at module
+# level, and importing pxr BEFORE SimulationApp() below breaks Isaac's USD
+# plugin init ("extension class wrapper ... TfNotice has not been created
+# yet" -- measured 2026-10-14).
 
 RENDER_WIDTH = 640
 RENDER_HEIGHT = 480
@@ -74,6 +77,8 @@ def _look_basis_matrix(translation_local, forward_local, up_hint=(0.0, 0.0, 1.0)
 
 
 def add_camera_prims(stage):
+    import build_wall_stage as ws
+    SENSOR_CAM_PATHS = ws.SENSOR_CAM_PATHS
     """Defines the 6 UsdGeom.Camera prims (plain USD authoring -- Isaac
     Sim's pxr.UsdGeom is the same API build_wall_stage.py already uses
     under plain usd-core). Returns {name: path}."""
@@ -126,10 +131,11 @@ def build_camera_graph(og, graph_path, camera_paths):
     specs = [
         ('wrist', camera_paths['wrist'], '/piper/camera/wrist/image_raw', 'wrist_camera'),
         ('external', camera_paths['external'], '/external_camera/image_raw', 'external_camera'),
-        ('sensor_1', camera_paths['sensor_1'], '/sensor_camera_1/image_raw', 'sensor_camera_1'),
-        ('sensor_2', camera_paths['sensor_2'], '/sensor_camera_2/image_raw', 'sensor_camera_2'),
-        ('sensor_3', camera_paths['sensor_3'], '/sensor_camera_3/image_raw', 'sensor_camera_3'),
-        ('sensor_4', camera_paths['sensor_4'], '/sensor_camera_4/image_raw', 'sensor_camera_4'),
+    ] + [
+        (name, camera_paths[name],
+         f'/sensor_camera_{name.split("_")[1]}/image_raw',
+         f'sensor_camera_{name.split("_")[1]}')
+        for name in sorted(camera_paths) if name.startswith('sensor_')
     ]
 
     create_nodes = [

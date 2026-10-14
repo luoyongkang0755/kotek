@@ -378,7 +378,9 @@ def check_wall_demo(stage: Usd.Stage, c: 'Checker') -> None:
         if wall_geom:
             c.check('PhysicsCollisionAPI' in wall_geom.GetAppliedSchemas(),
                     '/World/wall/geom has PhysicsCollisionAPI')
-    for i in range(4):
+    # 2026-10-14: range from ws.WALL_TARGETS (2 since the user-directed
+    # revert; was hardcoded range(4)).
+    for i in range(len(ws.WALL_TARGETS)):
         path = f'/World/wall_target_{i + 1}'
         prim = stage.GetPrimAtPath(path)
         c.check(bool(prim), f'{path} exists')
@@ -408,8 +410,11 @@ def check_wall_demo(stage: Usd.Stage, c: 'Checker') -> None:
     }
     cameras = [p for p in stage.TraverseAll() if str(p.GetTypeName()) == 'Camera']
     camera_names = {p.GetName() for p in cameras}
-    c.check(len(cameras) >= 6,
-            f'>= 6 Camera prims exist (1 wrist + 1 external + 4 sensor-cam, got {len(cameras)}: '
+    # 2026-10-14: 2 + len(ws.SENSOR_CAM_PATHS) (was >= 6 hardcoded for the
+    # 4-box layout; the user-directed revert keeps only the rear pair).
+    c.check(len(cameras) >= 2 + len(ws.SENSOR_CAM_PATHS),
+            f'>= {2 + len(ws.SENSOR_CAM_PATHS)} Camera prims exist (1 wrist + '
+            f'1 external + {len(ws.SENSOR_CAM_PATHS)} sensor-cam, got {len(cameras)}: '
             f'{sorted(camera_names)})')
     # IsaacCreateRenderProduct only creates its RenderProduct-typed prim at
     # RUNTIME when the node first executes (like every other OGN compute
@@ -419,14 +424,15 @@ def check_wall_demo(stage: Usd.Stage, c: 'Checker') -> None:
         p for p in stage.TraverseAll()
         if str(p.GetTypeName()) == 'OmniGraphNode'
         and p.GetAttribute('node:type').Get() == 'isaacsim.core.nodes.IsaacCreateRenderProduct']
-    c.check(len(render_product_nodes) >= 6,
-            f'>= 6 IsaacCreateRenderProduct nodes exist, one per camera '
-            f'(got {len(render_product_nodes)})')
+    c.check(len(render_product_nodes) >= 2 + len(ws.SENSOR_CAM_PATHS),
+            f'>= {2 + len(ws.SENSOR_CAM_PATHS)} IsaacCreateRenderProduct nodes '
+            f'exist, one per camera (got {len(render_product_nodes)})')
     camera_helpers = [p for p in stage.TraverseAll()
                       if str(p.GetTypeName()) == 'OmniGraphNode'
                       and p.GetAttribute('node:type').Get() == 'isaacsim.ros2.bridge.ROS2CameraHelper']
-    c.check(len(camera_helpers) >= 6,
-            f'>= 6 ROS2CameraHelper nodes exist (got {len(camera_helpers)})')
+    c.check(len(camera_helpers) >= 2 + len(ws.SENSOR_CAM_PATHS),
+            f'>= {2 + len(ws.SENSOR_CAM_PATHS)} ROS2CameraHelper nodes exist '
+            f'(got {len(camera_helpers)})')
 
     print('  -- magnet graph (needs author_magnet_graph.py, live Isaac Sim) --')
     script_nodes = [p for p in stage.TraverseAll()

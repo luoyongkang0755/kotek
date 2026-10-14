@@ -82,33 +82,32 @@ ARM_MOUNT_PLATFORM_OFFSET_X = 0.06
 RISER_HALF_EXTENT_X = 0.175
 RISER_HALF_EXTENT_Y = 0.125
 
-# --- the 4 sensor-cam pickup poses (base_link-local frame) ---------------
-# Inset convention: each box edge sits 1mm in from the platform edge, i.e.
-# the corner offset uses the box's OWN half-extent along that axis (x:
-# 8cm-box long half, y: 3.5cm-box short half) -- NOT the long half in both
-# directions (the 2026-10-14 pre-fix code used the long half for y too,
-# corner y=0.084, which pushed the near pair deeper into the arm column's
-# ungraspable crescent). Grasp feasibility of the resulting corners was
-# verified with live /piper/compute_ik probes in ARM-frame coordinates
-# (ik_probe15-17, collision ON): far pair clean at the global grasp
-# settings; near pair clean with the wrist flipped beyond the box at a
-# capped pregrasp height (see wall_mount.yaml grasp_approach_height_near_
-# column). NOTE ik_probe14's "12/12 CLEAN" rows are superseded -- it
-# probed scout-frame x=0.134 as if it were arm-frame. Boxes remain
-# AXIS-ALIGNED (yaw = 0) -- the F-group finding that made the slow close
-# self-centering unnecessary.
+# --- the 2 sensor-cam pickup poses (base_link-local frame) ---------------
+# 2026-10-14 -- USER-DIRECTED revert to the proven-working configuration:
+# the pre-platform-layout era (arm centered at scout x=0, boxes at
+# arm-frame (-0.109, +-0.109), wall face 0.40, _WALL_X 0.39, global 0.018
+# close, standard lift) ran the 4-cycle wall task to full success. The
+# ONLY real-bench change kept is the arm's measured position (scout
+# x=+0.06); the boxes move FORWARD by the same amount (scout x = -0.109 +
+# 0.06 = -0.049) and the wall moves AWAY by the same amount (0.40 + 0.06 =
+# 0.46), so EVERY arm-frame relationship is preserved exactly -- the arm
+# replays the original joint trajectories, and the near-column special
+# casing (wrist flip, capped pregrasp, stop-at-contact close) is disabled
+# in wall_mount.yaml (none of these boxes is near the column). Only the
+# REAR pair is kept (user: 减少至两个盒子，只保留后方的两个), so no box
+# is near the column at all. y uses the platform-width limit +-0.1065
+# (1mm-edge inset on the 25cm width; 2.5mm inside the original +-0.109).
 _SENSOR_LONG_HALF = physics_tuning.SENSOR_CAM_SIZE_XYZ[0] / 2.0
 _SENSOR_SHORT_HALF = physics_tuning.SENSOR_CAM_SIZE_XYZ[1] / 2.0
-CORNER_X = RISER_HALF_EXTENT_X - (_SENSOR_LONG_HALF + 0.001)    # 0.134 m
+CORNER_X = -0.049                 # scout x: arm-frame -0.109 + arm 0.06
 CORNER_Y = RISER_HALF_EXTENT_Y - (_SENSOR_SHORT_HALF + 0.001)   # 0.1065 m
 SENSOR_CAM_LOCAL_Z = RISER_TOP_LOCAL_Z + physics_tuning.SENSOR_CAM_SIZE_XYZ[2] / 2.0
 SENSOR_CAM_CORNERS_LOCAL = [
-    (+CORNER_X, +CORNER_Y, SENSOR_CAM_LOCAL_Z),
-    (+CORNER_X, -CORNER_Y, SENSOR_CAM_LOCAL_Z),
-    (-CORNER_X, -CORNER_Y, SENSOR_CAM_LOCAL_Z),
-    (-CORNER_X, +CORNER_Y, SENSOR_CAM_LOCAL_Z),
+    (CORNER_X, +CORNER_Y, SENSOR_CAM_LOCAL_Z),
+    (CORNER_X, -CORNER_Y, SENSOR_CAM_LOCAL_Z),
 ]
-SENSOR_CAM_PATHS = [f'{SCOUT_BASE_LINK}/sensor_cam_{i + 1}' for i in range(4)]
+SENSOR_CAM_PATHS = [
+    f'{SCOUT_BASE_LINK}/sensor_cam_{i + 1}' for i in range(len(SENSOR_CAM_CORNERS_LOCAL))]
 
 # --- the wall and its 4 mount targets (world frame) -----------------------
 # The robot spawns at the sublayer's own default pose (world origin, facing
@@ -133,41 +132,24 @@ SENSOR_CAM_PATHS = [f'{SCOUT_BASE_LINK}/sensor_cam_{i + 1}' for i in range(4)]
 # pitch/clearance data): grasp_pitch~1.2 rad off the riser corners,
 # place_pitch~0.7 rad into the wall, both far from the pedestal demo's tuned
 # 0.4 rad -- see wall_mount.yaml and piper_manipulator.hpp's Params comment.
-WALL_FACE_X = 0.40           # m, world x of the wall's front (near) face == robot standoff (robot spawns at x=0)
-# 2026-10-14 -- USER-CORRECTED: the arm's real-bench position is +0.06
-# (measured: plate rear edge 19.5cm from the platform rear edge on the 35cm
-# front-back platform), 5cm further from the wall than the old +0.11 sim,
-# and the real lab wall does not move -- so the arm-frame face distance is
-# genuinely 0.34 and the pipeline must be tuned to work at it. An earlier
-# same-day edit moved the wall to 0.385/0.35 to 'restore the tuned 0.29
-# relative geometry'; the user corrected that (离远5cm才是正确的): the sim
-# must match the real bench, not the other way around. The 5cm of reach
-# margin is recovered by the place chain's own tuning (press_distance 0.06,
-# MAGNET_ATTRACT_RANGE 0.012) -- see wall_mount.yaml. The magnet graph's
-# wallTargets and wall_mount_task.py's _WALL_X derive from this -- keep
-# them in sync.
-WALL_TARGET_Z = 0.35         # m, world z of the LOWER mount-target row (upper row +0.10)
-# 2026-10-14 -- USER-REDESIGNED target layout (was a single row at
-# y=[-0.19,-0.09,0.09,0.19], z=0.35): a 2x2 grid at y=+-0.09, z={0.35,
-# 0.45}. The single-row layout forced the far-pair pickup corners
-# (y=+-0.1065) onto 8.4cm LATERAL swings to the +-0.19 targets, and the
-# carry twist measured at the wall scaled with swing distance (near/short
-# 0-14 deg, far/long 24-34 deg -- PhysX point contacts have no torsional
-# friction, so the box rotates freely about the finger-contact line under
-# lateral inertial loads). The 2x2 grid makes every swing ~2cm lateral +
-# a vertical carry (the arm's strong direction, minimal twist input); the
-# upper row also lifts link6 away from the measured lower workspace
-# boundary. Constraints kept: y stays at the validated +-0.09 (the |y|<=
-# ~0.07 band is an IK dead zone, and target spacing must stay >= 0.10 m
-# over the 0.08m box), z row spacing 0.10 > box height 0.04, both rows
-# well inside the 1m wall. WALL_TARGETS pairs each target's (y, z) --
+WALL_FACE_X = 0.46           # m, world x of the wall's front (near) face == robot standoff (robot spawns at x=0)
+# 0.40 -> 0.46 (2026-10-14, user-directed revert): the ONLY real-bench
+# change vs the proven-working era (4-cycle task to full success, arm
+# centered at scout x=0) is the arm's measured position (scout x=+0.06).
+# To preserve every arm-frame relationship of that working geometry
+# (face at arm-frame 0.40, release 0.39), the wall moves AWAY by the
+# same 6cm: 0.40 + 0.06 = 0.46. The arm then replays the original joint
+# trajectories exactly, and the near-column special casing stays off
+# (see the pickup-pose comment and wall_mount.yaml).
+WALL_TARGET_Z = 0.35         # m, world z of every mount target (era value)
+# 2026-10-14 -- 2-target layout (user: keep only the rear two boxes): the
+# era's OUTER pair y=+-0.15, z=0.35 (the inner +-0.05 pair belonged to
+# the removed near-column boxes). WALL_TARGETS pairs each target's (y,z);
 # consumers: add_wall's guide markers, author_magnet_graph.py's
 # wallTargets, wall_mount_task.py's PLACE_POSITIONS.
 WALL_TARGETS = [
-    (-0.09, WALL_TARGET_Z),          # row 1 (lower): near targets
-    (+0.09, WALL_TARGET_Z),
-    (-0.09, WALL_TARGET_Z + 0.10),   # row 2 (upper, +10cm per user)
-    (+0.09, WALL_TARGET_Z + 0.10),
+    (-0.15, WALL_TARGET_Z),
+    (+0.15, WALL_TARGET_Z),
 ]
 WALL_TARGET_Y = [y for y, _ in WALL_TARGETS]   # back-compat shim for the
                                                # probe script (uses row 1)
@@ -493,7 +475,7 @@ def build(source: str, output: str):
     print(f'Wrote {output}')
     print(f'  sublayer: {rel_source}')
     print(f'  arm mount: scout x=+{ARM_MOUNT_PLATFORM_OFFSET_X} (real-robot platform layout)')
-    print(f'  4 sensor-cams at (x +/-{CORNER_X:.4f}, y +/-{CORNER_Y:.4f}, z={SENSOR_CAM_LOCAL_Z:.4f})')
+    print(f'  {len(SENSOR_CAM_PATHS)} sensor-cams at (x {CORNER_X:+.4f}, y +/-{CORNER_Y:.4f}, z={SENSOR_CAM_LOCAL_Z:.4f})')
     print(f'  wall face at x={WALL_FACE_X}, targets (y,z)={WALL_TARGETS}')
 
 

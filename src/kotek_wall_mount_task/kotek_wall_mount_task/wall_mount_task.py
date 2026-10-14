@@ -32,83 +32,43 @@ from kotek_msgs.action import GraspObject, PlaceObject
 from rclpy.action import ActionClient
 from rclpy.node import Node
 
-# Riser-corner pickup positions (arm frame) -- corners of the real-robot
-# platform layout (build_wall_stage.py, 2026-10-13, orientation corrected
-# 2026-10-14): platform 35cm(x, front-back) x 25cm(y, left-right) centered
-# on scout base_link, boxes axis-aligned at (x=+-0.134, y=+-0.1065)
-# scout-frame, arm mounted FORWARD at scout x=+0.06 (mounting plate rear
-# 19.5cm from the platform rear, plate 8cm deep: -0.175 + 0.195 + 0.04).
-# y=0.1065 uses the per-axis 1mm-edge inset (the 2026-10-14 pre-fix 0.084
-# pushed the near pair deeper into the arm column's ungraspable crescent --
-# see build_wall_stage.py's inset comment and ik_probe15-17).
-# Arm frame = scout frame - arm mount: the near pair (cycles 1/2) lands
-# IN FRONT of the arm column (arm-frame x=+0.074), the far pair 19.4cm
-# BEHIND it (x=-0.194). z is unchanged: the platform top sits at the same
-# height as the old riser top.
-_GRASP_X_NEAR = 0.134 - 0.06   # +0.074
-_GRASP_X_FAR = -0.134 - 0.06   # -0.194
-_CORNER_Y = 0.1065
+# Rear-pair pickup positions (arm frame) -- 2026-10-14 USER-DIRECTED
+# revert to the proven-working configuration: the pre-platform-layout era
+# (arm centered, boxes at arm-frame (-0.109, +-0.109)) ran the wall task
+# to full success with the ORIGINAL motion logic (axis-snapped approach,
+# 0.018 close, standard lift -- no near-column special casing). The only
+# real-bench change kept is the arm's measured position (scout x=+0.06);
+# the boxes move forward by the same amount so the arm-frame pickup
+# geometry is EXACTLY the era's: scout x -0.049 - arm 0.06 = -0.109. Only
+# the rear pair is kept (user: two boxes, rear only), so no box is near
+# the arm column and every near-band special in wall_mount.yaml is
+# disabled. y=0.1065 (platform-width 1mm-edge inset, 2.5mm inside the
+# era's 0.109 -- negligible). z unchanged.
+_GRASP_X = -0.049 - 0.06   # -0.109 arm frame (era value)
+_GRASP_Y = 0.1065
 _GRASP_Z = 0.3103 - 0.29101  # SENSOR_CAM_LOCAL_Z - arm_mount_xyz.z (z unchanged)
 GRASP_POSITIONS = [
-    (_GRASP_X_NEAR, +_CORNER_Y, _GRASP_Z),
-    (_GRASP_X_NEAR, -_CORNER_Y, _GRASP_Z),
-    (_GRASP_X_FAR, -_CORNER_Y, _GRASP_Z),
-    (_GRASP_X_FAR, +_CORNER_Y, _GRASP_Z),
+    (_GRASP_X, +_GRASP_Y, _GRASP_Z),
+    (_GRASP_X, -_GRASP_Y, _GRASP_Z),
 ]
 
 # Wall mount target positions (arm frame) -- build_wall_stage.py's
-# WALL_FACE_X/WALL_TARGET_Y/WALL_TARGET_Z (world frame), converted the same
-# way: the robot spawns at world origin (x=0,y=0,yaw=0, untouched sublayer
-# default -- see build_wall_stage.py's own comment on why it stays that
-# way), so world x/y equal arm-frame x/y directly, and world z is converted
-# via the chassis's own settled height (~0.18m, physics_tuning.py) plus the
-# arm mount offset.
-# NOT the wall face itself: commanding the object CENTER onto the face
-# (x=0.40) drives the pitched box's leading corner (the 8cm axis tilted at
-# place_pitch=0.7 reaches ~3.5cm beyond the center along x) INTO the wall
-# during MOVE_ARM_TO_PREPLACE -- MoveIt does not model the carried object,
-# so the arm keeps driving while the wall pries the fingers open (a live
-# monitor trace caught joint7 forced from its 0.019 grip stall to 0.058 as
-# the box corner met the wall, then free-fall). This only ever "worked"
-# while pre-parking-brake chassis creep happened to pull the whole robot
-# 2-3cm back before the first place. Released 4.5cm short instead (corner
-# reach + 1cm clearance), the magnet's widened attract range
-# (MAGNET_ATTRACT_RANGE=0.08, physics_tuning.py) covers the final hop and
-# the weld still engages at its usual ~6mm equilibrium.
-# _WALL_Z +0.06 vs the mount target's own height (2026-09-13, measured):
-# with the reoriented vertical delivery (place_reorient), the fingertip
-# axis tilts down by grasp_pitch and link6 must stay above the arm's
-# measured lower workspace boundary (link6 z ~ -0.05 m -- a live OMPL sweep
-# grid found everything below that unplannable at the wall standoff). The
-# box's own magnet target stays at the authored 0.35m; the released box is
-# pulled down onto it during release_settle_time, 5cm is well inside the
-# magnet's capture range.
-# 2026-10-13 real-robot platform layout (arm at scout x=+0.11), reworked
-# 2026-10-14 for the corrected orientation (arm at scout x=+0.06, wall
-# stays at world x=0.40 -- USER-CORRECTED: the real bench's arm-wall
-# distance is genuinely 0.34 and the pipeline is tuned to work at it, not
-# retreated from it). The release point keeps the era's 1cm
-# short-of-face offset (0.39 = face 0.40 - 0.01; all the corner-reach
-# reasoning above is unchanged). Recalibrate against the real wall
-# position before the wall-mount phase on the real robot (same
-# measure-don't-assume rule as _WALL_Z).
-_WALL_X = 0.33     # = 0.39 - 0.06 arm-forward shift; face 10mm off at PLACE
-_WALL_Z = 0.3734 - 0.18 - 0.29101            # object z, lower row (target 0.35)
-_WALL_Z_UPPER = 0.4734 - 0.18 - 0.29101      # object z, upper row (target 0.45)
-# TARGET LAYOUT (2026-10-14, user-redesigned -- see build_wall_stage.py's
-# WALL_TARGETS): a 2x2 grid at y=+-0.09, z={0.35, 0.45}. Every pickup
-# corner (y=+-0.1065) now swings only ~2cm laterally to its target; the
-# far pair's old +-0.19 targets forced 8.4cm lateral swings whose carry
-# twist (24-34 deg measured, scaling with swing distance under PhysX's
-# torsional-friction-less point contacts) was the dominant wall-side
-# failure. The upper row adds a vertical carry (the arm's strong
-# direction). Pairing: weak-squeeze near pair -> lower row, firm far
-# pair -> upper row.
+# WALL_FACE_X/WALL_TARGETS (world frame), converted the same way: the
+# robot spawns at world origin (x=0,y=0,yaw=0, untouched sublayer
+# default), so world x/y equal arm-frame x/y directly, and world z is
+# converted via the chassis's own settled height (~0.18m) plus the arm
+# mount offset. 2026-10-14 user-directed revert: the wall moved AWAY with
+# the arm (world 0.46 = era face 0.40 + arm 0.06), keeping the era's
+# arm-frame distances EXACTLY -- face 0.40, release _WALL_X 0.39 (1cm
+# short of the face, the era's corner-reach clearance), targets the era's
+# outer pair y=+-0.15, z=0.35. The arm replays the original trajectories.
+# Recalibrate against the real wall position on the real robot (same
+# measure-don't-assume rule as ever).
+_WALL_X = 0.39     # = 0.46 face - 0.06 arm - 0.01 clearance (era value)
+_WALL_Z = 0.3734 - 0.18 - 0.29101
 PLACE_POSITIONS = [
-    (_WALL_X, +0.09, _WALL_Z),        # grasp[1] near pair -> lower row
-    (_WALL_X, -0.09, _WALL_Z),        # grasp[2] near pair -> lower row
-    (_WALL_X, -0.09, _WALL_Z_UPPER),  # grasp[3] far pair -> upper row
-    (_WALL_X, +0.09, _WALL_Z_UPPER),  # grasp[4] far pair -> upper row
+    (_WALL_X, -0.15, _WALL_Z),
+    (_WALL_X, +0.15, _WALL_Z),
 ]
 
 ARM_FRAME = 'base_link'
@@ -185,7 +145,7 @@ def main():
     rclpy.init()
     node = WallMountTask()
     ok = True
-    for i in range(4):
+    for i in range(len(GRASP_POSITIONS)):
         index = i + 1
         # Re-grasp retry (Task 2b, 2026-09-20): the grasp-close kick rotates
         # the box 30-50% of the time on this stage (chaotic contact

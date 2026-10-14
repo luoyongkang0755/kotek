@@ -98,8 +98,8 @@
     # command now, so a no-stall close reaching the command trips
     # reached_command (caught), and a true through-close passes below 0.030
     # (caught); a held box never dips (min ~0.035). Consistent.
-    grasp_width_near_column: 0.030
-    grasp_eject_opening_max: 0.030
+    grasp_width_near_column: 0.0
+    grasp_eject_opening_max: 0.0
     gripper_open_near_column: 0.0
     # 0.10 (the pedestal default) left the held box's underside only ~2cm
     # above the riser top -- fine for the two wall-side corners, but the
@@ -170,7 +170,7 @@
     # The far pair keeps the global height -- its wrist between column and
     # box probes CLEAN (ik_probe17), so the band/flip/height overrides are
     # near-column-only.
-    grasp_approach_height_near_column: 0.03
+    grasp_approach_height_near_column: 0.0
     # Kept from the 0.22-era design: no longer load-bearing (0.12 is
     # reachable, not ambitious) but harmless, and it preserves the
     # "at least half" guard if lift_height is ever raised again.
